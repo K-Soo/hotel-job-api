@@ -77,10 +77,6 @@ jobs:
           echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
-          # Inspect the image to check its architecture
-          ARCHITECTURE=$(docker inspect --format='{{.Architecture}}' $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG)
-          echo "Image architecture: $ARCHITECTURE"
-
       - name: Fill in the new image ID in the Amazon ECS task definition
         env:
           CONTAINER_NAME: hotel-job-api
