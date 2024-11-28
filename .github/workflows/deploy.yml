@@ -38,28 +38,19 @@ jobs:
           fi
 
       - name: Create .env-cmdrc file
-        run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
+        run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc.json
 
       - name: View generated ENV.json
         run: |
-          cat .env-cmdrc
+          cat .env-cmdrc.json
           pwd
-          - name: Check if .env-cmdrc file exists
-          run: |
-            if [ -f $GITHUB_WORKSPACE/.env-cmdrc ]; then
-              echo ".env-cmdrc file exists!"
-              ls -a $GITHUB_WORKSPACE
-            else
-              echo "Error: .env-cmdrc file not found."
-              exit 1
-            fi
-            
+
     # Step 3: 다운로드 가능하게 파일 업로드
       - name: Upload ENV.json for download
         uses: actions/upload-artifact@v3
         with:
           name: env-cmdrc
-          path: $GITHUB_WORKSPACE/.env-cmdrc
+          path: $GITHUB_WORKSPACE/.env-cmdrc.json
 
       # - name: Get Code
       #   uses: actions/checkout@v4
