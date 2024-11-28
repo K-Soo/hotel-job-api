@@ -7,7 +7,6 @@ COPY pnpm-lock.yaml package.json ./
 FROM base AS dev
 RUN pnpm install --frozen-lockfile
 COPY . /app
-COPY .env-cmdrc /app/.env-cmdrc
 EXPOSE 8010
 CMD ["pnpm", "run", "start:dev"]
 
@@ -22,8 +21,7 @@ FROM base AS prod
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
-
-COPY --from=build /app/.env-cmdrc .env-cmdrc
+COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
 # COPY .env-cmdrc /app/.env-cmdrc
 
 EXPOSE 8020
