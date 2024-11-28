@@ -1,4 +1,4 @@
-name: ECS Deployment
+name: Debug
 
 on:
   workflow_dispatch:
@@ -25,5 +25,10 @@ jobs:
           --task-definition hotel-job-api-prod-task \
           --region ${{ secrets.AWS_REGION }} \
           --output json > task-definition.json
+
+      - name: Debug Task Definition JSON
+        run: |
+          echo "The content of the Task Definition JSON file is:"
+          cat task-definition.json
 
 
