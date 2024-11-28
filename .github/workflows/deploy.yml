@@ -41,14 +41,16 @@ jobs:
         run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
 
       - name: View generated ENV.json
-        run: cat .env-cmdrc
+        run: |
+          cat .env-cmdrc
+          pwd
 
     # Step 3: 다운로드 가능하게 파일 업로드
       - name: Upload ENV.json for download
         uses: actions/upload-artifact@v3
         with:
           name: env-cmdrc
-          path: ${{ github.workspace }}/.env-cmdrc
+          path: .env-cmdrc
 
       # - name: Get Code
       #   uses: actions/checkout@v4
