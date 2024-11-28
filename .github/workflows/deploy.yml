@@ -27,8 +27,10 @@ jobs:
 
           if [ "$BRANCH_NAME" = "develop" ]; then
             echo "stage=dev" >> $GITHUB_ENV
+            echo "task_definition=${{ secrets.DEV_TASK_DEFINITION }}" >> $GITHUB_ENV
           elif [ "$BRANCH_NAME" = "main" ]; then
             echo "stage=prod" >> $GITHUB_ENV
+            echo "task_definition=${{ secrets.PROD_TASK_DEFINITION }}" >> $GITHUB_ENV
           else
             echo "Error: Unsupported branch name '$BRANCH_NAME'. Workflow will now exit."
             exit 1
@@ -37,15 +39,19 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
-      # - name: Create .env-cmdrc file
-      #   run: echo "${{ secrets.ENV_CMDRC }}" > ".env-cmdrc.json"
-
-      - name: Create JSON File
-        id: create-json
+      - name: Create ENV JSON File
+        id: env-json
         uses: jsdaniell/create-json@1.1.2
         with:
           name: ".env-cmdrc.json"
           json: ${{ secrets.ENV_CMDRC }}
+
+      - name: Create task JSON File
+        id: task-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "task-definition.json"
+          json: ${{ env.task_definition }}
 
       - name: test branch
         run: |
@@ -95,32 +101,32 @@ jobs:
       #       echo "${{ secrets.DEV_TASK_DEFINITION }}" > ${{env.stage}}.json
       #     fi
 
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   env:
-      #     CONTAINER_NAME: hotel-job-api
-      #   id: task-def
-      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-      #   with:
-      #     task-definition: ${{ env.ECS_TASK_DEFINITION }}
-      #     container-name: ${{ env.CONTAINER_NAME }}
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        env:
+          CONTAINER_NAME: hotel-job-api
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ secrets.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Debug new task definition output
-      #   run: echo ${{ steps.task-def.outputs.task-definition }}
+      - name: Debug new task definition output
+        run: echo ${{ steps.task-def.outputs.task-definition }}
 
-      # - name: Upload new task definition
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: new-task-definition
-      #     path: ${{ steps.task-def.outputs.task-definition }}
+      - name: Upload new task definition
+        uses: actions/upload-artifact@v4
+        with:
+          name: new-task-definition
+          path: ${{ steps.task-def.outputs.task-definition }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   env:
-      #     ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
-      #     ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: ${{ env.ECS_SERVICE }}
-      #     cluster: ${{ env.ECS_CLUSTER }}
-      #     wait-for-service-stability: true
+      - name: Deploy Amazon ECS task definition
+        env:
+          ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+          ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
