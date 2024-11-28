@@ -34,20 +34,6 @@ jobs:
             exit 1
           fi
 
-
-
-      # - name: View generated ENV.json
-      #   run: |
-      #     cat env-cmdrc
-      #     pwd
-
-    # Step 3: 다운로드 가능하게 파일 업로드
-      # - name: Upload ENV.json for download
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: secret-json
-      #     path: env-cmdrc
-
       - name: Get Code
         uses: actions/checkout@v4
 
@@ -80,8 +66,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -90,9 +74,9 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
           docker build --target ${{env.stage}} --platform linux/arm64 -t $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
+          # docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
+          # echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          # echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
       # - name: Create ECS Task Definition JSON
       #   run: |
