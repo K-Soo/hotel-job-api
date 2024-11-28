@@ -23,12 +23,13 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 
-# COPY --from=build /app/.env-cmdrc .env-cmdrc
-COPY .env-cmdrc /app/.env-cmdrc
+COPY --from=build /app/.env-cmdrc .env-cmdrc
+# COPY .env-cmdrc /app/.env-cmdrc
 
 EXPOSE 8020
 
 RUN ls -a
+RUN pwd
 
 CMD ["pnpm", "run", "start:prod"]
 
