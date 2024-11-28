@@ -40,9 +40,6 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Create .env-cmdrc file
-        run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
-
       - name: test branch
         run: |
           ls -a
@@ -69,6 +66,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Create .env-cmdrc file
+        run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -80,6 +80,16 @@ jobs:
           docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Create ECS Task Definition JSON
+        run: |
+          if [ "$BRANCH_NAME" = "main" ]; then
+            echo "${{ secrets.PROD_TASK_DEFINITION }}" > ${{env.stage}}.json
+          fi
+
+          if [ "$BRANCH_NAME" = "develop" ]; then
+            echo "${{ secrets.DEV_TASK_DEFINITION }}" > ${{env.stage}}.json
+          fi
 
       # - name: Fill in the new image ID in the Amazon ECS task definition
       #   env:
