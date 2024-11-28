@@ -98,7 +98,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         env:
-          CONTAINER_NAME: hotel-job-api
+          CONTAINER_NAME: prod-hotel-job-api
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
