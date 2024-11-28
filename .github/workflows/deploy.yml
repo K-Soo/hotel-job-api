@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: env-cmdrc
-          path: .env-cmdrc
+          path: ${{ github.workspace }}/.env-cmdrc
 
       # - name: Get Code
       #   uses: actions/checkout@v4
