@@ -4,7 +4,7 @@ RUN corepack enable && corepack prepare pnpm@9.13.2 --activate
 COPY pnpm-lock.yaml package.json ./
 
 # Stage - development
-FROM base AS development
+FROM base AS dev
 RUN pnpm install --frozen-lockfile
 COPY . /app
 # COPY .env-cmdrc /app/.env-cmdrc
@@ -18,7 +18,7 @@ COPY . /app
 RUN pnpm run build
 
 # Stage - Production 
-FROM base AS production
+FROM base AS prod
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 # COPY --from=build /app/.env-cmdrc .
