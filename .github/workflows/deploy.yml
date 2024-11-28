@@ -36,7 +36,7 @@ jobs:
 
       - name: Create .env-cmdrc file
         run: |
-          echo "$ENV_CMDRC" > env-cmdrc.json
+          echo "${{ secrets.ENV_CMDRC }}" > env-cmdrc.json
         env:
           ENV_CMDRC: ${{ secrets.ENV_CMDRC }}
 
