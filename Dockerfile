@@ -1,6 +1,6 @@
 FROM node:20.18.0-alpine AS base
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.13.2 --activate
 COPY pnpm-lock.yaml package.json ./
 
 # Stage - development
