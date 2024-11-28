@@ -24,7 +24,6 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
 
 RUN ls -a
-RUN pwd
 RUN cat .env-cmdrc.json
 
 EXPOSE 8020
