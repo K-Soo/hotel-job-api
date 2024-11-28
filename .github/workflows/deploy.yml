@@ -87,7 +87,7 @@ jobs:
           docker build --target ${{env.stage}} --platform linux/arm64 -t $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
+          # echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Download ECS Task Definition 
         run: |
