@@ -40,15 +40,15 @@ jobs:
       - name: Create .env-cmdrc file
         run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
 
-      # - name: View generated ENV.json
-      #   run: .env-cmdrc
+      - name: View generated ENV.json
+        run: cat .env-cmdrc
 
     # Step 3: 다운로드 가능하게 파일 업로드
       - name: Upload ENV.json for download
         uses: actions/upload-artifact@v3
         with:
           name: env-cmdrc
-          path: env-cmdrc
+          path: .env-cmdrc
 
       # - name: Get Code
       #   uses: actions/checkout@v4
