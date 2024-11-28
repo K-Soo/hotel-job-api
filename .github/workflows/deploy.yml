@@ -47,10 +47,6 @@ jobs:
           name: ".env-cmdrc.json"
           json: ${{ secrets.ENV_CMDRC }}
 
-      - name: Show created JSON file
-        run: |
-          cat secrets.json
-
       - name: test branch
         run: |
           ls -a
