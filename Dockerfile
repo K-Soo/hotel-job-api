@@ -21,10 +21,15 @@ RUN pnpm run build
 FROM base AS prod
 WORKDIR /app
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+
 COPY --from=build /app/.env-cmdrc .env-cmdrc
 COPY .env-cmdrc /app/.env-cmdrc
-COPY --from=build /app/node_modules ./node_modules
+
 EXPOSE 8020
+
+RUN ls -a
+
 CMD ["pnpm", "run", "start:prod"]
 
 # FROM node:20.18.0-alpine

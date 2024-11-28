@@ -77,19 +77,19 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
           docker build --target ${{env.stage}} --platform linux/arm64 -t $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
+          # docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
+          # echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          # echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Create ECS Task Definition JSON
-        run: |
-          if [ "$BRANCH_NAME" = "main" ]; then
-            echo "${{ secrets.PROD_TASK_DEFINITION }}" > ${{env.stage}}.json
-          fi
+      # - name: Create ECS Task Definition JSON
+      #   run: |
+      #     if [ "$BRANCH_NAME" = "main" ]; then
+      #       echo "${{ secrets.PROD_TASK_DEFINITION }}" > ${{env.stage}}.json
+      #     fi
 
-          if [ "$BRANCH_NAME" = "develop" ]; then
-            echo "${{ secrets.DEV_TASK_DEFINITION }}" > ${{env.stage}}.json
-          fi
+      #     if [ "$BRANCH_NAME" = "develop" ]; then
+      #       echo "${{ secrets.DEV_TASK_DEFINITION }}" > ${{env.stage}}.json
+      #     fi
 
       # - name: Fill in the new image ID in the Amazon ECS task definition
       #   env:
