@@ -36,7 +36,6 @@ jobs:
             echo "Error: Unsupported branch name '$BRANCH_NAME'. Workflow will now exit."
             exit 1
           fi
-          echo "The branch is env : ${{ env.stage }}"
 
       - name: Get Code
         uses: actions/checkout@v4
@@ -45,7 +44,9 @@ jobs:
         run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
 
       - name: ls
-        run: ls -a
+        run: |
+          ls -a
+          echo "The branch is env : ${{ env.stage }}"
 
       # # Enable QEMU for ARM64 emulation
       # - name: Set up QEMU
