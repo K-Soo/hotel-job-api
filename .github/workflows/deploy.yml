@@ -30,8 +30,10 @@ jobs:
 
           if [ "$BRANCH_NAME" = "develop" ]; then
             echo "stage=dev" >> $GITHUB_ENV
+            echo "stage=dev" >> $GITHUB_OUTPUT
           elif [ "$BRANCH_NAME" = "main" ]; then
             echo "stage=prod" >> $GITHUB_ENV
+            echo "stage=prod" >> $GITHUB_OUTPUT
           else
             echo "Error: Unsupported branch name '$BRANCH_NAME'. Workflow will now exit."
             exit 1
@@ -39,7 +41,7 @@ jobs:
 
       - name: test branch
         run: |
-          echo "The branch is: ${{ steps.branch.env.stage }}"
+          echo "The branch is: ${{ steps.branch.outputs.stage }}"
           echo "The branch is env : ${{ env.stage }}"
 
       # - name: Get Code
