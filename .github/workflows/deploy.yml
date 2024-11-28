@@ -36,6 +36,10 @@ jobs:
             exit 1
           fi
 
+      - name: test branch
+        run: |
+          echo "The branch is: ${{ steps.branch.outputs.stage }}"
+
       # - name: Get Code
       #   uses: actions/checkout@v4
 
