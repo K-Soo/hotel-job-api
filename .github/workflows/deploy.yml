@@ -27,10 +27,8 @@ jobs:
 
           if [ "$BRANCH_NAME" = "develop" ]; then
             echo "stage=dev" >> $GITHUB_ENV
-            echo "task_definition=${{ secrets.DEV_TASK_DEFINITION }}" >> $GITHUB_ENV
           elif [ "$BRANCH_NAME" = "main" ]; then
             echo "stage=prod" >> $GITHUB_ENV
-            echo "task_definition=${{ secrets.PROD_TASK_DEFINITION }}" >> $GITHUB_ENV
           else
             echo "Error: Unsupported branch name '$BRANCH_NAME'. Workflow will now exit."
             exit 1
@@ -91,15 +89,12 @@ jobs:
           echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      # - name: Create ECS Task Definition JSON
-      #   run: |
-      #     if [ "$BRANCH_NAME" = "main" ]; then
-      #       echo "${{ secrets.PROD_TASK_DEFINITION }}" > ${{env.stage}}.json
-      #     fi
-
-      #     if [ "$BRANCH_NAME" = "develop" ]; then
-      #       echo "${{ secrets.DEV_TASK_DEFINITION }}" > ${{env.stage}}.json
-      #     fi
+      - name: Download ECS Task Definition 
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition hotel-job-api-${{env.stage}}-task \
+          --region ${{ secrets.AWS_REGION }} \
+          --output json > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         env:
