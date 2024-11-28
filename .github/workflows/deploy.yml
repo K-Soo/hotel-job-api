@@ -50,6 +50,7 @@ jobs:
       - name: test branch
         run: |
           ls -a
+          cat .env-cmdrc.json.json
           echo "The branch is env : ${{ env.stage }}"
 
       # Enable QEMU for ARM64 emulation
@@ -59,31 +60,31 @@ jobs:
           platforms: linux/arm64
 
       # Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-        run: |
-          docker build --target ${{env.stage}} --platform linux/arm64 -t $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG .
-          # docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
-          # echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          # echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
+      # - name: Build, tag, and push image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     IMAGE_TAG: ${{ github.sha }}
+      #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      #   run: |
+      #     docker build --target ${{env.stage}} --platform linux/arm64 -t $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     # docker push $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG
+      #     # echo "image=$ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      #     # echo "output - $ECR_REGISTRY/${{env.stage}}/$ECR_REPOSITORY:$IMAGE_TAG"
 
       # - name: Create ECS Task Definition JSON
       #   run: |
