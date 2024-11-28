@@ -45,7 +45,7 @@ jobs:
         run: echo "${{ secrets.ENV_CMDRC }}" > .env-cmdrc
 
       - name: ls
-        run: echo "ls -a"
+        run: ls -a
 
       # # Enable QEMU for ARM64 emulation
       # - name: Set up QEMU
