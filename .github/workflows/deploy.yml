@@ -23,6 +23,7 @@ jobs:
     steps:
       - name: Get branch name
         id: branch
+
         run: |
           echo "The GITHUB_REF is: $GITHUB_REF"
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
@@ -39,6 +40,7 @@ jobs:
       - name: test branch
         run: |
           echo "The branch is: ${{ steps.branch.env.stage }}"
+          echo "The branch is env : ${{ env.stage }}"
 
       # - name: Get Code
       #   uses: actions/checkout@v4
