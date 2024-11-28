@@ -36,13 +36,13 @@ jobs:
 
       - name: Create .env-cmdrc file
         run: |
-          echo "$ENV_CMDRC" > config.json
+          echo "$ENV_CMDRC" > env-cmdrc.json
         env:
           ENV_CMDRC: ${{ secrets.ENV_CMDRC }}
 
       - name: View generated ENV.json
         run: |
-          cat config.json
+          cat env-cmdrc.json
           pwd
 
     # Step 3: 다운로드 가능하게 파일 업로드
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: secret-json
-          path: config.json
+          path: env-cmdrc.json
 
       # - name: Get Code
       #   uses: actions/checkout@v4
