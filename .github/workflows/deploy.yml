@@ -102,13 +102,11 @@ jobs:
           cat task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
-        env:
-          CONTAINER_NAME: prod-hotel-job-api
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: prod-hotel-job-api
+          container-name: prod-hotel-${{env.stage}}-api
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Debug new task definition output
