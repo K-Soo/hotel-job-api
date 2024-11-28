@@ -11,12 +11,6 @@ on:
       - 'test/**'
       - '**.md'
 
-env:
-  ECS_TASK_DEFINITION: ./aws/task-definition/production.json
-
-permissions:
-  contents: read
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
