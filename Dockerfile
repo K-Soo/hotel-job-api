@@ -14,21 +14,18 @@ COPY pnpm-lock.yaml package.json ./
 FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . /app
+# RUN ls -al /app
 RUN pnpm run build
 
 # Stage - development
 FROM base AS dev
 WORKDIR /app
+# RUN ls -a
+# RUN cat .env-cmdrc.json
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
-
-RUN ls -a
-RUN cat .env-cmdrc.json
-
 EXPOSE 8010
-
-RUN ls -a
 RUN pwd
 CMD ["pnpm", "run", "start:dev"]
 # CMD ["env-cmd", "-e", "development", 'node' , 'dist/main']
