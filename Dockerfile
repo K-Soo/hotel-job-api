@@ -30,7 +30,8 @@ EXPOSE 8010
 
 RUN ls -a
 RUN pwd
-CMD ["pnpm", "run", "start:dev"]
+# CMD ["pnpm", "run", "start:dev"]
+CMD ["env-cmd", "-e", "development", 'node' , 'dist/main']
 
 
 # Stage - Production 
