@@ -2,8 +2,7 @@ name: Debug
 
 on:
   workflow_dispatch:
-  push:
-   
+
 jobs:
   Debug:
     runs-on: ubuntu-latest
@@ -19,7 +18,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Download ECS Task Definition 
+      - name: Download ECS Task Definition
         run: |
           aws ecs describe-task-definition \
           --task-definition hotel-job-api-prod-task \
@@ -30,5 +29,3 @@ jobs:
         run: |
           echo "The content of the Task Definition JSON file is:"
           cat task-definition.json
-
-
