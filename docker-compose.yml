@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
-  hotel-job-api:
+  server:
     build:
       context: .
+      target: local
     image: hotel-job-api
     container_name: hotel-job-api_container
     volumes:

@@ -10,6 +10,13 @@ RUN pnpm install --frozen-lockfile
 COPY . /app
 RUN pnpm run build
 
+# Stage - Local
+FROM base AS local
+RUN pnpm install --frozen-lockfile
+COPY . /app
+EXPOSE 8010
+CMD ["pnpm", "run", "start:local"]
+
 # Stage - Development
 FROM base AS dev
 RUN pnpm install --frozen-lockfile
