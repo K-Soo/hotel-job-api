@@ -5,6 +5,6 @@ export class HealthController {
   constructor() {}
   @Get()
   findAll() {
-    return { status: 'OK' };
+    return 'success';
   }
 }
