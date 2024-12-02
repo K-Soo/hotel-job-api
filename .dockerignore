@@ -4,4 +4,3 @@ dist
 .dockerignore
 Dockerfile
 docker-compose.yml
-aws

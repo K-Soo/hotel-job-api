@@ -18,9 +18,9 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       retryAttempts: 1,
       entities: ['dist/**/*.entity.js'],
       synchronize: configService.get('APP_ENV') === 'local',
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      // ssl: {
+      //   rejectUnauthorized: false,
+      // },
       // autoLoadEntities: true, // 개쌉중요해 EntityMetadataNotFoundError 에러 났었음.
     };
   },

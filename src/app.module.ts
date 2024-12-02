@@ -6,6 +6,9 @@ import { HealthModule } from './models/health/health.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './config/database/postgres/configuration';
 import { TestsModule } from './models/tests/tests.module';
+import { BusinessUsersModule } from './models/business-users/business-users.module';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -13,8 +16,9 @@ import { TestsModule } from './models/tests/tests.module';
     HealthModule,
     TypeOrmModule.forRootAsync(configuration),
     TestsModule,
+    BusinessUsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
 })
 export class AppModule {}
