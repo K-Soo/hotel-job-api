@@ -5,15 +5,14 @@ export const configuration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
-    console.log(__dirname);
+    console.log('configuration', __dirname);
     return {
       type: 'postgres',
-      // host: configService.get('DB_HOST'),
-      host: 'dev-hotel-job-api-db.c5msqsekurzz.ap-northeast-2.rds.amazonaws.com',
+      host: configService.get('DB_HOST'),
       port: configService.get('DB_PORT'),
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
-      database: 'postgres',
+      database: configService.get('DB_NAME'),
       retryAttempts: 1,
       entities: ['dist/**/*.entity.js'],
       synchronize: configService.get('APP_ENV') === 'local',
