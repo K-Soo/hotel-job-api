@@ -27,6 +27,9 @@ export const postgresDataSource = new DataSource({
   // migrations: [`${__dirname}/../../src/database/migrations/*.ts`], //dev ok,
   synchronize: false,
   logging: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 console.log('__dirname:', `${__dirname}`);

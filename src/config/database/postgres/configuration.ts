@@ -6,6 +6,8 @@ export const configuration: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
     console.log('configuration', __dirname);
+    console.log('DB_NAME:', configService.get<string>('DB_NAME'));
+    console.log('DB_HOST:', configService.get<string>('DB_HOST'));
     return {
       type: 'postgres',
       host: configService.get('DB_HOST'),
