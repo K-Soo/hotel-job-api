@@ -8,11 +8,12 @@ export const configuration: TypeOrmModuleAsyncOptions = {
     console.log(__dirname);
     return {
       type: 'postgres',
-      host: configService.get('DB_HOST'),
+      // host: configService.get('DB_HOST'),
+      host: 'dev-hotel-job-api-db.c5msqsekurzz.ap-northeast-2.rds.amazonaws.com',
       port: configService.get('DB_PORT'),
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
-      database: configService.get('DB_NAME'),
+      database: 'postgres',
       retryAttempts: 1,
       entities: ['dist/**/*.entity.js'],
       synchronize: configService.get('APP_ENV') === 'local',
