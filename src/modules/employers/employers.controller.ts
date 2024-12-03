@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
+import { SerializeInterceptor } from 'src/common/interceptors/serialize.interceptor';
 
 @Controller('employers')
 export class EmployersController {
 	constructor(private readonly employersService: EmployersService) {}
 
 	@Post()
+	@UseInterceptors(new SerializeInterceptor(CreateEmployerDto))
 	create(@Body() createEmployerDto: CreateEmployerDto) {
 		return this.employersService.create(createEmployerDto);
 	}

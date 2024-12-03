@@ -10,7 +10,6 @@ export class EmployersService {
 	constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
 
 	async create(createEmployerDto: CreateEmployerDto) {
-		console.log();
 		const isExistUser = await this.isUserIdExists(createEmployerDto.userId);
 		if (isExistUser) {
 			throw new HttpException('User already exist.', HttpStatus.CONFLICT);

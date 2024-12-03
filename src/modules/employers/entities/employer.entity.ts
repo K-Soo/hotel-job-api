@@ -5,6 +5,12 @@ export class Employer {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column({ default: 'local' })
+	provider: string;
+
+	@Column({ default: 'user' })
+	role: string;
+
 	@Column()
 	userId: string;
 
