@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
 
-export class CreateBusinessUserDto {
+export class CreateEmployerDto {
   @IsString()
   @IsNotEmpty()
   @Length(5, 30, {
@@ -8,4 +8,8 @@ export class CreateBusinessUserDto {
   })
   @Matches(/^[a-z0-9]+$/, { message: 'username Matches Invalid format.' })
   userId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }
