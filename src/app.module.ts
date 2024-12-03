@@ -18,8 +18,8 @@ import { UsersModule } from './modules/users/users.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-		HealthModule,
 		TypeOrmModule.forRootAsync(configuration),
+		HealthModule,
 		TestsModule,
 		EmployersModule,
 		ApplicantsModule,

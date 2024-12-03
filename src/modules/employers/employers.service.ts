@@ -1,7 +1,6 @@
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
-import { customHttpException } from '../../common/constants/custom-http-exception';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { Repository } from 'typeorm';
@@ -10,8 +9,12 @@ import { Repository } from 'typeorm';
 export class EmployersService {
 	constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
 
-	create(createEmployerDto: CreateEmployerDto) {
-		throw new HttpException(customHttpException.INVALID_CREDENTIALS, 404);
+	async create(createEmployerDto: CreateEmployerDto) {
+		const isExistUser = await this.isUserIdExists(createEmployerDto.userId);
+		if (isExistUser) {
+			throw new HttpException('User already exist.', HttpStatus.CONFLICT);
+		}
+		return 'This action adds a new employer';
 	}
 
 	findAll() {
@@ -28,5 +31,10 @@ export class EmployersService {
 
 	remove(id: number) {
 		return `This action removes a #${id} employer`;
+	}
+
+	async isUserIdExists(userId: string) {
+		const user = await this.repo.findOne({ where: { userId: userId } });
+		return !!user;
 	}
 }
