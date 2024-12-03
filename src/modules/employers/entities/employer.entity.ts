@@ -10,6 +10,9 @@ export class Employer {
 
 	@Column()
 	name: string;
+
+	@Column()
+	password: string;
 }
 
 function generateRandomUsername(): string {

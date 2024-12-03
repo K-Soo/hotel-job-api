@@ -16,16 +16,21 @@ export class EmployersService {
 			throw new HttpException('User already exist.', HttpStatus.CONFLICT);
 		}
 		const hashedPassword = await hashPassword(createEmployerDto.password);
-		console.log('hashedPassword: ', hashedPassword);
-		return 'This action adds a new employer';
+
+		const user = this.repo.create({
+			...createEmployerDto,
+			password: hashedPassword,
+		});
+
+		return this.repo.save(user);
 	}
 
 	findAll() {
-		return `This action returns all employers`;
+		return this.repo.find();
 	}
 
 	findOne(id: number) {
-		return `This action returns a #${id} employer`;
+		return this.repo.findOne({ where: { id } });
 	}
 
 	update(id: number, updateEmployerDto: UpdateEmployerDto) {
