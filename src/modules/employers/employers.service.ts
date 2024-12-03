@@ -4,16 +4,19 @@ import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { Repository } from 'typeorm';
-
+import { hashPassword } from '../../common/helpers/password.helper';
 @Injectable()
 export class EmployersService {
 	constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
 
 	async create(createEmployerDto: CreateEmployerDto) {
+		console.log();
 		const isExistUser = await this.isUserIdExists(createEmployerDto.userId);
 		if (isExistUser) {
 			throw new HttpException('User already exist.', HttpStatus.CONFLICT);
 		}
+		const hashedPassword = await hashPassword(createEmployerDto.password);
+		console.log('hashedPassword: ', hashedPassword);
 		return 'This action adds a new employer';
 	}
 
