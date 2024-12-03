@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } fr
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
-import { SerializeInterceptor } from 'src/common/interceptors/serialize.interceptor';
+import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 
 @Controller('employers')
 export class EmployersController {

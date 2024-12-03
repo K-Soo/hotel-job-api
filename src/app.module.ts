@@ -16,18 +16,18 @@ import { OauthModule } from './authentication/oauth/oauth.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ isGlobal: true }),
-		TypeOrmModule.forRootAsync(configuration),
-		HealthModule,
-		TestsModule,
-		EmployersModule,
-		ApplicantsModule,
-		AuthModule,
-		OauthModule,
-		UsersModule,
-	],
-	controllers: [AppController],
-	providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync(configuration),
+    HealthModule,
+    TestsModule,
+    EmployersModule,
+    ApplicantsModule,
+    AuthModule,
+    OauthModule,
+    UsersModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
 })
 export class AppModule {}
