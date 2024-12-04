@@ -1,3 +1,8 @@
+export enum ProviderRole {
+  LOCAL = 'LOCAL',
+  KAKAO = 'KAKAO',
+}
+
 export enum UserRole {
   ADMIN = 'ADMIN',
   EMPLOYER = 'EMPLOYER',

@@ -1,11 +1,12 @@
-import { ProviderType } from '../types';
+import { ProviderRoleType, UserRoleType } from '../types';
 
 export interface EmployerUser {
   id: number;
   userId: string;
   name: string;
   password: string;
-  provider: ProviderType;
+  provider: ProviderRoleType;
+  role: UserRoleType;
   createdAt: Date;
   updatedAt: Date;
 }

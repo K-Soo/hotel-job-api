@@ -1,13 +1,12 @@
-import { ProviderType } from '../../../common/types';
 import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { UserRole } from '../../../common/constants/user-role.enum';
+import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: 'local' })
-  provider: ProviderType;
+  @Column({ type: 'enum', enum: ProviderRole, default: ProviderRole.LOCAL })
+  provider: ProviderRole;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYER })
   role: UserRole;

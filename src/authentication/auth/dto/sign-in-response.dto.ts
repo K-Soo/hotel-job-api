@@ -2,10 +2,10 @@ import { Expose } from 'class-transformer';
 
 export class SignInResponseDto {
   @Expose()
-  userId: string;
+  accessToken: string;
 
   @Expose()
-  accessToken: string;
+  role: string;
 
   @Expose()
   provider: string;

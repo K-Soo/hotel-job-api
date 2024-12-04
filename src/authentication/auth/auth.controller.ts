@@ -8,7 +8,7 @@ import { SerializeInterceptor } from '../../common/interceptors/serialize.interc
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
-
+import { EmployerUser } from '../../common/interfaces/user.interface';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -21,22 +21,20 @@ export class AuthController {
   @Post('sign-in')
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
-  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
-    console.log('req: ', req.user);
-    // const { id, provider, userId } = req.user;
+  async signIn(@Body() _: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
+    const { id } = req.user as EmployerUser;
 
-    // const accessToken = await this.authService.generateAccessToken(id);
-    // const refreshToken = await this.authService.generateRefreshToken(id);
+    const accessToken = await this.authService.generateAccessToken(id);
+    const refreshToken = await this.authService.generateRefreshToken(id);
 
-    // res.cookie('refresh_token', refreshToken, {
-    //   httpOnly: true,
-    //   secure: this.configService.get('APP_ENV') !== 'local',
-    //   sameSite: 'lax',
-    //   maxAge: 1000 * 60 * 15, // 15분
-    // });
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('APP_ENV') !== 'local',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 15, // 15분
+    });
 
-    // return { userId, provider, accessToken };
-    return '';
+    return { ...req.user, accessToken };
   }
 
   @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })

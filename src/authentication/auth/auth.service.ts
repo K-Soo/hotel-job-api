@@ -1,9 +1,7 @@
-import { Body, HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtConfigService } from './jwt-config.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Employer } from '../../modules/employers/entities/employer.entity';
+
 @Injectable()
 export class AuthService {
   constructor(

@@ -5,7 +5,7 @@ import { Strategy } from 'passport-local';
 import { SignInDto } from '../dto/sign-in.dto';
 import { validate } from 'class-validator';
 import { EmployersService } from '../../../modules/employers/employers.service';
-import { EmployerUser } from 'src/common/interfaces/employer-user.interface';
+import { EmployerUser } from 'src/common/interfaces/user.interface';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
