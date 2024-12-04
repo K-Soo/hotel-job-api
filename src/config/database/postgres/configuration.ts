@@ -1,5 +1,6 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 export const configuration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -18,6 +19,7 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       database: configService.get('DB_NAME'),
       retryAttempts: 1,
       entities: ['dist/**/*.entity.js'],
+      namingStrategy: new SnakeNamingStrategy(), // 스네이크케이스로 변환
       synchronize: isLocal,
       ...(!isLocal && { ssl: { rejectUnauthorized: false } }),
       // autoLoadEntities: true, // 개쌉중요해 EntityMetadataNotFoundError 에러 났었음.

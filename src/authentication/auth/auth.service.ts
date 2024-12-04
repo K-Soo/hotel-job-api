@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Body, HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { JwtConfigService } from './jwt-config.service';
+import { SignInDto } from './dto/sign-in.dto';
+import { comparePassword } from '../../common/helpers/password.helper';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Employer } from '../../modules/employers/entities/employer.entity';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(Employer) private repo: Repository<Employer>,
+    private readonly jwtService: JwtService,
+    private readonly jwtConfigService: JwtConfigService,
+  ) {}
+
+  async signIn(signInDto: SignInDto) {
+    const employerUser = await this.repo.findOne({ where: { userId: signInDto.userId } });
+
+    if (!employerUser) {
+      throw new HttpException('Invalid credentials.', HttpStatus.BAD_REQUEST);
+    }
+    const isPasswordValid = await comparePassword(signInDto.password, '123');
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid credentials.', HttpStatus.BAD_REQUEST);
+    }
+    return employerUser;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async generateAccessToken(id: number): Promise<string> {
+    const payload = { sub: id };
+
+    const config = this.jwtConfigService.getAccessTokenConfig();
+    return this.jwtService.sign(payload, config);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  async generateRefreshToken(id: number): Promise<string> {
+    const payload = { sub: id };
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const config = this.jwtConfigService.getRefreshTokenConfig();
+    return this.jwtService.sign(payload, config);
   }
 }

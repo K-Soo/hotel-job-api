@@ -27,6 +27,3 @@ export const postgresDataSource = new DataSource({
     rejectUnauthorized: false,
   },
 });
-
-//마이그레이션 __dirname: /Users/neo/Documents/PROJECT/hotel-jop-server/src/database
-//개발환경 __dirname: /Users/neo/Documents/PROJECT/hotel-jop-server/dist/database
