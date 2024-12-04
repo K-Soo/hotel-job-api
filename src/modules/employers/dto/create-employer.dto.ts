@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
 import { regex, validationMessage } from '../../../common/utils/regex';
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 export class CreateEmployerDto {
   @Expose()
   @IsString()

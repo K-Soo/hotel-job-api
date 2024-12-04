@@ -16,16 +16,19 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto) {
-    const employerUser = await this.repo.findOne({ where: { userId: signInDto.userId } });
-
-    if (!employerUser) {
-      throw new HttpException('Invalid credentials.', HttpStatus.BAD_REQUEST);
+    try {
+      const employerUser = await this.repo.findOne({ where: { userId: signInDto.userId } });
+      if (!employerUser) {
+        throw new Error('Invalid credentials.');
+      }
+      const isPasswordValid = await comparePassword(signInDto.password, employerUser.password);
+      if (!isPasswordValid) {
+        throw new Error('Invalid credentials.');
+      }
+      return employerUser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    const isPasswordValid = await comparePassword(signInDto.password, '123');
-    if (!isPasswordValid) {
-      throw new HttpException('Invalid credentials.', HttpStatus.BAD_REQUEST);
-    }
-    return employerUser;
   }
 
   async generateAccessToken(id: number): Promise<string> {

@@ -4,15 +4,15 @@ import { map, Observable } from 'rxjs';
 
 @Injectable()
 export class SerializeInterceptor<T> implements NestInterceptor {
-	constructor(private dto: ClassConstructor<T>) {}
+  constructor(private dto: ClassConstructor<T>) {}
 
-	intercept(_: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-		return next.handle().pipe(
-			map((data: any) => {
-				return plainToInstance(this.dto, data, {
-					excludeExtraneousValues: true,
-				});
-			}),
-		);
-	}
+  intercept(_: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+    return next.handle().pipe(
+      map((data: any) => {
+        return plainToInstance(this.dto, data, {
+          excludeExtraneousValues: true,
+        });
+      }),
+    );
+  }
 }

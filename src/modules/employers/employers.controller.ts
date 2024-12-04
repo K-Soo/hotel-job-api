@@ -20,10 +20,8 @@ export class EmployersController {
   @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
   async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {
     console.log('인스턴스?: ', createEmployerDto instanceof CreateEmployerDto);
-    console.log('Object or DTO: ', createEmployerDto.constructor.name);
 
     const user = await this.employersService.create(createEmployerDto);
-    console.log('constructor: ', user.constructor.name);
 
     const accessToken = await this.authService.generateAccessToken(user.id);
 

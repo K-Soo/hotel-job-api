@@ -1,11 +1,11 @@
 export const customHttpException = {
-  USER_ALREADY_EXISTS: {
+  ACCESS_TOKEN_: {
     customCode: 1010,
-    message: 'User already exists.',
+    message: 'Access token expired',
   },
   INVALID_CREDENTIALS: {
     customCode: 1020,
-    message: 'Invalid credentials provided.',
+    message: 'Refresh token expired',
   },
   RESOURCE_NOT_FOUND: {
     customCode: 1030,
