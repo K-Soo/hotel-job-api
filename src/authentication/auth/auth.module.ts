@@ -7,7 +7,7 @@ import { EmployersModule } from '../../modules/employers/employers.module';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employer } from '../../modules/employers/entities/employer.entity';
-
+import { PassportModule } from '@nestjs/passport';
 @Module({
   controllers: [AuthController],
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([Employer]), forwardRef(() => EmployersModule)],

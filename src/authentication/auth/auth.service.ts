@@ -6,28 +6,22 @@ import { comparePassword } from '../../common/helpers/password.helper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Employer } from '../../modules/employers/entities/employer.entity';
-
+import { EmployersService } from '../../modules/employers/employers.service';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Employer) private repo: Repository<Employer>,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
+    private readonly employersService: EmployersService,
   ) {}
 
   async signIn(signInDto: SignInDto) {
     try {
-      const employerUser = await this.repo.findOne({ where: { userId: signInDto.userId } });
-      if (!employerUser) {
-        throw new Error('Invalid credentials.');
-      }
-      const isPasswordValid = await comparePassword(signInDto.password, employerUser.password);
-      if (!isPasswordValid) {
-        throw new Error('Invalid credentials.');
-      }
-      return employerUser;
+      const user = await this.employersService.validateEmployerUser(signInDto);
+      return user;
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw error;
     }
   }
 

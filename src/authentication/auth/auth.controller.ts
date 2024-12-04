@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Body, Res, UseInterceptors, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { Response } from 'express';
@@ -7,6 +7,8 @@ import { Throttle } from '@nestjs/throttler';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { PassportLocalGuard } from './guards/passport-local.guard';
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -33,6 +35,12 @@ export class AuthController {
     });
 
     return { userId, provider, accessToken };
+  }
+
+  @UseGuards(PassportLocalGuard)
+  @Post('login')
+  async testSignIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response) {
+    return '';
   }
 
   @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })

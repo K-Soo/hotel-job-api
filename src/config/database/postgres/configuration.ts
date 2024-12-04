@@ -21,6 +21,8 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       entities: ['dist/**/*.entity.js'],
       namingStrategy: new SnakeNamingStrategy(), // 스네이크케이스로 변환
       synchronize: isLocal,
+      connectTimeoutMS: 1000, // 1ms로 강제 타임아웃 설정
+
       ...(!isLocal && { ssl: { rejectUnauthorized: false } }),
       // autoLoadEntities: true, // 개쌉중요해 EntityMetadataNotFoundError 에러 났었음.
     };
