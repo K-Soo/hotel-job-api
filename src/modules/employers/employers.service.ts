@@ -4,8 +4,8 @@ import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { Repository } from 'typeorm';
-import { hashPassword } from '../../common/helpers/password.helper';
-import { customHttpException } from '../../common/constants/custom-http-exception';
+import { hashPassword, comparePassword } from '../../common/helpers/password.helper';
+import { safeQuery } from '../../common/helpers/database.helper';
 @Injectable()
 export class EmployersService {
   constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
@@ -25,6 +25,30 @@ export class EmployersService {
     return this.repo.save(user);
   }
 
+  async isEmployerUserExists(userId: string) {
+    return safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
+  }
+
+  async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
+    try {
+      const doesExist = await this.isEmployerUserExists(userId);
+
+      if (!doesExist) {
+        throw new Error();
+      }
+
+      const isPasswordHashValid = await comparePassword(password, doesExist.password);
+
+      if (!isPasswordHashValid) {
+        throw new Error();
+      }
+
+      return doesExist;
+    } catch (_) {
+      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   findAll() {
     return this.repo.find();
   }
@@ -39,27 +63,5 @@ export class EmployersService {
 
   remove(id: number) {
     return `This action removes a #${id} employer`;
-  }
-
-  async isEmployerUserExists(userId: string) {
-    try {
-      // const user = this.repo.findOne({ where: { userId: userId } });
-      const user = await this.repo.query('SELECT non_existing_column FROM users');
-      return user;
-    } catch (_error: any) {
-      throw new HttpException(customHttpException.DATABASE_QUERY_FAILED, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
-    const doesExist = await this.isEmployerUserExists(userId);
-    if (!doesExist) {
-      throw new Error('Invalid credentials.');
-    }
-    const isPasswordHashValid = await hashPassword(password);
-    if (!isPasswordHashValid) {
-      throw new Error('Invalid credentials.');
-    }
-    return doesExist;
   }
 }
