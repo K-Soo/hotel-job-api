@@ -19,7 +19,6 @@ export class EmployersController {
   ) {}
 
   @Post()
-  // @ApiBody({ description: 'User data', schema: { example: { name: 'John', age: 25 } } })
   @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
   async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {
     console.log('인스턴스?: ', createEmployerDto instanceof CreateEmployerDto);

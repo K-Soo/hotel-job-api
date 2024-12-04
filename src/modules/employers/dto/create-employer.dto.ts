@@ -17,7 +17,10 @@ export class CreateEmployerDto {
   @Matches(regex.ALL_SPACE, validationMessage('name'))
   name: string;
 
-  @ApiProperty({ description: '비밀번호', example: '@ER123' })
+  @ApiProperty({
+    description: '8자 이상 20자 이하, 대소문자 구분없이, 숫자, 특수문자(@, $, !, %, *, ?, &)를 최소 1개씩 포함',
+    example: '@e123456',
+  })
   @IsString()
   @IsNotEmpty()
   @Matches(regex.PASSWORD, validationMessage('password'))

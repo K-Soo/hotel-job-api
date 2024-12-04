@@ -20,10 +20,10 @@ export class Employer {
   @Column()
   password: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 }
 

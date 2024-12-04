@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './config/database/postgres/configuration';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { SwaggerConfigModule } from './config/swagger/swagger.config.module';
 
 import { EmployersModule } from './modules/employers/employers.module';
 import { HealthModule } from './modules/health/health.module';
@@ -19,6 +20,7 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(configuration),
+    SwaggerConfigModule,
     HealthModule,
     TestsModule,
     EmployersModule,
