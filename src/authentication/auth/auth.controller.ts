@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Res, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, UseInterceptors, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
@@ -17,29 +17,25 @@ export class AuthController {
   ) {}
 
   @ApiOperation({ summary: '사업자 로그인' })
+  @UseGuards(PassportLocalGuard)
   @Post('sign-in')
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
-  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response) {
-    const employerUser = await this.authService.signIn(signInDto);
-    const { id, provider, userId } = employerUser;
+  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
+    console.log('req: ', req.user);
+    // const { id, provider, userId } = req.user;
 
-    const accessToken = await this.authService.generateAccessToken(id);
-    const refreshToken = await this.authService.generateRefreshToken(id);
+    // const accessToken = await this.authService.generateAccessToken(id);
+    // const refreshToken = await this.authService.generateRefreshToken(id);
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 15, // 15분
-    });
+    // res.cookie('refresh_token', refreshToken, {
+    //   httpOnly: true,
+    //   secure: this.configService.get('APP_ENV') !== 'local',
+    //   sameSite: 'lax',
+    //   maxAge: 1000 * 60 * 15, // 15분
+    // });
 
-    return { userId, provider, accessToken };
-  }
-
-  @UseGuards(PassportLocalGuard)
-  @Post('login')
-  async testSignIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response) {
+    // return { userId, provider, accessToken };
     return '';
   }
 

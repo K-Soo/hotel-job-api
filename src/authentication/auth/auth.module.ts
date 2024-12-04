@@ -8,10 +8,11 @@ import { EmployersService } from '../../modules/employers/employers.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employer } from '../../modules/employers/entities/employer.entity';
 import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './strategies/local.strategy';
 @Module({
   controllers: [AuthController],
-  imports: [JwtModule.register({}), TypeOrmModule.forFeature([Employer]), forwardRef(() => EmployersModule)],
-  providers: [AuthService, JwtConfigService, EmployersService],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([Employer]), forwardRef(() => EmployersModule), PassportModule],
+  providers: [AuthService, JwtConfigService, EmployersService, LocalStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
