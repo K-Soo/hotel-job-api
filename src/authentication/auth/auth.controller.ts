@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
+import { ApiOperation } from '@nestjs/swagger';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -13,6 +14,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @ApiOperation({ summary: '사업자 로그인' })
   @Post('sign-in')
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
@@ -33,6 +35,7 @@ export class AuthController {
     return { userId, provider, accessToken };
   }
 
+  @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })
   @Post('sign-out')
   signOut(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('refresh_token');

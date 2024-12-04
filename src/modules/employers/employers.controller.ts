@@ -7,7 +7,9 @@ import { SerializeInterceptor } from '../../common/interceptors/serialize.interc
 import { AuthService } from '../../authentication/auth/auth.service';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('employers') // 컨트롤러 그룹 이름
 @Controller('employers')
 export class EmployersController {
   constructor(
@@ -17,6 +19,7 @@ export class EmployersController {
   ) {}
 
   @Post()
+  // @ApiBody({ description: 'User data', schema: { example: { name: 'John', age: 25 } } })
   @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
   async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {
     console.log('인스턴스?: ', createEmployerDto instanceof CreateEmployerDto);
