@@ -20,10 +20,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse() as ResponseMessage | string;
-    console.log('responseMessage: ', exceptionResponse);
     const { message, customCode } = this.extractCustomResponse(exceptionResponse);
 
-    this.logger.error(`status: ${status}, message: ${exception.message}`);
+    this.logger.error(`status: ${customCode || status}, message: ${exception.message}`);
 
     response.status(status).json({
       success: false,
@@ -42,6 +41,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const { message, customCode } = response;
+
+    // Database Error
+    if (customCode?.toString().startsWith('6')) {
+      return { message: 'An unexpected error occurred. Please try again later.', customCode };
+    }
+    // Internal Server Error
+    if (customCode?.toString().startsWith('7')) {
+      return { message: 'An unexpected error occurred. Please try again later.', customCode };
+    }
+
     const formattedMessage = Array.isArray(message) ? message.join(', ') : message;
 
     return { message: formattedMessage, customCode };
