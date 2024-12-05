@@ -10,6 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const httpAdapterHost = app.get(HttpAdapterHost);
 
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
+  const origin = configService.get('ORIGIN');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -17,15 +21,19 @@ async function bootstrap() {
     }),
   );
 
-  const configService = app.get(ConfigService);
   app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
+
+  app.enableCors({
+    origin: origin,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    // allowedHeaders: 'Content-Type, Accept',
+    credentials: true,
+  });
 
   const swaggerConfigService = app.get(SwaggerConfigService);
 
   swaggerConfigService.setupSwagger(app);
-
-  const port = configService.get<number>('PORT');
 
   await app.listen(port);
 }

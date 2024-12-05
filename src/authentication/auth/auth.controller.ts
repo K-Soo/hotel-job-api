@@ -5,7 +5,7 @@ import { Response, Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
-import { SignInResponseDto } from './dto/sign-in-response.dto';
+import { SignInResponseDto } from './dto/sign-in.response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
 import { EmployerUser } from '../../common/interfaces/user.interface';
