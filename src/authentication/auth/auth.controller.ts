@@ -8,8 +8,12 @@ import { SerializeInterceptor } from '../../common/interceptors/serialize.interc
 import { SignInResponseDto } from './dto/sign-in.response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
+import { PassportJwtGuard } from './guards/passport-jwt.guard';
 import { EmployerUser } from '../../common/interfaces/user.interface';
 import { customHttpException } from '../../common/constants/custom-http-exception';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -48,8 +52,12 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({ summary: '인증한 사용자 정보' })
+  @UseGuards(PassportJwtGuard)
   @Post('me')
-  userMe(@Req() req: Request, @Res({ passthrough: true }) res: Response) {}
+  userMe(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return 'me';
+  }
 
   @ApiOperation({ summary: 'refresh token 재 요청' })
   @Post('refresh')

@@ -11,15 +11,21 @@ export class AuthService {
 
   async generateAccessToken(id: number): Promise<string> {
     const payload = { sub: id };
-
     const config = this.jwtConfigService.getAccessTokenConfig();
     return this.jwtService.sign(payload, config);
   }
 
   async generateRefreshToken(id: number): Promise<string> {
     const payload = { sub: id };
-
     const config = this.jwtConfigService.getRefreshTokenConfig();
     return this.jwtService.sign(payload, config);
+  }
+
+  async accessTokenVerify(token: string) {
+    return this.jwtService.verify(token, this.jwtConfigService.getAccessTokenConfig());
+  }
+
+  async refreshTokenVerify(token: string) {
+    return this.jwtService.verify(token, this.jwtConfigService.getRefreshTokenConfig());
   }
 }
