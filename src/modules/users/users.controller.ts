@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation } from '@nestjs/swagger';
 
@@ -7,13 +7,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: '유저 정보' })
-  @Get(':id')
+  @Get()
   findOne() {
     return this.usersService.findOne();
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
 }

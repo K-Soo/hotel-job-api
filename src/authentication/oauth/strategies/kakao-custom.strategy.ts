@@ -6,6 +6,9 @@ import { lastValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import { ApplicantsService } from '../../../modules/applicants/applicants.service';
+import { Applicant } from '../../../modules/applicants/entities/applicant.entity';
+import { KakaoUser } from '../interfaces/user.interface';
+import { oauth } from '../../../common/constants/api';
 @Injectable()
 export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custom') {
   constructor(
@@ -16,14 +19,13 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     super();
   }
 
-  async validate(req: any): Promise<any> {
+  async validate(req: any): Promise<Applicant> {
     const { code } = req.body;
 
     if (!code) {
       throw new Error('Authorization code is required');
     }
-    const tokenUrl = 'https://kauth.kakao.com/oauth/token';
-    const tokenResponse = await this.getAccessToken(code, tokenUrl);
+    const tokenResponse = await this.getAccessToken(code);
 
     const { access_token } = tokenResponse;
 
@@ -31,18 +33,20 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       throw new Error('Failed to retrieve access token from Kakao');
     }
 
-    const userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
+    const userInfoResponse = await this.getUserInfo(access_token);
+    const user = await this.applicantsService.findOne(userInfoResponse.id);
 
-    const userInfoResponse = await this.getUserInfo(access_token, userInfoUrl);
+    if (!user) {
+      const user = await this.applicantsService.create(userInfoResponse.id);
+      return user;
+    }
 
-    return {
-      ...userInfoResponse,
-    };
+    return user;
   }
 
-  private async getAccessToken(code: string, url: string): Promise<any> {
+  private async getAccessToken(code: string): Promise<any> {
     try {
-      const response = this.httpService.post(url, null, {
+      const response = this.httpService.post(oauth.kakao.token, null, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         params: {
           grant_type: 'authorization_code',
@@ -58,17 +62,15 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     }
   }
 
-  private async getUserInfo(accessToken: string, url: string): Promise<any> {
+  private async getUserInfo(accessToken: string): Promise<KakaoUser> {
     try {
-      const response = this.httpService.get(url, {
+      const response = this.httpService.get(oauth.kakao.userInfo, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       const { data } = await lastValueFrom(response);
-      console.log('data: ', data);
-      const user = this.applicantsService.findOne(data.id);
-      console.log('user: ', user);
+
       return data;
     } catch (error) {
       console.error('Error fetching Kakao access token:', error.response?.data || error.message);

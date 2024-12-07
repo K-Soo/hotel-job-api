@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Req, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, UseInterceptors, UseGuards, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { Response, Request } from 'express';
@@ -9,6 +9,7 @@ import { SignInResponseDto } from './dto/sign-in.response.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
 import { EmployerUser } from '../../common/interfaces/user.interface';
+import { customHttpException } from '../../common/constants/custom-http-exception';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -45,5 +46,22 @@ export class AuthController {
     return {
       status: 'SUCCESS',
     };
+  }
+
+  @Post('me')
+  userMe(@Req() req: Request, @Res({ passthrough: true }) res: Response) {}
+
+  @ApiOperation({ summary: 'refresh token 재 요청' })
+  @Post('refresh')
+  generateAccessToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+    if (!refreshToken) {
+      throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
+    }
+    try {
+    } catch (error) {
+      console.log('REFRESH_TOKEN_INVALID_CREDENTIALS: ', error);
+      throw new ForbiddenException(customHttpException.REFRESH_TOKEN_INVALID_CREDENTIALS);
+    }
   }
 }

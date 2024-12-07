@@ -11,16 +11,20 @@ export const customHttpException = {
     customCode: 1020,
     message: 'Refresh token expired',
   },
-  REFRESH_TOKEN_INVALID_CREDENTIALS: {
+  REFRESH_TOKEN_MISSING: {
     customCode: 1030,
-    message: 'Access token is invalid',
+    message: 'Refresh token is missing',
+  },
+  REFRESH_TOKEN_INVALID_CREDENTIALS: {
+    customCode: 1040,
+    message: 'Refresh token is invalid',
   },
   OAUTH_TOKEN_ERROR: {
     customCode: 2000,
-    message: 'The access token is invalid, expired, or lacks the required permissions.',
+    message: 'Authentication failed',
   },
   OAUTH_USER_INFO_ERROR: {
     code: 2010,
-    message: 'Failed to fetch user information from Kakao.',
+    message: 'Authentication failed.',
   },
 } as const;
