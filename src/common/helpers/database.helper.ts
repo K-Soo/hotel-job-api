@@ -1,4 +1,3 @@
-import { customHttpException } from '../../common/constants/custom-http-exception';
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('Database');
