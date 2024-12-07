@@ -1,19 +1,23 @@
-import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
-import { JwtService, TokenExpiredError } from '@nestjs/jwt';
+import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
+import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-// import chalk from 'chalk';
-import { ConfigService } from '@nestjs/config';
+import { AuthService } from '../../authentication/auth/auth.service';
+import { customHttpException } from '../../common/constants/custom-http-exception';
+import chalk from 'chalk';
 
-// 쿠키가 있을경우 토큰 위변조만 검사함
-//쿠키토큰 없으면 대응못함
+//1. 쿠키 토큰 위변조만 검사
+//2. 쿠키 토큰 만료 체크
+//3. 쿠키 토큰 없으면 다음 미들웨어로 이동
 @Injectable()
 export class RefreshTokenMiddleware implements NestMiddleware {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    // private readonly configService: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
-  use(req: Request, res: Response, next: () => void) {
+  async use(req: Request, res: Response, next: () => void) {
+    console.log('리프레시 토큰 미들웨어');
+
     const token = req.cookies['refresh_token'];
 
     if (!token) {
@@ -21,17 +25,16 @@ export class RefreshTokenMiddleware implements NestMiddleware {
     }
 
     try {
-      this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      });
+      await this.authService.refreshTokenVerify(token);
       return next();
     } catch (error) {
-      // console.error(chalk.red('cookie middleware instanceType:', error.constructor.name));
-      if (error instanceof TokenExpiredError) {
-        throw new HttpException('refresh token Expired', HttpStatus.FORBIDDEN);
-      }
-      throw new HttpException('Invalid refresh token', HttpStatus.FORBIDDEN);
       res.clearCookie('refresh_token');
+      if (error instanceof TokenExpiredError) {
+        throw new ForbiddenException(customHttpException.REFRESH_TOKEN_EXPIRED);
+      }
+      if (error instanceof JsonWebTokenError) {
+        throw new ForbiddenException(customHttpException.REFRESH_TOKEN_INVALID_CREDENTIALS);
+      }
     }
   }
 }
