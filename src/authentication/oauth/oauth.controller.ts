@@ -1,18 +1,18 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { OauthService } from './oauth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('oauth')
 export class OauthController {
-  constructor(private readonly oauthService: OauthService) {}
+  constructor(
+    private readonly oauthService: OauthService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('kakao')
   @UseGuards(AuthGuard('kakao-custom'))
-  async kakaoSignIn(@Body('code') code: string) {
-    console.log('code: ', code);
-    // if (!code) {
-    //   throw new HttpException('Authorization code is required', HttpStatus.BAD_REQUEST);
-    // }
-    return '';
+  async kakaoSignIn(@Req() req: any) {
+    return req.user;
   }
 }

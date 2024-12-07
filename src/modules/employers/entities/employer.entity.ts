@@ -1,15 +1,9 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ type: 'enum', enum: ProviderRole, default: ProviderRole.LOCAL })
-  provider: ProviderRole;
-
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYER })
-  role: UserRole;
 
   @Column()
   userId: string;
@@ -19,6 +13,12 @@ export class Employer {
 
   @Column()
   password: string;
+
+  @Column({ type: 'enum', enum: ProviderRole, default: ProviderRole.LOCAL })
+  provider: ProviderRole;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYER })
+  role: UserRole;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;

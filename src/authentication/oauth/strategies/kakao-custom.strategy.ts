@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-custom';
 import { HttpService } from '@nestjs/axios';
-
+import { lastValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
+import { customHttpException } from '../../../common/constants/custom-http-exception';
+import { ApplicantsService } from '../../../modules/applicants/applicants.service';
 @Injectable()
 export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custom') {
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+    private readonly applicantsService: ApplicantsService,
+  ) {
     super();
   }
 
@@ -15,48 +22,57 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     if (!code) {
       throw new Error('Authorization code is required');
     }
-    const url = 'https://kauth.kakao.com/oauth/token';
+    const tokenUrl = 'https://kauth.kakao.com/oauth/token';
+    const tokenResponse = await this.getAccessToken(code, tokenUrl);
 
-    const response = this.httpService.post(url, null, {
-      params: {
-        grant_type: 'authorization_code',
-        client_id: process.env.KAKAO_CLIENT_ID,
-        client_secret: process.env.KAKAO_CLIENT_SECRET,
-        redirect_uri: process.env.KAKAO_REDIRECT_URI,
-        code,
-      },
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
+    const { access_token } = tokenResponse;
 
-    // // Step 1: Get access token from Kakao
-    // const tokenResponse = await axios.post('https://kauth.kakao.com/oauth/token', null, {
-    //   params: {
-    //     grant_type: 'authorization_code',
-    //     client_id: process.env.KAKAO_CLIENT_ID,
-    //     client_secret: process.env.KAKAO_CLIENT_SECRET,
-    //     redirect_uri: process.env.KAKAO_REDIRECT_URI,
-    //     code,
-    //   },
-    //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    // });
+    if (!access_token) {
+      throw new Error('Failed to retrieve access token from Kakao');
+    }
 
-    // const { access_token } = tokenResponse.data;
+    const userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
 
-    // // Step 2: Get user info from Kakao
-    // const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
-    //   headers: {
-    //     Authorization: `Bearer ${access_token}`,
-    //   },
-    // });
+    const userInfoResponse = await this.getUserInfo(access_token, userInfoUrl);
 
-    // const user = userResponse.data;
+    return {
+      ...userInfoResponse,
+    };
+  }
 
-    // // Return the user object
-    // return {
-    //   kakaoId: user.id,
-    //   email: user.kakao_account?.email,
-    //   nickname: user.properties?.nickname,
-    //   profileImage: user.properties?.profile_image,
-    // };
+  private async getAccessToken(code: string, url: string): Promise<any> {
+    try {
+      const response = this.httpService.post(url, null, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        params: {
+          grant_type: 'authorization_code',
+          client_id: this.configService.get('KAKAO_CLIENT_ID'),
+          code,
+        },
+      });
+      const { data } = await lastValueFrom(response);
+      return data;
+    } catch (error) {
+      console.error('Error fetching Kakao access token:', error.response?.data || error.message);
+      throw new BadRequestException(customHttpException.OAUTH_TOKEN_ERROR);
+    }
+  }
+
+  private async getUserInfo(accessToken: string, url: string): Promise<any> {
+    try {
+      const response = this.httpService.get(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const { data } = await lastValueFrom(response);
+      console.log('data: ', data);
+      const user = this.applicantsService.findOne(data.id);
+      console.log('user: ', user);
+      return data;
+    } catch (error) {
+      console.error('Error fetching Kakao access token:', error.response?.data || error.message);
+      throw new BadRequestException(customHttpException.OAUTH_USER_INFO_ERROR);
+    }
   }
 }

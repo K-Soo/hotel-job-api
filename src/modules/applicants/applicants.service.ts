@@ -4,6 +4,7 @@ import { UpdateApplicantDto } from './dto/update-applicant.dto';
 
 @Injectable()
 export class ApplicantsService {
+  constructor() {}
   create(createApplicantDto: CreateApplicantDto) {
     return 'This action adds a new applicant';
   }
