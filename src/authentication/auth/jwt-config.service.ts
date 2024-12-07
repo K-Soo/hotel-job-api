@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class JwtConfigService {
   constructor(private readonly configService: ConfigService) {}
+
   getAccessTokenConfig() {
     return {
       secret: this.configService.get('JWT_ACCESS_SECRET'),
