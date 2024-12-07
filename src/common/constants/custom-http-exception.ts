@@ -17,7 +17,7 @@ export const customHttpException = {
   },
   REFRESH_TOKEN_INVALID_CREDENTIALS: {
     customCode: 1040,
-    message: 'Refresh token is invalid',
+    message: 'Refresh token is invalid credentials',
   },
   OAUTH_TOKEN_ERROR: {
     customCode: 2000,
