@@ -16,8 +16,9 @@ export class OauthController {
   async kakaoSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as RequestUser;
     const accessToken = await this.authService.generateAccessToken(user.id);
+    const refreshToken = await this.authService.generateRefreshToken(user.id);
 
-    res.cookie('refresh_token', accessToken, {
+    res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: 'lax',
