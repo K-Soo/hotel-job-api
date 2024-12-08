@@ -34,7 +34,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     }
 
     const userInfoResponse = await this.getUserInfo(access_token);
-    const user = await this.applicantsService.findOne(userInfoResponse.id);
+    const user = await this.applicantsService.findOneUserId(userInfoResponse.id);
 
     if (!user) {
       const user = await this.applicantsService.create(userInfoResponse.id);
