@@ -3,8 +3,8 @@ import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 
 @Entity()
 export class Applicant {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @PrimaryColumn({ type: 'bigint' })
   userId: number;

@@ -14,9 +14,4 @@ export class ApplicantsController {
   findAll() {
     return this.applicantsService.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.applicantsService.findOne(+id);
-  }
 }

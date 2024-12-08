@@ -1,7 +1,7 @@
 import { ProviderRoleType, UserRoleType } from '../types';
 
 export interface EmployerUser {
-  id: number;
+  id: string;
   userId: string;
   name: string;
   password: string;

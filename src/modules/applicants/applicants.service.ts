@@ -16,7 +16,11 @@ export class ApplicantsService {
     return `This action returns all applicants`;
   }
 
-  findOne(userId: number) {
+  findOne(id: string) {
+    return safeQuery(() => this.repo.findOne({ where: { id: id } }));
+  }
+
+  findOneUserId(userId: number) {
     return safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
   }
 }

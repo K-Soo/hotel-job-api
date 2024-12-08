@@ -18,8 +18,8 @@ export interface KakaoUser {
 }
 
 export interface RequestUser {
-  id: number;
-  userId: string;
+  id: string;
+  userId: number;
   provider: ProviderRoleType;
   role: UserRoleType;
   createdAt: Date;
