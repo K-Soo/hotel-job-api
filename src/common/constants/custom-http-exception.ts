@@ -3,8 +3,12 @@ export const customHttpException = {
     customCode: 1000,
     message: 'Access token expired',
   },
+  ACCESS_TOKEN_MISSING: {
+    customCode: 1001,
+    message: 'Access token is missing',
+  },
   ACCESS_TOKEN_INVALID_CREDENTIALS: {
-    customCode: 1010,
+    customCode: 1002,
     message: 'Access token is invalid',
   },
   REFRESH_TOKEN_EXPIRED: {
@@ -12,11 +16,11 @@ export const customHttpException = {
     message: 'Refresh token expired',
   },
   REFRESH_TOKEN_MISSING: {
-    customCode: 1030,
+    customCode: 1021,
     message: 'Refresh token is missing',
   },
   REFRESH_TOKEN_INVALID_CREDENTIALS: {
-    customCode: 1040,
+    customCode: 1022,
     message: 'Refresh token is invalid credentials',
   },
   OAUTH_TOKEN_ERROR: {
