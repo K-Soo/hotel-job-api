@@ -2,8 +2,8 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   userId: string;

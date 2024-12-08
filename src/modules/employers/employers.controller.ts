@@ -25,7 +25,7 @@ export class EmployersController {
 
     const user = await this.employersService.create(createEmployerDto);
 
-    const accessToken = await this.authService.generateAccessToken(user.id);
+    const accessToken = await this.authService.generateAccessToken(user.id, user.provider);
 
     res.cookie('refresh_token', accessToken, {
       httpOnly: true,
@@ -47,7 +47,7 @@ export class EmployersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.employersService.findOne(+id);
+    return this.employersService.findOne(id);
   }
 
   @Patch(':id')

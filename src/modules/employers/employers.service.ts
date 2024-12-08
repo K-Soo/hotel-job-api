@@ -11,7 +11,7 @@ export class EmployersService {
   constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
 
   async create(createEmployerDto: CreateEmployerDto) {
-    const isExistUser = await this.isEmployerUserExists(createEmployerDto.userId);
+    const isExistUser = await this.findOne(createEmployerDto.userId);
     if (isExistUser) {
       throw new HttpException('User already exist.', HttpStatus.CONFLICT);
     }
@@ -25,13 +25,13 @@ export class EmployersService {
     return this.repo.save(user);
   }
 
-  async isEmployerUserExists(userId: string) {
+  findOne(userId: string) {
     return safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
   }
 
   async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
     try {
-      const doesExist = await this.isEmployerUserExists(userId);
+      const doesExist = await this.findOne(userId);
 
       if (!doesExist) {
         throw new Error();
@@ -51,10 +51,6 @@ export class EmployersService {
 
   findAll() {
     return this.repo.find();
-  }
-
-  findOne(id: number) {
-    return this.repo.findOne({ where: { id } });
   }
 
   update(id: number, updateEmployerDto: UpdateEmployerDto) {
