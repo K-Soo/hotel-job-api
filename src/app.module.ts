@@ -18,6 +18,7 @@ import { AuthModule } from './authentication/auth/auth.module';
 import { OauthModule } from './authentication/oauth/oauth.module';
 import { UsersModule } from './modules/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ConsentsModule } from './modules/consents/consents.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     OauthModule,
     UsersModule,
+    ConsentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],

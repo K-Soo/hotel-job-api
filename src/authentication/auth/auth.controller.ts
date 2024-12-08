@@ -13,12 +13,16 @@ import { EmployerUser } from '../../common/interfaces/user.interface';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { EmployersService } from '../../modules/employers/employers.service';
+import { ApplicantsService } from '../../modules/applicants/applicants.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
+    private readonly employersService: EmployersService,
+    private readonly applicantsService: ApplicantsService,
   ) {}
 
   @ApiOperation({ summary: '사업자 로그인' })
@@ -27,10 +31,10 @@ export class AuthController {
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
   async signIn(@Body() _: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
-    const { id } = req.user as EmployerUser;
+    const { id, provider } = req.user as EmployerUser;
 
-    const accessToken = await this.authService.generateAccessToken(id);
-    const refreshToken = await this.authService.generateRefreshToken(id);
+    const accessToken = await this.authService.generateAccessToken(id, provider);
+    const refreshToken = await this.authService.generateRefreshToken(id, provider);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -61,15 +65,25 @@ export class AuthController {
 
   @ApiOperation({ summary: 'refresh token 재 요청' })
   @Post('refresh')
-  generateAccessToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
+  async updateToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refresh_token'];
     if (!refreshToken) {
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
     }
-    try {
-    } catch (error) {
-      console.log('REFRESH_TOKEN_INVALID_CREDENTIALS: ', error);
-      throw new ForbiddenException(customHttpException.REFRESH_TOKEN_INVALID_CREDENTIALS);
-    }
+    const user = await this.authService.refreshAccessToken(refreshToken);
+    const { id, provider } = user;
+
+    const newAccessToken = await this.authService.generateAccessToken(id, provider);
+    const newRefreshToken = await this.authService.generateRefreshToken(id, provider);
+
+    res.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('APP_ENV') !== 'local',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 15, // 15분
+    });
+
+    return { ...user, accessToken: newAccessToken };
   }
 }
