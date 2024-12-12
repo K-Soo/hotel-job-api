@@ -9,7 +9,9 @@ export class ApplicantsService {
   constructor(@InjectRepository(Applicant) private repo: Repository<Applicant>) {}
 
   async create(userId: number) {
-    const user = await safeQuery(async () => this.repo.create({ userId, provider: ProviderRole.KAKAO, role: UserRole.JOB_SEEKER }));
+    const user = await safeQuery(async () =>
+      this.repo.create({ userId, provider: ProviderRole.KAKAO, role: UserRole.JOB_SEEKER }),
+    );
     return this.repo.save(user);
   }
 
@@ -17,8 +19,11 @@ export class ApplicantsService {
     return `This action returns all applicants`;
   }
 
-  findOne(id: string) {
-    return safeQuery(() => this.repo.findOne({ where: { id: id } }));
+  async findOne(id: string) {
+    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: id } }));
+    console.log('applicant: ', applicant.constructor.name);
+    console.log('Is Applicant Instance:', applicant instanceof Applicant);
+    return applicant;
   }
 
   findOneUserId(userId: number) {

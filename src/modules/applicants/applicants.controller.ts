@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { ApplicantsService } from './applicants.service';
+import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
+import { Request } from 'express';
 
 @Controller('applicants')
 export class ApplicantsController {
@@ -13,5 +16,13 @@ export class ApplicantsController {
   @Get()
   findAll() {
     return this.applicantsService.findAll();
+  }
+
+  @ApiOperation({ summary: '일반 유저 정보' })
+  @ApiBearerAuth()
+  @UseGuards(PassportJwtGuard)
+  @Get('profile')
+  find(@Req() req: Request) {
+    return this.applicantsService.findOne(req.user['sub']);
   }
 }

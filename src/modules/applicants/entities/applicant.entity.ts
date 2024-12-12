@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 import { Consent } from '../../consents/entities/consent.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Applicant {
@@ -19,6 +20,7 @@ export class Applicant {
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 
