@@ -1,7 +1,7 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { NestFactory, HttpAdapterHost, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
 import { SwaggerConfigService } from './config/swagger/swagger.config.service';
@@ -21,10 +21,12 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       stopAtFirstError: true,
+      transform: true,
     }),
   );
 
   app.setGlobalPrefix('api/v1');
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
 
   app.enableCors({
