@@ -5,13 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
+import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
+import { Payload } from '../interfaces/payload.interface';
+// import chalk from 'chalk';
 
 //리턴값을 주지않으면 401에러 생김 주의
-export interface Payload {
-  sub: number;
-  lat: number; //발급 시간
-  exp: number; //만료 시간
-}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -35,32 +33,42 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: Request, payload: Payload) {
+    const accessToken = req.headers.authorization.split(' ')[1];
     const refreshToken = req.cookies['refresh_token'];
+
+    const { exp, lat } = payload;
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+    const secondsRemaining = exp - currentTimeInSeconds;
+    console.log('secondsRemaining: ', secondsRemaining);
     //토큰 없을 경우만 검사 - 미들웨어에서 토큰이 있다면 만료, 위변조 검사했기 때문에 여기서는 검사하지 않음
     if (!refreshToken) {
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
     }
-    const test = this.configService.get('JWT_ACCESS_SECRET');
-    console.log('test: ', test);
-    return { success: true };
-    // const { exp, sub: accessTokenSub } = payload;
-    console.log('payload: ', payload);
 
-    console.log('jwt passport 만료');
+    const decodedRefreshToken: Payload = this.jwtService.decode(refreshToken);
+
+    if (payload.sub !== decodedRefreshToken.sub) {
+      throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_INVALID_CREDENTIALS);
+    }
+
     try {
-      // const refreshTokenPayload: Payload = this.jwtService.verify(refreshToken, {
-      //   secret: this.configService.get('JWT_REFRESH_SECRET'),
-      // });
-      // if (refreshTokenPayload.sub !== accessTokenSub) {
-      //   throw new HttpException('FORBIDDEN: token does not match.', HttpStatus.FORBIDDEN);
-      // }
-      // throw new HttpException('access token expired.', HttpStatus.UNAUTHORIZED);
+      const verifyToken: Payload = this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_ACCESS_SECRET'),
+      });
+
+      return {
+        sub: payload.sub,
+        provider: verifyToken.provider,
+      };
     } catch (error) {
-      console.log('error: ', error);
-      // if (error.name === 'TokenExpiredError') {
-      //   throw new HttpException('FORBIDDEN: Refresh token expired.', HttpStatus.FORBIDDEN);
-      // }
-      // throw new HttpException('FORBIDDEN: Invalid refresh token.', HttpStatus.FORBIDDEN);
+      // console.error(chalk.red('access-token middleware instanceType:', error.constructor.name));
+
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_EXPIRED);
+      }
+      if (error instanceof JsonWebTokenError) {
+        throw new ForbiddenException(customHttpException.ACCESS_TOKEN_INVALID_CREDENTIALS);
+      }
     }
   }
 }
