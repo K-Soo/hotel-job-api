@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Consent } from '../../consents/entities/consent.entity';
 import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
@@ -25,6 +26,9 @@ export class Employer {
 
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
+
+  // @OneToOne(() => Consent, (consent) => consent.employer)
+  // consent: Consent;
 }
 
 function generateRandomUsername(): string {

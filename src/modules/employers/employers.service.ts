@@ -25,8 +25,8 @@ export class EmployersService {
     return this.repo.save(user);
   }
 
-  findOne(userId: string) {
-    return safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
+  findOne(id: string) {
+    return safeQuery(() => this.repo.findOne({ where: { id } }));
   }
 
   async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
