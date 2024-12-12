@@ -33,10 +33,10 @@ export const customHttpException = {
   },
   OAUTH_SIGN_IN_NOT_FOUND_USER: {
     customCode: 2002,
-    message: 'not found user',
+    message: 'User not found',
   },
   OAUTH_SIGN_IN_BAD_REQUEST: {
     customCode: 2003,
-    message: 'bad request',
+    message: 'Required field missing in the request body',
   },
 } as const;
