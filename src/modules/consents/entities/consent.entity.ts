@@ -3,17 +3,16 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  ManyToOne,
   OneToOne,
-  Index,
   UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
 import { Applicant } from '../../applicants/entities/applicant.entity';
 import { Employer } from '../../employers/entities/employer.entity';
-
 @Entity()
 // @Index(['applicant'], { unique: true })
+// @Index(['applicant'], { unique: true })
+// @Check(`("applicantId" IS NOT NULL OR "employerId" IS NOT NULL) AND NOT ("applicantId" IS NOT NULL AND "employerId" IS NOT NULL)`)
 export class Consent {
   @PrimaryGeneratedColumn()
   id: string;
@@ -33,10 +32,11 @@ export class Consent {
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 
-  // @ManyToOne(() => Employer, (Employer) => Employer.consents, { nullable: true, onDelete: 'CASCADE' })
+  // @OneToOne(() => Employer, (Employer) => Employer.consent, { nullable: true, cascade: true })
+  // @JoinColumn({ name: 'employerId' })
   // employer: Employer;
 
-  @OneToOne(() => Applicant, (applicant) => applicant.consent, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'applicantId' })
+  @OneToOne(() => Applicant, (applicant) => applicant.consent, { cascade: true })
+  @JoinColumn({ name: 'applicant_id', referencedColumnName: 'id' })
   applicant: Applicant;
 }

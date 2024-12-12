@@ -1,26 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateConsentDto } from './dto/create-consent.dto';
-import { UpdateConsentDto } from './dto/update-consent.dto';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Consent } from './entities/consent.entity';
+import { Repository } from 'typeorm';
+import { Applicant } from '../applicants/entities/applicant.entity';
 @Injectable()
 export class ConsentsService {
-  create(createConsentDto: CreateConsentDto) {
-    return 'This action adds a new consent';
+  constructor(@InjectRepository(Consent) private readonly repo: Repository<Consent>) {}
+
+  async createApplicantConsent(createConsentDto: CreateConsentDto, applicant: Applicant) {
+    const consent = this.repo.create({ ...createConsentDto, applicant: applicant });
+
+    return this.repo.save(consent);
   }
 
   findAll() {
-    return `This action returns all consents`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} consent`;
-  }
-
-  update(id: number, updateConsentDto: UpdateConsentDto) {
-    return `This action updates a #${id} consent`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} consent`;
+    return this.repo.find({
+      relations: ['applicant'],
+    });
   }
 }
