@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { AuthService } from '../../authentication/auth/auth.service';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import chalk from 'chalk';
@@ -15,20 +15,18 @@ export class RefreshTokenMiddleware implements NestMiddleware {
     private readonly authService: AuthService,
   ) {}
 
-  async use(req: Request, res: Response, next: () => void) {
-    console.log('리프레시 토큰 미들웨어');
-
-    const token = req.cookies['refresh_token'];
+  use(request: Request, response: Response, next: NextFunction) {
+    const token = request.cookies['refresh_token'];
 
     if (!token) {
       return next();
     }
 
     try {
-      await this.authService.refreshTokenVerify(token);
+      this.authService.refreshTokenVerify(token);
       return next();
     } catch (error) {
-      res.clearCookie('refresh_token');
+      response.clearCookie('refresh_token');
       if (error instanceof TokenExpiredError) {
         throw new ForbiddenException(customHttpException.REFRESH_TOKEN_EXPIRED);
       }
