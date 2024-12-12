@@ -15,8 +15,6 @@ export class TestsService {
   }
 
   findAll() {
-    return this.repo.find({
-      relations: ['consent'],
-    });
+    return this.repo.find();
   }
 }

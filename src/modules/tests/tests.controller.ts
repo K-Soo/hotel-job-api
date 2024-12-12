@@ -15,9 +15,8 @@ export class TestsController {
   }
 
   @Get()
-  // @UseGuards(PassportJwtGuard)
+  @UseGuards(PassportJwtGuard)
   findAll(@Req() req: Request) {
-    console.log('req: ', req.user);
     return this.testsService.findAll();
   }
 }
