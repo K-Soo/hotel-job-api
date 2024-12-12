@@ -16,26 +16,27 @@ export class AuthService {
     private readonly applicantsService: ApplicantsService,
   ) {}
 
-  private async validateRefreshToken(provider: ProviderRoleType, id: string) {
+  private async getUserByProvider(provider: ProviderRoleType, id: string) {
     if (provider !== 'LOCAL') {
-      const user = await this.applicantsService.findOne(id);
-      if (!user) {
-        throw new Error();
+      const existingApplicantUser = await this.applicantsService.findOne(id);
+      if (!existingApplicantUser) {
+        throw new Error('Applicant not found');
       }
-      return user;
+      return existingApplicantUser;
     }
 
-    const user = await this.employersService.findOne(id);
-    if (!user) {
-      throw new Error();
+    const existingEmployerUser = await this.employersService.findOne(id);
+    if (!existingEmployerUser) {
+      throw new Error('Employer not found');
     }
-    return user;
+    return existingEmployerUser;
   }
 
   async refreshAccessToken(refreshToken: string) {
     try {
       const refreshTokenPayload = this.refreshTokenVerify(refreshToken);
-      return this.validateRefreshToken(refreshTokenPayload.provider, refreshTokenPayload.id);
+      console.log('refreshTokenPayload: ', refreshTokenPayload);
+      return this.getUserByProvider(refreshTokenPayload.provider, refreshTokenPayload.sub);
     } catch (error) {
       console.error('REFRESH_TOKEN_INVALID_CREDENTIALS ERROR: ', error);
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_INVALID_CREDENTIALS);
@@ -43,13 +44,13 @@ export class AuthService {
   }
 
   async generateAccessToken(id: string, provider: ProviderRoleType): Promise<string> {
-    const payload = { id, provider, iss: 'hotel-job-connect' };
+    const payload = { sub: id, provider, iss: 'hotel-job-connect' };
     const config = this.jwtConfigService.getAccessTokenConfig();
     return this.jwtService.sign(payload, config);
   }
 
   async generateRefreshToken(id: string, provider: ProviderRoleType): Promise<string> {
-    const payload = { id, provider, iss: 'hotel-job-connect' };
+    const payload = { sub: id, provider, iss: 'hotel-job-connect' };
     const config = this.jwtConfigService.getRefreshTokenConfig();
     return this.jwtService.sign(payload, config);
   }

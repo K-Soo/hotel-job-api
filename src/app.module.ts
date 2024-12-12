@@ -9,6 +9,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SwaggerConfigModule } from './config/swagger/swagger.config.module';
 import { RefreshTokenMiddleware } from './common/middlewares/refresh-token.middleware';
 import { AccessTokenMiddleware } from './common/middlewares/access-token.middleware';
+import { LoggingMiddleware } from './common/middlewares/logging.middleware';
 
 import { EmployersModule } from './modules/employers/employers.module';
 import { HealthModule } from './modules/health/health.module';
@@ -42,5 +43,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RefreshTokenMiddleware).forRoutes('*');
     consumer.apply(AccessTokenMiddleware).forRoutes('*');
+    consumer.apply(LoggingMiddleware).forRoutes('*');
   }
 }

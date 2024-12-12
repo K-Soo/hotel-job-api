@@ -7,6 +7,7 @@ import { ProviderRole, UserRole } from '../../common/constants/app.enum';
 @Injectable()
 export class ApplicantsService {
   constructor(@InjectRepository(Applicant) private repo: Repository<Applicant>) {}
+
   async create(userId: number) {
     const user = await safeQuery(async () => this.repo.create({ userId, provider: ProviderRole.KAKAO, role: UserRole.JOB_SEEKER }));
     return this.repo.save(user);

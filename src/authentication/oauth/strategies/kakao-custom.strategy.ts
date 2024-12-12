@@ -38,27 +38,24 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       }
     }
 
-    const response = await this.getAccessToken(kakaoDto.code);
+    const accessTokenResponse = await this.getAccessToken(kakaoDto.code);
 
-    const decodeToken: KakaoPayload = this.jwtService.decode(response.id_token);
+    const kakaoPayload: KakaoPayload = this.jwtService.decode(accessTokenResponse.id_token);
 
-    const user = await this.applicantsService.findOneUserId(Number(decodeToken.sub));
-    console.log('user: ', user);
+    const existingUser = await this.applicantsService.findOneUserId(Number(kakaoPayload.sub));
 
-    if (!user) {
+    if (!existingUser) {
       if (kakaoDto.isInitialRequest === 'Y') {
         throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
       }
 
-      const createUser = await this.applicantsService.create(Number(decodeToken.sub));
-      // DTO에 Applicant ID 추가
-      // kakaoDto.applicantId = createUser.id;
+      const createdUser = await this.applicantsService.create(Number(kakaoPayload.sub));
+      await this.consentsService.createApplicantConsent(kakaoDto, createdUser);
 
-      const consent = await this.consentsService.create(kakaoDto);
-      return createUser;
+      return createdUser;
     }
 
-    return user;
+    return existingUser;
   }
 
   private async getAccessToken(code: string): Promise<any> {
