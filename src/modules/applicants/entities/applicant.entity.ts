@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 import { Consent } from '../../consents/entities/consent.entity';
 
@@ -24,7 +24,4 @@ export class Applicant {
 
   @OneToOne(() => Consent, (consent) => consent.applicant)
   consent: Consent;
-}
-function GeneratedColumn(arg0: string): (target: Applicant, propertyKey: 'uuid') => void {
-  throw new Error('Function not implemented.');
 }
