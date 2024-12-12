@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private jwtService: JwtService,
   ) {
     super({
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       jwtFromRequest: (req: Request): string => {
         const token: string | null = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
         if (!token) {
@@ -45,13 +44,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
     }
 
-    const decodedRefreshToken: Payload = this.jwtService.decode(refreshToken);
-
-    if (payload.sub !== decodedRefreshToken.sub) {
-      throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_INVALID_CREDENTIALS);
-    }
-
     try {
+      const decodedRefreshToken: Payload = this.jwtService.decode(refreshToken);
+
+      if (payload.sub !== decodedRefreshToken.sub) {
+        throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_INVALID_CREDENTIALS);
+      }
+
       const verifyToken: Payload = this.jwtService.verify(accessToken, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
       });
