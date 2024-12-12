@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtConfigService } from './jwt-config.service';
 import { Payload } from './interfaces/payload.interface';
-import { ProviderRoleType } from '../../common/types';
+import { ProviderType, RoleType } from '../../common/types';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { customHttpException } from '../../common/constants/custom-http-exception';
@@ -16,7 +16,7 @@ export class AuthService {
     private readonly applicantsService: ApplicantsService,
   ) {}
 
-  private async getUserByProvider(provider: ProviderRoleType, id: string) {
+  private async getUserByProvider(provider: ProviderType, id: string) {
     if (provider !== 'LOCAL') {
       const existingApplicantUser = await this.applicantsService.findOne(id);
       if (!existingApplicantUser) {
@@ -43,13 +43,13 @@ export class AuthService {
     }
   }
 
-  async generateAccessToken(id: string, provider: ProviderRoleType): Promise<string> {
-    const payload = { sub: id, provider, iss: 'hotel-job-connect' };
+  async generateAccessToken(id: string, provider: ProviderType, role: RoleType): Promise<string> {
+    const payload = { sub: id, provider, iss: 'hotel-job-connect', role };
     const config = this.jwtConfigService.getAccessTokenConfig();
     return this.jwtService.sign(payload, config);
   }
 
-  async generateRefreshToken(id: string, provider: ProviderRoleType): Promise<string> {
+  async generateRefreshToken(id: string, provider: ProviderType): Promise<string> {
     const payload = { sub: id, provider, iss: 'hotel-job-connect' };
     const config = this.jwtConfigService.getRefreshTokenConfig();
     return this.jwtService.sign(payload, config);

@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
+import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
 
 @Controller('auth')
 export class AuthController {
@@ -31,9 +32,9 @@ export class AuthController {
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
   async signIn(@Body() _: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
-    const { id, provider } = req.user as EmployerUser;
+    const { id, provider, role } = req.user as EmployerUser;
 
-    const accessToken = await this.authService.generateAccessToken(id, provider);
+    const accessToken = await this.authService.generateAccessToken(id, provider, role);
     const refreshToken = await this.authService.generateRefreshToken(id, provider);
 
     res.cookie('refresh_token', refreshToken, {
@@ -72,17 +73,20 @@ export class AuthController {
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
     }
     const user = await this.authService.refreshAccessToken(refreshToken);
-    const { id, provider } = user;
+    const { id, provider, role } = user;
 
-    const newAccessToken = await this.authService.generateAccessToken(id, provider);
+    const newAccessToken = await this.authService.generateAccessToken(id, provider, role);
     const newRefreshToken = await this.authService.generateRefreshToken(id, provider);
+
+    const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
 
     res.cookie('refresh_token', newRefreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 15, // 15분
+      maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
+    console.log('parseTimeToMs(jwtRefreshExpiration) / 1000: ', parseTimeToMs(jwtRefreshExpiration) / 1000);
 
     return { ...user, accessToken: newAccessToken };
   }
