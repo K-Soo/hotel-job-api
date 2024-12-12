@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-custom';
 import { HttpService } from '@nestjs/axios';
@@ -9,6 +9,7 @@ import { ApplicantsService } from '../../../modules/applicants/applicants.servic
 import { Applicant } from '../../../modules/applicants/entities/applicant.entity';
 import { KakaoUser } from '../interfaces/user.interface';
 import { oauth } from '../../../common/constants/api';
+import { HttpException, HttpStatus } from '@nestjs/common';
 @Injectable()
 export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custom') {
   constructor(
@@ -19,12 +20,13 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     super();
   }
 
-  async validate(req: any): Promise<Applicant> {
-    const { code } = req.body;
+  async validate(req: { body: { code: string; isInitialRequest: boolean } }): Promise<Applicant> {
+    const { code, isInitialRequest } = req.body;
 
     if (!code) {
-      throw new Error('Authorization code is required');
+      throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_BAD_REQUEST);
     }
+
     const tokenResponse = await this.getAccessToken(code);
 
     const { access_token } = tokenResponse;
@@ -37,8 +39,11 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     const user = await this.applicantsService.findOneUserId(userInfoResponse.id);
 
     if (!user) {
-      const user = await this.applicantsService.create(userInfoResponse.id);
-      return user;
+      if (isInitialRequest) {
+        throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
+      }
+      const createUser = await this.applicantsService.create(userInfoResponse.id);
+      return createUser;
     }
 
     return user;
@@ -58,7 +63,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       return data;
     } catch (error) {
       console.error('Error fetching Kakao access token:', error.response?.data || error.message);
-      throw new BadRequestException(customHttpException.OAUTH_TOKEN_ERROR);
+      throw new BadRequestException(customHttpException.OAUTH_SIGN_IN_TOKEN);
     }
   }
 
@@ -74,7 +79,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       return data;
     } catch (error) {
       console.error('Error fetching Kakao access token:', error.response?.data || error.message);
-      throw new BadRequestException(customHttpException.OAUTH_USER_INFO_ERROR);
+      throw new BadRequestException(customHttpException.OAUTH_SIGN_IN_USER_INFO);
     }
   }
 }

@@ -23,12 +23,20 @@ export const customHttpException = {
     customCode: 1022,
     message: 'Refresh token is invalid credentials',
   },
-  OAUTH_TOKEN_ERROR: {
+  OAUTH_SIGN_IN_TOKEN: {
     customCode: 2000,
     message: 'Authentication failed',
   },
-  OAUTH_USER_INFO_ERROR: {
-    code: 2010,
+  OAUTH_SIGN_IN_USER_INFO: {
+    customCode: 2001,
     message: 'Authentication failed.',
+  },
+  OAUTH_SIGN_IN_NOT_FOUND_USER: {
+    customCode: 2002,
+    message: 'not found user',
+  },
+  OAUTH_SIGN_IN_BAD_REQUEST: {
+    customCode: 2003,
+    message: 'bad request',
   },
 } as const;

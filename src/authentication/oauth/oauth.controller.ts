@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Req, Res } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Res, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { Request, Response } from 'express';
@@ -31,4 +31,6 @@ export class OauthController {
       accessToken: accessToken,
     };
   }
+  @Post('check')
+  async check(@Body() body) {}
 }
