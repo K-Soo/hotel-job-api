@@ -4,24 +4,40 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
+import { SwaggerConfigService } from './config/swagger/swagger.config.service';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
-	const httpAdapterHost = app.get(HttpAdapterHost);
+  const app = await NestFactory.create(AppModule);
+  const httpAdapterHost = app.get(HttpAdapterHost);
 
-	app.useGlobalPipes(
-		new ValidationPipe({
-			whitelist: true,
-			stopAtFirstError: true,
-		}),
-	);
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
+  const origin = configService.get('ORIGIN');
 
-	const configService = app.get(ConfigService);
-	app.setGlobalPrefix('api/v1');
-	app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
+  app.use(cookieParser());
 
-	const port = configService.get<number>('PORT');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      stopAtFirstError: true,
+    }),
+  );
 
-	await app.listen(port);
+  app.setGlobalPrefix('api/v1');
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
+
+  app.enableCors({
+    origin: origin,
+    // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    // allowedHeaders: 'Content-Type, Accept',
+    credentials: true,
+  });
+
+  const swaggerConfigService = app.get(SwaggerConfigService);
+
+  swaggerConfigService.setupSwagger(app);
+
+  await app.listen(port);
 }
 bootstrap();

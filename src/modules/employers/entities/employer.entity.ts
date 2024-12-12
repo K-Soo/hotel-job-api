@@ -1,15 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Consent } from '../../consents/entities/consent.entity';
+import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ default: 'local' })
-  provider: string;
-
-  @Column({ default: 'user' })
-  role: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   userId: string;
@@ -19,6 +14,21 @@ export class Employer {
 
   @Column()
   password: string;
+
+  @Column({ type: 'enum', enum: ProviderRole, default: ProviderRole.LOCAL })
+  provider: ProviderRole;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYER })
+  role: UserRole;
+
+  @CreateDateColumn({ type: 'timestamptz', precision: 0 })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
+  updatedAt: Date;
+
+  // @OneToOne(() => Consent, (consent) => consent.employer)
+  // consent: Consent;
 }
 
 function generateRandomUsername(): string {

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { TestsService } from './tests.service';
 import { CreateTestDto } from './dto/create-test.dto';
-import { UpdateTestDto } from './dto/update-test.dto';
+import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
+import { Request } from 'express';
 
 @Controller('tests')
 export class TestsController {
@@ -9,26 +10,13 @@ export class TestsController {
 
   @Post()
   create(@Body() createTestDto: CreateTestDto) {
+    console.log('createTestDto: ', createTestDto);
     return this.testsService.create(createTestDto);
   }
 
   @Get()
-  findAll() {
+  @UseGuards(PassportJwtGuard)
+  findAll(@Req() req: Request) {
     return this.testsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.testsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTestDto: UpdateTestDto) {
-    return this.testsService.update(+id, updateTestDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.testsService.remove(+id);
   }
 }

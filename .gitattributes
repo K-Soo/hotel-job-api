@@ -1,1 +1,1 @@
-src/database/migrations/* merge=ours
+**/database/migrations/* merge=ours

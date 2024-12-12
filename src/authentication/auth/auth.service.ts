@@ -1,26 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { JwtConfigService } from './jwt-config.service';
+import { Payload } from './interfaces/payload.interface';
+import { ProviderRoleType } from '../../common/types';
+import { EmployersService } from '../../modules/employers/employers.service';
+import { ApplicantsService } from '../../modules/applicants/applicants.service';
+import { customHttpException } from '../../common/constants/custom-http-exception';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly jwtConfigService: JwtConfigService,
+    private readonly employersService: EmployersService,
+    private readonly applicantsService: ApplicantsService,
+  ) {}
+
+  private async getUserByProvider(provider: ProviderRoleType, id: string) {
+    if (provider !== 'LOCAL') {
+      const existingApplicantUser = await this.applicantsService.findOne(id);
+      if (!existingApplicantUser) {
+        throw new Error('Applicant not found');
+      }
+      return existingApplicantUser;
+    }
+
+    const existingEmployerUser = await this.employersService.findOne(id);
+    if (!existingEmployerUser) {
+      throw new Error('Employer not found');
+    }
+    return existingEmployerUser;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async refreshAccessToken(refreshToken: string) {
+    try {
+      const refreshTokenPayload = this.refreshTokenVerify(refreshToken);
+      console.log('refreshTokenPayload: ', refreshTokenPayload);
+      return this.getUserByProvider(refreshTokenPayload.provider, refreshTokenPayload.sub);
+    } catch (error) {
+      console.error('REFRESH_TOKEN_INVALID_CREDENTIALS ERROR: ', error);
+      throw new ForbiddenException(customHttpException.REFRESH_TOKEN_INVALID_CREDENTIALS);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async generateAccessToken(id: string, provider: ProviderRoleType): Promise<string> {
+    const payload = { sub: id, provider, iss: 'hotel-job-connect' };
+    const config = this.jwtConfigService.getAccessTokenConfig();
+    return this.jwtService.sign(payload, config);
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
+  async generateRefreshToken(id: string, provider: ProviderRoleType): Promise<string> {
+    const payload = { sub: id, provider, iss: 'hotel-job-connect' };
+    const config = this.jwtConfigService.getRefreshTokenConfig();
+    return this.jwtService.sign(payload, config);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  accessTokenVerify(token: string): Payload {
+    return this.jwtService.verify(token, this.jwtConfigService.getAccessTokenConfig());
+  }
+
+  refreshTokenVerify(token: string): Payload {
+    return this.jwtService.verify(token, this.jwtConfigService.getRefreshTokenConfig());
   }
 }
