@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const accessToken = req.headers.authorization.split(' ')[1];
     const refreshToken = req.cookies['refresh_token'];
 
-    const { exp, lat } = payload;
+    const { exp } = payload;
     const currentTimeInSeconds = Math.floor(Date.now() / 1000);
     const secondsRemaining = exp - currentTimeInSeconds;
     console.log('secondsRemaining: ', secondsRemaining);
