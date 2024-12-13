@@ -5,6 +5,7 @@ export const regex = {
   ALL_SPACE: /^[^\s]*$/,
   FIRST_SPACE: /^\S/, //첫번째글자 공백 체크
   LAST_SPACE: /\S$/, //마지막 글자 공백 체크
+  TIME: /^(\d+)([smhd])$/, //숫자와 단위를 분리
 };
 
 export const validationMessage = (text: string) => {
