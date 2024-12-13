@@ -1,4 +1,4 @@
-import { ProviderRoleType, UserRoleType } from '../../../common/types';
+import { ProviderType, RoleType } from '../../../common/types';
 
 export interface KakaoPayload {
   aud: string;
@@ -12,9 +12,9 @@ export interface KakaoPayload {
 
 export interface RequestUser {
   id: string;
-  userId: number;
-  provider: ProviderRoleType;
-  role: UserRoleType;
+  userId: string;
+  provider: ProviderType;
+  role: RoleType;
   createdAt: Date;
   updatedAt: Date;
 }
