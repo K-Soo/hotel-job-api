@@ -25,16 +25,16 @@ export class Applicant {
   @Column({ type: 'enum', enum: Role, default: Role.JOB_SEEKER })
   role: Role;
 
+  @OneToMany(() => Resume, (resumes) => resumes.applicant)
+  resumes: Resume[];
+
+  @OneToOne(() => Consent, (consent) => consent.applicant)
+  consent: Consent;
+
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
   @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
-
-  @OneToMany(() => Resume, (resumes) => resumes.applicant)
-  resumes: Resume[];
-
-  @OneToOne(() => Consent, (consent) => consent.applicant)
-  consent: Consent;
 }
