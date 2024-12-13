@@ -1,4 +1,4 @@
-import { UserRole, ProviderRole } from '../constants/app.enum';
+import { Role, Provider } from '../constants/app.enum';
 
-export type UserRoleType = `${UserRole}`;
-export type ProviderRoleType = `${ProviderRole}`;
+export type RoleType = `${Role}`;
+export type ProviderType = `${Provider}`;
