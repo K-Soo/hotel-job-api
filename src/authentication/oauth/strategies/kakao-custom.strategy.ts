@@ -42,14 +42,16 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
 
     const kakaoPayload: KakaoPayload = this.jwtService.decode(accessTokenResponse.id_token);
 
-    const existingUser = await this.applicantsService.findOneUserId(Number(kakaoPayload.sub));
+    const kakaoUserId = kakaoPayload.sub;
+
+    const existingUser = await this.applicantsService.findByUserId(kakaoUserId);
 
     if (!existingUser) {
       if (kakaoDto.isInitialRequest === 'Y') {
         throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
       }
 
-      const createdUser = await this.applicantsService.create(Number(kakaoPayload.sub));
+      const createdUser = await this.applicantsService.create(kakaoUserId);
       await this.consentsService.createApplicantConsent(kakaoDto, createdUser);
 
       return createdUser;
