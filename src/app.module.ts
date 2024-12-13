@@ -21,6 +21,7 @@ import { UsersModule } from './modules/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ResumesModule } from './modules/resumes/resumes.module';
+import { ExperiencesModule } from './modules/experiences/experiences.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ResumesModule } from './modules/resumes/resumes.module';
     UsersModule,
     ConsentsModule,
     ResumesModule,
+    ExperiencesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],

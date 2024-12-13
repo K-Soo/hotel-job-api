@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
 import { SwaggerConfigService } from './config/swagger/swagger.config.service';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
   const port = configService.get('PORT');
   const origin = configService.get('ORIGIN');
 
+  app.use(helmet());
   app.use(cookieParser());
 
   app.useGlobalPipes(
