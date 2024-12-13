@@ -37,11 +37,13 @@ export class AuthController {
     const accessToken = await this.authService.generateAccessToken(id, provider, role);
     const refreshToken = await this.authService.generateRefreshToken(id, provider);
 
+    const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
+
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 15, // 15분
+      maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
 
     return { ...req.user, accessToken };
@@ -73,6 +75,7 @@ export class AuthController {
       throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
     }
     const user = await this.authService.refreshAccessToken(refreshToken);
+
     const { id, provider, role } = user;
 
     const newAccessToken = await this.authService.generateAccessToken(id, provider, role);
@@ -86,7 +89,6 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
-    console.log('parseTimeToMs(jwtRefreshExpiration) / 1000: ', parseTimeToMs(jwtRefreshExpiration) / 1000);
 
     return { ...user, accessToken: newAccessToken };
   }

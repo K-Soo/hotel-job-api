@@ -35,7 +35,6 @@ export class AuthService {
   async refreshAccessToken(refreshToken: string) {
     try {
       const refreshTokenPayload = this.refreshTokenVerify(refreshToken);
-      console.log('refreshTokenPayload: ', refreshTokenPayload);
       return this.getUserByProvider(refreshTokenPayload.provider, refreshTokenPayload.sub);
     } catch (error) {
       console.error('REFRESH_TOKEN_INVALID_CREDENTIALS ERROR: ', error);
