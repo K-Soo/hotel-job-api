@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Consent } from '../../consents/entities/consent.entity';
-import { UserRole, ProviderRole } from '../../../common/constants/app.enum';
+import { Role, Provider } from '../../../common/constants/app.enum';
 @Entity()
 export class Employer {
   @PrimaryGeneratedColumn('uuid')
@@ -15,11 +15,11 @@ export class Employer {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: ProviderRole, default: ProviderRole.LOCAL })
-  provider: ProviderRole;
+  @Column({ type: 'enum', enum: Provider, default: Provider.LOCAL })
+  provider: Provider;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYER })
-  role: UserRole;
+  @Column({ type: 'enum', enum: Role, default: Role.EMPLOYER })
+  role: Role;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;

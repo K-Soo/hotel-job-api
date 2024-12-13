@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Applicant } from './entities/applicant.entity';
 import { safeQuery } from '../../common/helpers/database.helper';
-import { ProviderRole, UserRole } from '../../common/constants/app.enum';
+import { Provider, Role } from '../../common/constants/app.enum';
 @Injectable()
 export class ApplicantsService {
   constructor(@InjectRepository(Applicant) private repo: Repository<Applicant>) {}
 
-  async create(userId: number) {
-    const user = await safeQuery(async () => this.repo.create({ userId, provider: ProviderRole.KAKAO, role: UserRole.JOB_SEEKER }));
+  async create(userId: string) {
+    const user = await safeQuery(async () =>
+      this.repo.create({ userId, provider: Provider.KAKAO, role: Role.JOB_SEEKER }),
+    );
     return this.repo.save(user);
   }
 
@@ -17,11 +19,16 @@ export class ApplicantsService {
     return `This action returns all applicants`;
   }
 
-  findOne(id: string) {
-    return safeQuery(() => this.repo.findOne({ where: { id: id } }));
+  async findOne(id: string) {
+    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: id }, relations: ['consent'] }));
+    return applicant;
   }
 
-  findOneUserId(userId: number) {
+  findByUserId(userId: string) {
     return safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
+  }
+
+  findByUuid(uuid: string) {
+    return safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
   }
 }

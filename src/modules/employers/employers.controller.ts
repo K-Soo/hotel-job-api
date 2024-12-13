@@ -9,7 +9,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 
-@ApiTags('employers') // 컨트롤러 그룹 이름
+@ApiTags('employers(사업자 유저)')
 @Controller('employers')
 export class EmployersController {
   constructor(
@@ -25,7 +25,7 @@ export class EmployersController {
 
     const user = await this.employersService.create(createEmployerDto);
 
-    const accessToken = await this.authService.generateAccessToken(user.id, user.provider);
+    const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
 
     res.cookie('refresh_token', accessToken, {
       httpOnly: true,

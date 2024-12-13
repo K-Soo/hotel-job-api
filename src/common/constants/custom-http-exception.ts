@@ -11,13 +11,17 @@ export const customHttpException = {
     customCode: 1002,
     message: 'Access token is invalid',
   },
+  USER_ROLE_INVALID: {
+    customCode: 1010,
+    message: 'Permission denied',
+  },
   REFRESH_TOKEN_EXPIRED: {
     customCode: 1020,
     message: 'Refresh token expired',
   },
   REFRESH_TOKEN_MISSING: {
     customCode: 1021,
-    message: 'Refresh token is missing',
+    message: 'Access denied',
   },
   REFRESH_TOKEN_INVALID_CREDENTIALS: {
     customCode: 1022,

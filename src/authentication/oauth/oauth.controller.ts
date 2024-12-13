@@ -16,7 +16,7 @@ export class OauthController {
   async kakaoSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as RequestUser;
 
-    const accessToken = await this.authService.generateAccessToken(user.id, user.provider);
+    const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
 
     res.cookie('refresh_token', refreshToken, {

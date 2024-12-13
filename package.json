@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:generate": "env-cmd -e $npm_config_env npm run typeorm -- migration:generate -d dist/database/data-source.js src/database/migrations/$npm_config_name",
+    "migration:generate": "npm run build && env-cmd -e $npm_config_env npm run typeorm -- migration:generate -d dist/database/data-source.js src/database/migrations/$npm_config_name",
     "migration:run": "env-cmd -e $npm_config_env npm run typeorm migration:run -- -d dist/database/data-source.js",
     "migration:revert": "npm run typeorm migration:revert -- -d src/database/typeorm-data-source.ts"
   },
@@ -42,6 +42,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "env-cmd": "^10.1.0",
+    "helmet": "^8.0.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-kakao": "^1.0.1",

@@ -19,6 +19,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: (req: Request): string => {
+        const refreshToken = req.cookies?.['refresh_token'];
+        //토큰 없을 경우만 검사 - 미들웨어에서 토큰이 있다면 만료, 위변조 검사했기 때문에 여기서는 검사하지 않음
+        if (!refreshToken) {
+          throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
+        }
         const token: string | null = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
         if (!token) {
           throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_MISSING);
@@ -35,16 +40,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const accessToken = req.headers.authorization.split(' ')[1];
     const refreshToken = req.cookies['refresh_token'];
 
-    const { exp, lat } = payload;
-    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-    const secondsRemaining = exp - currentTimeInSeconds;
-    console.log('secondsRemaining: ', secondsRemaining);
-    //토큰 없을 경우만 검사 - 미들웨어에서 토큰이 있다면 만료, 위변조 검사했기 때문에 여기서는 검사하지 않음
-    if (!refreshToken) {
-      throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
-    }
-
     try {
+      const { exp } = payload;
+      const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+      const secondsRemaining = exp - currentTimeInSeconds;
+      console.log('token exp: ', secondsRemaining);
+
       const decodedRefreshToken: Payload = this.jwtService.decode(refreshToken);
 
       if (payload.sub !== decodedRefreshToken.sub) {
@@ -58,6 +59,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return {
         sub: payload.sub,
         provider: verifyToken.provider,
+        role: verifyToken.role,
       };
     } catch (error) {
       // console.error(chalk.red('access-token middleware instanceType:', error.constructor.name));
