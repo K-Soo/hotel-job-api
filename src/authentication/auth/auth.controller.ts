@@ -11,11 +11,11 @@ import { PassportLocalGuard } from './guards/passport-local.guard';
 import { PassportJwtGuard } from './guards/passport-jwt.guard';
 import { EmployerUser } from '../../common/interfaces/user.interface';
 import { customHttpException } from '../../common/constants/custom-http-exception';
-import { AuthGuard } from '@nestjs/passport';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
+import { RequestUser } from './interfaces/jwt-payload.interface';
+import { MeResponseDto } from './dto/me.response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -53,20 +53,22 @@ export class AuthController {
   @Post('sign-out')
   signOut(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('refresh_token');
-
     return {
       status: 'SUCCESS',
     };
   }
 
-  @ApiOperation({ summary: '인증한 사용자 정보' })
+  @ApiOperation({ summary: '사용자 인증 정보' })
   @UseGuards(PassportJwtGuard)
   @Post('me')
-  userMe(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    return 'me';
+  @UseInterceptors(new SerializeInterceptor(MeResponseDto))
+  async userMe(@Req() req: Request) {
+    const user = req.user as RequestUser;
+    const existingUser = await this.authService.getUserByProvider(user.provider, user.sub);
+    return existingUser;
   }
 
-  @ApiOperation({ summary: 'refresh token 재 요청' })
+  @ApiOperation({ summary: 'token 인증 갱신' })
   @Post('refresh')
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
   async updateToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -90,6 +92,6 @@ export class AuthController {
       maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
 
-    return { ...user, accessToken: newAccessToken };
+    return { accessToken: newAccessToken };
   }
 }

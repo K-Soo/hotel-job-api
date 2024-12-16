@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtConfigService } from './jwt-config.service';
-import { Payload } from './interfaces/payload.interface';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { ProviderType, RoleType } from '../../common/types';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
@@ -16,16 +16,16 @@ export class AuthService {
     private readonly applicantsService: ApplicantsService,
   ) {}
 
-  private async getUserByProvider(provider: ProviderType, id: string) {
+  async getUserByProvider(provider: ProviderType, uuid: string) {
     if (provider !== 'LOCAL') {
-      const existingApplicantUser = await this.applicantsService.findOne(id);
+      const existingApplicantUser = await this.applicantsService.findOne(uuid);
       if (!existingApplicantUser) {
         throw new Error('Applicant not found');
       }
       return existingApplicantUser;
     }
 
-    const existingEmployerUser = await this.employersService.findOne(id);
+    const existingEmployerUser = await this.employersService.findOne(uuid);
     if (!existingEmployerUser) {
       throw new Error('Employer not found');
     }
@@ -54,11 +54,11 @@ export class AuthService {
     return this.jwtService.sign(payload, config);
   }
 
-  accessTokenVerify(token: string): Payload {
+  accessTokenVerify(token: string): JwtPayload {
     return this.jwtService.verify(token, this.jwtConfigService.getAccessTokenConfig());
   }
 
-  refreshTokenVerify(token: string): Payload {
+  refreshTokenVerify(token: string): JwtPayload {
     return this.jwtService.verify(token, this.jwtConfigService.getRefreshTokenConfig());
   }
 }

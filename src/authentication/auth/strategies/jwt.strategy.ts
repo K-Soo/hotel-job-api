@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
-import { Payload } from '../interfaces/payload.interface';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 // import chalk from 'chalk';
 
 //리턴값을 주지않으면 401에러 생김 주의
@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: Request, payload: Payload) {
+  async validate(req: Request, payload: JwtPayload) {
     const accessToken = req.headers.authorization.split(' ')[1];
     const refreshToken = req.cookies['refresh_token'];
 
@@ -46,13 +46,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const secondsRemaining = exp - currentTimeInSeconds;
       console.log('token exp: ', secondsRemaining);
 
-      const decodedRefreshToken: Payload = this.jwtService.decode(refreshToken);
+      const decodedRefreshToken: JwtPayload = this.jwtService.decode(refreshToken);
 
       if (payload.sub !== decodedRefreshToken.sub) {
         throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_INVALID_CREDENTIALS);
       }
 
-      const verifyToken: Payload = this.jwtService.verify(accessToken, {
+      const verifyToken: JwtPayload = this.jwtService.verify(accessToken, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
       });
 
