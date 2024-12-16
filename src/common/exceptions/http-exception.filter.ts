@@ -42,13 +42,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const { message, customCode } = response;
 
+    // Internal Server Error
+    if (customCode?.toString().startsWith('5')) {
+      return { message: 'An unexpected error occurred.', customCode };
+    }
+
     // Database Error
     if (customCode?.toString().startsWith('6')) {
-      return { message: 'An unexpected error occurred. Please try again later.', customCode };
-    }
-    // Internal Server Error
-    if (customCode?.toString().startsWith('7')) {
-      return { message: 'An unexpected error occurred. Please try again later.', customCode };
+      return { message: 'An unexpected error occurred.', customCode };
     }
 
     const formattedMessage = Array.isArray(message) ? message.join(', ') : message;
