@@ -43,4 +43,12 @@ export const customHttpException = {
     customCode: 2003,
     message: 'Required field missing in the request body',
   },
+  CREATION_LIMIT_EXCEEDED: {
+    customCode: 3000,
+    message: 'Creation limit exceeded for the resource',
+  },
+  DATABASE_OPERATION_FAILED: {
+    customCode: 6000,
+    message: 'An error occurred while processing your request',
+  },
 } as const;
