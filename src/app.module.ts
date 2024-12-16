@@ -22,6 +22,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ResumesModule } from './modules/resumes/resumes.module';
 import { ExperiencesModule } from './modules/experiences/experiences.module';
+import { VerificationsModule } from './modules/verifications/verifications.module';
+import { LicensesModule } from './modules/licenses/licenses.module';
+import { MilitaryModule } from './modules/military/military.module';
+import { PartnersModule } from './modules/partners/partners.module';
 
 @Module({
   imports: [
@@ -39,6 +43,10 @@ import { ExperiencesModule } from './modules/experiences/experiences.module';
     ConsentsModule,
     ResumesModule,
     ExperiencesModule,
+    VerificationsModule,
+    LicensesModule,
+    MilitaryModule,
+    PartnersModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
