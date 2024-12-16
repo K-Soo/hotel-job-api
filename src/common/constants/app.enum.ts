@@ -25,6 +25,7 @@ export enum SanctionReason {
 }
 
 export enum Position {
+  NONE = 'NONE', // 미선택
   INTERN = 'INTERN', // 인턴
   PART_TIME = 'PART_TIME', // 알바
   STAFF = 'STAFF', // 사원
@@ -93,4 +94,77 @@ export enum SalaryType {
   ANNUAL = 'ANNUAL', // 연봉
   MONTHLY = 'MONTHLY', // 월급 (기본급 + 수당)
   DAILY = 'DAILY', // 일급
+  HOURLY = 'HOURLY', // 시급
+}
+
+export enum Region {
+  NONE = 'NONE',
+  서울특별시 = '서울특별시',
+  부산광역시 = '부산광역시',
+  강원도 = '강원도',
+  경기도 = '경기도',
+  경상남도 = '경상남도',
+  경상북도 = '경상북도',
+  광주광역시 = '광주광역시',
+  대구광역시 = '대구광역시',
+  대전광역시 = '대전광역시',
+  세종특별자치시 = '세종특별자치시',
+  울산광역시 = '울산광역시',
+  인천광역시 = '인천광역시',
+  전라남도 = '전라남도',
+  전라북도 = '전라북도',
+  제주특별자치도 = '제주특별자치도',
+  충청남도 = '충청남도',
+  충청북도 = '충청북도',
+}
+
+export enum Language {
+  NONE = 'NONE', // 선택되지 않음
+  ENGLISH = 'ENGLISH', // 영어
+  KOREAN = 'KOREAN', // 한국어
+  SPANISH = 'SPANISH', // 스페인어
+  FRENCH = 'FRENCH', // 프랑스어
+  CHINESE = 'CHINESE', // 중국어
+  RUSSIAN = 'RUSSIAN', // 러시아어
+  MONGOLIAN = 'MONGOLIAN', // 몽골어
+  JAPANESE = 'JAPANESE', // 일본어
+}
+
+export enum Proficiency {
+  BEGINNER = 'BEGINNER',
+  INTERMEDIATE = 'INTERMEDIATE',
+  ADVANCED = 'ADVANCED',
+  NATIVE = 'NATIVE',
+}
+
+export enum LicenseStage {
+  FIRST = 'FIRST', // 1차 합격
+  SECOND = 'SECOND', // 2차 합격
+  WRITTEN = 'WRITTEN', // 필기 합격
+  PRACTICAL = 'PRACTICAL', // 실기 합격
+  FINAL = 'FINAL', // 최종 합격
+}
+
+export enum MilitaryStatus {
+  NONE = 'NONE', // 미선택
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // 대상 아님
+  COMPLETED = 'COMPLETED', // 군필
+  NOT_COMPLETED = 'NOT_COMPLETED', // 미필
+  EXEMPTED = 'EXEMPTED', // 면제
+  MEDICALLY_DISCHARGED = 'MEDICALLY_DISCHARGED', // 의가사 전역
+}
+
+export enum EducationLevel {
+  ELEMENTARY = 'ELEMENTARY', // 초등학교
+  MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
+  HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
+  COLLEGE_2_3_YEAR = 'COLLEGE_2_3_YEAR', // 대학교(2,3년)
+  COLLEGE_4_YEAR = 'COLLEGE_4_YEAR', // 대학교(4년)
+  MASTER = 'MASTER', // 대학원(석사)
+  DOCTORATE = 'DOCTORATE', // 대학원(박사)
+}
+
+export enum ResumeType {
+  FILE = 'FILE', // 파일로 등록
+  GENERAL = 'GENERAL', // 일반적인 등록
 }
