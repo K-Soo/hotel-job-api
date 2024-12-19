@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, IsDate, IsNumber, IsEnum, ValidateIf, Min, Length } from 'class-validator';
-import { Job, Position, SalaryType, Region } from '../../../common/constants/app.enum';
+import { Job, Position, SalaryType } from '../../../common/constants/app.enum';
+import { City } from '../../../common/constants/location.enum';
 import { Type } from 'class-transformer';
 export class CreateExperienceDto {
   @ApiProperty({ description: '회사명', example: 'ABC Corp' })
@@ -34,10 +35,10 @@ export class CreateExperienceDto {
   @IsDate({ message: 'startDate must be a valid ISO 8601 date in UTC format' })
   endDate: Date | null;
 
-  @ApiProperty({ description: '근무지 (NONE: 미선택)', example: Region.강원도, enum: Region })
+  @ApiProperty({ description: '근무지 (NONE: 미선택)', example: City.강원도, enum: City })
   @IsOptional()
-  @IsEnum(Region)
-  location: Region;
+  @IsEnum(City)
+  city: City;
 
   @ApiProperty({
     description: '급여 유형 (NONE: 미선택, ANNUAL: 연봉, MONTHLY: 월급, HOURLY: 시급)',
