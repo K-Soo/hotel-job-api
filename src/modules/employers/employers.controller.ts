@@ -7,9 +7,9 @@ import { SerializeInterceptor } from '../../common/interceptors/serialize.interc
 import { AuthService } from '../../authentication/auth/auth.service';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('employers(사업자 유저)')
+@ApiTags('employers 사업자 유저')
 @Controller('employers')
 export class EmployersController {
   constructor(
