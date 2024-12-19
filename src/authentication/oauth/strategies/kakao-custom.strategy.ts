@@ -14,6 +14,7 @@ import { CreateOAuthDto } from '../dto/create-oauth.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ConsentsService } from '../../../modules/consents/consents.service';
+import { UsersService } from '../../../modules/users/users.service';
 @Injectable()
 export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custom') {
   constructor(
@@ -22,6 +23,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     private readonly configService: ConfigService,
     private readonly applicantsService: ApplicantsService,
     private readonly consentsService: ConsentsService,
+    private readonly usersService: UsersService,
   ) {
     super();
   }
@@ -53,6 +55,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
 
       const createdUser = await this.applicantsService.create(kakaoUserId);
       await this.consentsService.createApplicantConsent(kakaoDto, createdUser);
+      await this.usersService.create(createdUser);
 
       return createdUser;
     }
