@@ -6,6 +6,7 @@ export const regex = {
   FIRST_SPACE: /^\S/, //첫번째글자 공백 체크
   LAST_SPACE: /\S$/, //마지막 글자 공백 체크
   TIME: /^(\d+)([smhd])$/, //숫자와 단위를 분리
+  IMAGE_FILE: /^(image\/jpeg|image\/jpg|image\/png|image\/gif)$/, //이미지 파일
 };
 
 export const validationMessage = (text: string) => {
