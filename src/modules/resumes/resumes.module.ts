@@ -12,5 +12,6 @@ import { MilitaryModule } from '../military/military.module';
   imports: [TypeOrmModule.forFeature([Resume]), ApplicantsModule, ExperiencesModule, LicensesModule, MilitaryModule],
   controllers: [ResumesController],
   providers: [ResumesService],
+  exports: [ResumesService],
 })
 export class ResumesModule {}

@@ -23,34 +23,43 @@ export class ResumesService {
   ) {}
 
   async create(createResumeDto: CreateResumeDto, applicant: Applicant) {
-    const existingResumes = await this.resumeRepo.count({ where: { applicant } });
+    try {
+      const existingResumes = await this.resumeRepo.count({ where: { applicant } });
 
-    if (existingResumes >= 5) {
-      throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+      if (existingResumes >= 5) {
+        throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+      }
+
+      return this.dataSource.transaction(async (manager) => {
+        try {
+          // 1. Resume 저장
+          const resume = this.resumeRepo.create({ ...createResumeDto, applicant });
+          const savedResume = await manager.save(Resume, resume);
+
+          // 2. Experiences 저장
+          if (createResumeDto.experiences?.length > 0) {
+            await this.experienceService.create(createResumeDto.experiences, savedResume, manager);
+          }
+
+          // 3. Licenses 저장
+          if (createResumeDto.licenses?.length > 0) {
+            await this.licensesService.create(createResumeDto.licenses, savedResume, manager);
+          }
+
+          // 4. Military 저장
+          if (createResumeDto.military) {
+            await this.militaryService.create(createResumeDto.military, savedResume, manager);
+          }
+
+          return { status: 'success' };
+        } catch (error) {
+          console.log('error: ', error.message);
+          throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
+        }
+      });
+    } catch {
+      throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
     }
-
-    return this.dataSource.transaction(async (manager) => {
-      // 1. Resume 저장
-      const resume = this.resumeRepo.create({ ...createResumeDto, applicant });
-      const savedResume = await manager.save(Resume, resume);
-
-      // 2. Experiences 저장
-      if (createResumeDto.experiences?.length > 0) {
-        await this.experienceService.create(createResumeDto.experiences, savedResume, manager);
-      }
-
-      // 3. Licenses 저장
-      if (createResumeDto.licenses?.length > 0) {
-        await this.licensesService.create(createResumeDto.licenses, savedResume, manager);
-      }
-
-      // 4. Military 저장
-      if (createResumeDto.military) {
-        await this.militaryService.create(createResumeDto.military, savedResume, manager);
-      }
-
-      return { success: true };
-    });
   }
 
   findAll(uuid: string) {

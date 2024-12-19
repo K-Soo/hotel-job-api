@@ -17,11 +17,13 @@ import {
   Proficiency,
   EducationLevel,
   ResumeType,
+  CareerLevel,
 } from '../../../common/constants/app.enum';
 import { Experience } from '../../experiences/entities/experience.entity';
 import { Applicant } from '../../applicants/entities/applicant.entity';
 import { License } from '../../licenses/entities/license.entity';
 import { Military } from '../../military/entities/military.entity';
+import { Condition } from '../../conditions/entities/condition.entity';
 @Entity('resume')
 @Index('idx_resume_uuid', ['uuid'])
 export class Resume {
@@ -68,7 +70,7 @@ export class Resume {
   isDefault: boolean;
 
   //이력서 상태(임시 저장, 제출 완료, 삭제처리 등)
-  @Column({ type: 'enum', enum: ResumeStatus, default: ResumeStatus.DRAFT })
+  @Column({ type: 'enum', enum: ResumeStatus, default: ResumeStatus.SUBMITTED })
   status: ResumeStatus;
 
   //제제 사유
@@ -84,6 +86,10 @@ export class Resume {
   // 프로필 이미지
   // 외국인 여부
 
+  //경력 구분(신입 or 경력)
+  @Column({ type: 'enum', enum: CareerLevel })
+  careerLevel: CareerLevel;
+
   //이력서 타입
   @Column({ type: 'enum', enum: ResumeType, default: ResumeType.GENERAL })
   resumeType: ResumeType;
@@ -93,7 +99,7 @@ export class Resume {
   title: string;
 
   //간략소개 (선택)
-  // 간략 소개
+  //간략 소개
   @Column({ type: 'varchar', length: 500, nullable: true, default: '' })
   summary: string;
 
@@ -130,12 +136,17 @@ export class Resume {
 
   // 포트폴리오 및 기타문서
 
-  // ---------- 근무조건(근무조건 페이지에서 불러올수있도록?) ------------
-  // 희망지역
-  // 희망연봉 or 급여
-  // 희망 직무
-  // 고용 형태(정규직, 계약직 등)
-  // 복리후생
+  // 근무 조건
+  @OneToOne(() => Condition, (condition) => condition.resume)
+  condition: Condition;
+
+  // 필수항목 수집 동의
+  @Column({ type: 'boolean', default: false })
+  isRequiredAgreement: boolean;
+
+  // 선택항목 수집 동의
+  @Column({ type: 'boolean', default: false })
+  isOptionalAgreement: boolean;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;

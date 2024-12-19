@@ -5,7 +5,9 @@ import { CreateExperienceDto } from '../../experiences/dto/create-experience.dto
 import { LanguageDto } from '../dto/language.dto';
 import { CreateLicenseDto } from '../../licenses/dto/create-license.dto';
 import { CreateMilitaryDto } from '../../military/dto/create-military.dto';
-import { EducationLevel, ResumeType } from '../../../common/constants/app.enum';
+import { EducationLevel, ResumeType, CareerLevel } from '../../../common/constants/app.enum';
+import { IsTrue } from '../../../common/validations/is-true.decorator';
+
 export class CreateResumeDto {
   @ApiProperty({
     description: '이력서 타입 (FILE: 파일등록, GENERAL: 일반등록)',
@@ -14,6 +16,14 @@ export class CreateResumeDto {
   })
   @IsEnum(ResumeType, { message: 'result must be a valid ResumeType value' })
   resumeType: ResumeType;
+
+  @ApiProperty({
+    description: '경력 구분 (NEWBIE: 신입, EXPERIENCED: 경력)',
+    example: CareerLevel.NEWBIE,
+    enum: CareerLevel,
+  })
+  @IsEnum(CareerLevel, { message: 'result must be a valid CareerLevel value' })
+  careerLevel: CareerLevel;
 
   @ApiProperty({ description: '이력서 제목', example: '나의 이력서' })
   @Length(5, 255)
@@ -49,7 +59,7 @@ export class CreateResumeDto {
         baseSalary: 0,
         allowance: 0,
 
-        location: '서울특별시',
+        city: '서울특별시',
         reasonForLeaving: '개인적인 이유',
       },
     ],
@@ -99,7 +109,7 @@ export class CreateResumeDto {
     type: CreateMilitaryDto,
     example: {
       militaryStatus: 'NONE',
-      reason: 'ㅇㅇㅇ',
+      reason: '',
       enlistmentDate: null,
       dischargeDate: null,
     },
@@ -108,4 +118,13 @@ export class CreateResumeDto {
   @Type(() => CreateMilitaryDto)
   @ValidateNested()
   military?: CreateMilitaryDto;
+
+  @ApiProperty({ description: '필수항목 수집동의', example: true })
+  @IsBoolean()
+  @IsTrue()
+  isRequiredAgreement: boolean;
+
+  @ApiProperty({ description: '선택항목 수집동의', example: false })
+  @IsBoolean()
+  isOptionalAgreement: boolean;
 }
