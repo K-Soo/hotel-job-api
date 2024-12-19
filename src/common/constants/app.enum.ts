@@ -9,6 +9,12 @@ export enum Role {
   JOB_SEEKER = 'JOB_SEEKER',
 }
 
+export enum Gender {
+  NONE = 'NONE',
+  MAIL = 'MAIL',
+  FEMALE = 'FEMALE',
+}
+
 export enum ResumeStatus {
   DRAFT = 'DRAFT', // 작성 중(임시 저장 상태).
   SUBMITTED = 'SUBMITTED', // 제출 완료(정상 노출 가능 상태).
@@ -97,27 +103,6 @@ export enum SalaryType {
   HOURLY = 'HOURLY', // 시급
 }
 
-export enum Region {
-  NONE = 'NONE',
-  서울특별시 = '서울특별시',
-  부산광역시 = '부산광역시',
-  강원도 = '강원도',
-  경기도 = '경기도',
-  경상남도 = '경상남도',
-  경상북도 = '경상북도',
-  광주광역시 = '광주광역시',
-  대구광역시 = '대구광역시',
-  대전광역시 = '대전광역시',
-  세종특별자치시 = '세종특별자치시',
-  울산광역시 = '울산광역시',
-  인천광역시 = '인천광역시',
-  전라남도 = '전라남도',
-  전라북도 = '전라북도',
-  제주특별자치도 = '제주특별자치도',
-  충청남도 = '충청남도',
-  충청북도 = '충청북도',
-}
-
 export enum Language {
   NONE = 'NONE', // 선택되지 않음
   ENGLISH = 'ENGLISH', // 영어
@@ -167,4 +152,31 @@ export enum EducationLevel {
 export enum ResumeType {
   FILE = 'FILE', // 파일로 등록
   GENERAL = 'GENERAL', // 일반적인 등록
+}
+
+export enum CareerLevel {
+  NEWBIE = 'NEWBIE', // 신입
+  EXPERIENCED = 'EXPERIENCED', // 경력
+}
+
+// 고용 형태
+export enum EmploymentType {
+  FULL_TIME = 'FULL_TIME', // 정규직
+  CONTRACT = 'CONTRACT', // 계약직
+  PART_TIME = 'PART_TIME', // 아르바이트
+  DAILY_WORKER = 'DAILY_WORKER', // 파출부
+  INTERN = 'INTERN', // 인턴
+}
+
+// 복리후생
+export enum Benefits {
+  HEALTH_INSURANCE = 'HEALTH_INSURANCE', // 건강보험
+  MEAL_SUPPORT = 'MEAL_SUPPORT', // 식사 지원
+  TRANSPORTATION_SUPPORT = 'TRANSPORTATION_SUPPORT', // 교통비 지원
+  HOUSING_SUPPORT = 'HOUSING_SUPPORT', // 숙식제공
+  BONUS = 'BONUS', // 보너스 지급
+  PAID_LEAVE = 'PAID_LEAVE', // 유급 휴가
+  FLEXIBLE_WORK = 'FLEXIBLE_WORK', // 유연 근무제
+  CHILDCARE_SUPPORT = 'CHILDCARE_SUPPORT', // 육아 지원
+  RETIREMENT_PLAN = 'RETIREMENT_PLAN', // 퇴직금 제도
 }
