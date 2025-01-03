@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtConfigService } from './jwt-config.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -20,16 +20,18 @@ export class AuthService {
     if (provider !== 'LOCAL') {
       const existingApplicantUser = await this.applicantsService.findOne(uuid);
       if (!existingApplicantUser) {
-        throw new Error('Applicant not found');
+        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
       }
       return existingApplicantUser;
     }
 
-    const existingEmployerUser = await this.employersService.findOne(uuid);
-    if (!existingEmployerUser) {
-      throw new Error('Employer not found');
+    if (provider === 'LOCAL') {
+      const existingEmployerUser = await this.employersService.findOneUuid(uuid);
+      if (!existingEmployerUser) {
+        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      }
+      return existingEmployerUser;
     }
-    return existingEmployerUser;
   }
 
   async refreshAccessToken(refreshToken: string) {
