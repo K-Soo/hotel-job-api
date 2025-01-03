@@ -31,6 +31,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { ConditionsModule } from './modules/conditions/conditions.module';
 import { TalentsModule } from './modules/talents/talents.module';
 import { VerificationsModule } from './modules/verifications/verifications.module';
+import { CertificationModule } from './authentication/certification/certification.module';
 
 @Module({
   imports: [
@@ -58,6 +59,8 @@ import { VerificationsModule } from './modules/verifications/verifications.modul
     CompanyModule,
 
     VerificationsModule,
+
+    CertificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
