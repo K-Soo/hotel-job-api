@@ -11,6 +11,7 @@ import { Employer } from '../../modules/employers/entities/employer.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { ConsentsModule } from '../../modules/consents/consents.module';
 @Module({
   controllers: [AuthController],
   imports: [
@@ -19,6 +20,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     forwardRef(() => EmployersModule),
     PassportModule,
     ApplicantsModule,
+    ConsentsModule,
   ],
   providers: [AuthService, JwtConfigService, EmployersService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
