@@ -8,7 +8,7 @@ export class CreateExperienceDto {
   @IsString()
   companyName: string;
 
-  @ApiProperty({ description: '입사 재직 여부', example: false })
+  @ApiProperty({ description: '재직중', example: false })
   @IsBoolean()
   isEmployed: boolean;
 
