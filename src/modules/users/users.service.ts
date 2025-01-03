@@ -9,8 +9,8 @@ import { Applicant } from '../applicants/entities/applicant.entity';
 export class UsersService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
-  async create(applicant: Applicant) {
-    const user = await safeQuery(async () => this.userRepo.create({ applicant }));
+  async create(applicant: Applicant, email: string) {
+    const user = await safeQuery(async () => this.userRepo.create({ applicant, email }));
     return this.userRepo.save(user);
   }
 
