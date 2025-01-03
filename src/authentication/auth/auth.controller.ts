@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Res, Req, UseInterceptors, UseGuards, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Req,
+  UseInterceptors,
+  UseGuards,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { Response, Request } from 'express';
@@ -49,12 +59,23 @@ export class AuthController {
     return { ...req.user, accessToken };
   }
 
+  @ApiOperation({ summary: '사업자 사용자 회원가입' })
+  @Post()
+  signUpEmployer(@Body() createEmployerDto: any, @Res({ passthrough: true }) res: Response) {
+    // res.cookie('refresh_token', refreshToken, {
+    //   httpOnly: true,
+    //   secure: this.configService.get('APP_ENV') !== 'local',
+    //   sameSite: 'lax',
+    //   maxAge: parseTimeToMs(jwtRefreshExpiration),
+    // });
+  }
+
   @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })
   @Post('sign-out')
   signOut(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('refresh_token');
     return {
-      status: 'SUCCESS',
+      status: 'success',
     };
   }
 
@@ -64,8 +85,13 @@ export class AuthController {
   @UseInterceptors(new SerializeInterceptor(MeResponseDto))
   async userMe(@Req() req: Request) {
     const user = req.user as RequestUser;
-    const existingUser = await this.authService.getUserByProvider(user.provider, user.sub);
-    return existingUser;
+    try {
+      const existingUser = await this.authService.getUserByProvider(user.provider, user.sub);
+      return existingUser;
+    } catch (error) {
+      console.log('error: ', error.name);
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
   }
 
   @ApiOperation({ summary: 'token 인증 갱신' })
