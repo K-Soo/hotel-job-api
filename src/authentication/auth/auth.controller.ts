@@ -8,6 +8,8 @@ import {
   UseGuards,
   ForbiddenException,
   NotFoundException,
+  BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
@@ -26,6 +28,10 @@ import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
 import { RequestUser } from './interfaces/jwt-payload.interface';
 import { MeResponseDto } from './dto/me.response.dto';
+import { ConsentsService } from '../../modules/consents/consents.service';
+import { DataSource } from 'typeorm';
+import { CreateSignupDto } from './interfaces/create-sign-up.dto';
+import { ResponseSignUpDto } from './interfaces/response-sign-up.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +40,8 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly employersService: EmployersService,
     private readonly applicantsService: ApplicantsService,
+    private readonly consentsService: ConsentsService,
+    private readonly dataSource: DataSource,
   ) {}
 
   @ApiOperation({ summary: '사업자 로그인' })
@@ -60,14 +68,52 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '사업자 사용자 회원가입' })
-  @Post()
-  signUpEmployer(@Body() createEmployerDto: any, @Res({ passthrough: true }) res: Response) {
-    // res.cookie('refresh_token', refreshToken, {
-    //   httpOnly: true,
-    //   secure: this.configService.get('APP_ENV') !== 'local',
-    //   sameSite: 'lax',
-    //   maxAge: parseTimeToMs(jwtRefreshExpiration),
-    // });
+  @UseInterceptors(new SerializeInterceptor(ResponseSignUpDto))
+  @Post('sign-up')
+  async signUpEmployer(@Body() createSignupDto: CreateSignupDto, @Res({ passthrough: true }) res: Response) {
+    const employerUser = await this.dataSource.transaction(async (manager) => {
+      try {
+        const employer = await this.employersService.create(createSignupDto, manager);
+
+        await this.consentsService.createEmployerConsent(createSignupDto, employer, manager);
+
+        return employer;
+      } catch (error) {
+        if (error instanceof ConflictException) {
+          throw error;
+        }
+        throw new BadRequestException();
+      }
+    });
+
+    const accessToken = await this.authService.generateAccessToken(
+      employerUser.id,
+      employerUser.provider,
+      employerUser.role,
+    );
+
+    const refreshToken = await this.authService.generateRefreshToken(employerUser.id, employerUser.provider);
+
+    const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('APP_ENV') !== 'local',
+      sameSite: 'lax',
+      maxAge: parseTimeToMs(jwtRefreshExpiration),
+    });
+
+    // accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2IyODNmMC1kOTQyLTQyY2EtYTdiZC1iNjAzOWQ2YTNmZTIiLCJwcm92aWRlciI6IkxPQ0FMIiwiaXNzIjoiaG90ZWwtam9iLWNvbm5lY3QiLCJyb2xlIjoiRU1QTE9ZRVIiLCJpYXQiOjE3MzU5MTAyMTQsImV4cCI6MTczNjUxNTAxNH0.v3iS_UUMsNSoqRcHY0QeFsP1ZeKE3si8uwDO2KYI0cM';
+    // accountStatus: 'ACTIVE';
+    // nickname: '활기찬강아지38663150';
+    // provider: 'LOCAL';
+    // role: 'EMPLOYER';
+    // companyVerificationStatus
+
+    return {
+      ...employerUser,
+      accessToken,
+    };
   }
 
   @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })
