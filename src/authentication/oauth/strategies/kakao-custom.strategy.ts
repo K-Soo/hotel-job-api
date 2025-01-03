@@ -33,8 +33,9 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
 
     const errors = await validate(CreateOAuthDto);
 
-    // 회원가입일 경우 에러처리
-    if (kakaoDto.isInitialRequest === 'N') {
+    // 회원가입 폼과 함께 가입 요청
+    if (kakaoDto.requestType === 'signUp') {
+      // 동의 체크 여부 벨리데이션
       if (errors.length > 0) {
         throw new BadRequestException(customHttpException.OAUTH_SIGN_IN_BAD_REQUEST);
       }
@@ -45,24 +46,32 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
     const kakaoPayload: KakaoPayload = this.jwtService.decode(accessTokenResponse.id_token);
 
     const kakaoUserId = kakaoPayload.sub;
+    const kakaoUserEmail = kakaoPayload.email;
 
     const existingUser = await this.applicantsService.findByUserId(kakaoUserId);
 
+    // 가입된 유저가 없음
     if (!existingUser) {
-      if (kakaoDto.isInitialRequest === 'Y') {
+      if (kakaoDto.requestType === 'signIn') {
         throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
       }
 
-      const createdUser = await this.applicantsService.create(kakaoUserId);
-      await this.consentsService.createApplicantConsent(kakaoDto, createdUser);
-      await this.usersService.create(createdUser);
+      // Application 생성
+      const createdApplication = await this.applicantsService.create(kakaoUserId);
 
-      return createdUser;
+      // Consent 생성
+      await this.consentsService.createApplicantConsent(kakaoDto, createdApplication);
+
+      // User 생성
+      await this.usersService.create(createdApplication, kakaoUserEmail);
+
+      return createdApplication;
     }
 
     return existingUser;
   }
 
+  // 카카오 인가 코드로부터 액세스 토큰을 가져옴
   private async getAccessToken(code: string): Promise<any> {
     try {
       const response = this.httpService.post(oauth.kakao.token, null, {
