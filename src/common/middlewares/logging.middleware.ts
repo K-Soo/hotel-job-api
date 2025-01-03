@@ -18,27 +18,25 @@ export class LoggingMiddleware implements NestMiddleware {
 
     response.on('finish', () => {
       const { statusCode } = response;
-      if (!(statusCode !== 200 && statusCode !== 201)) {
-        const responseTime = new Date();
-        const timeTaken = responseTime.getTime() - requestTime.getTime();
+      const responseTime = new Date();
+      const timeTaken = responseTime.getTime() - requestTime.getTime();
 
-        const log = {
-          event: 'API Request',
-          method,
-          url: originalUrl,
-          statusCode,
-          responseTime: `${timeTaken}ms`,
-          ip,
-          timestamp: new Date().toISOString(),
-        };
+      const log = {
+        event: 'API Request',
+        method,
+        url: originalUrl,
+        statusCode,
+        responseTime: `${timeTaken}ms`,
+        ip,
+        timestamp: new Date().toISOString(),
+      };
 
-        if (this.isLocal) {
-          // const userAgent = request.get('user-agent') || '';
-          this.logger.debug(`${method} ${statusCode} - ${originalUrl} ${responseTime}ms IP:${ip}`);
-        } else {
-          // 운영 환경에서는 간소화된 로그
-          this.logger.log(JSON.stringify(log));
-        }
+      if (this.isLocal) {
+        // const userAgent = request.get('user-agent') || '';
+        this.logger.debug(`${method} ${statusCode} - ${originalUrl} ${responseTime}ms IP:${ip}`);
+      } else {
+        // 운영 환경에서는 간소화된 로그
+        this.logger.log(JSON.stringify(log));
       }
     });
 

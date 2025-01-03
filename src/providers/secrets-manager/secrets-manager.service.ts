@@ -22,7 +22,7 @@ export class SecretsManagerService {
       this.logger.error('SecretString is undefined');
       throw new Error('SecretString is undefined');
     } catch (error) {
-      this.logger.error(`Failed to fetch secret: ${error.message}`);
+      this.logger.error(`Failed to fetch secret: ${error.message}`, error.stack);
       throw error;
     }
   }
