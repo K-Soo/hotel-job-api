@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { AccountStatus } from '../../../common/constants/app.enum';
 
 export class SignInResponseDto {
   @Expose()
@@ -9,4 +10,10 @@ export class SignInResponseDto {
 
   @Expose()
   provider: string;
+
+  @Expose()
+  accountStatus: AccountStatus;
+
+  @Expose()
+  nickname: string;
 }

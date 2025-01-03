@@ -1,6 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 type ResponseMessage = {
   message: string[];
@@ -17,12 +16,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const domain = request.headers;
+    // console.log('domain: ', domain);
 
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse() as ResponseMessage | string;
     const { message, customCode } = this.extractCustomResponse(exceptionResponse);
 
-    this.logger.error(`status: ${customCode || status}, message: ${exception.message}`);
+    this.logger.error(
+      `origin: ${domain.origin}, ${request.method} ${request.url}, status: ${customCode || status}, message: ${exception.message}`,
+    );
 
     response.status(status).json({
       success: false,
@@ -42,13 +46,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const { message, customCode } = response;
 
+    // Internal Server Error
+    if (customCode?.toString().startsWith('5')) {
+      return { message: 'An unexpected error occurred.', customCode };
+    }
+
     // Database Error
     if (customCode?.toString().startsWith('6')) {
-      return { message: 'An unexpected error occurred. Please try again later.', customCode };
-    }
-    // Internal Server Error
-    if (customCode?.toString().startsWith('7')) {
-      return { message: 'An unexpected error occurred. Please try again later.', customCode };
+      return { message: 'An unexpected error occurred.', customCode };
     }
 
     const formattedMessage = Array.isArray(message) ? message.join(', ') : message;

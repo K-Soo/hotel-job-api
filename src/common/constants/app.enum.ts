@@ -9,6 +9,41 @@ export enum Role {
   JOB_SEEKER = 'JOB_SEEKER',
 }
 
+export enum AccountStatus {
+  ACTIVE = 'ACTIVE', //활성화되어 있으며 정상적으로 사용 가능한 상태.
+
+  INACTIVE = 'INACTIVE', //계정이 비활성화된 상태. 사용자가 자발적으로 계정을 비활성화하거나, 관리자가 임시로 비활성화한 경우.
+
+  BLOCKED = 'BLOCKED', //영구적 제한 상태(심각한 규칙 위반).
+
+  SUSPENDED = 'SUSPENDED', // 계정이 임시적으로 제한된 상태. 예: 사기 탐지.
+
+  LOCKED = 'LOCKED', // 보안상의 이유로 계정이 잠긴 상태. 비밀번호 시도 실패 등.
+
+  DELETED = 'DELETED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
+
+  PENDING = 'PENDING', // 인증 절차(이메일, 전화번호 인증 등)가 완료되지 않은 상태.
+
+  RECOVERY = 'RECOVERY', // 비밀번호 재설정 또는 계정 복구 절차 중인 상태.
+
+  ANONYMIZED = 'ANONYMIZED', // 개인정보가 익명 처리된 상태.
+
+  WAITING_APPROVAL = 'WAITING_APPROVAL', // 관리자 승인 대기 상태. 예: 기업 계정 요청.
+}
+
+export enum VerificationStatus {
+  NOT_REQUESTED = 'NOT_REQUESTED',
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED',
+}
+
+export enum Gender {
+  NONE = 'NONE',
+  MAIL = 'MAIL',
+  FEMALE = 'FEMALE',
+}
+
 export enum ResumeStatus {
   DRAFT = 'DRAFT', // 작성 중(임시 저장 상태).
   SUBMITTED = 'SUBMITTED', // 제출 완료(정상 노출 가능 상태).
@@ -25,6 +60,7 @@ export enum SanctionReason {
 }
 
 export enum Position {
+  NONE = 'NONE', // 미선택
   INTERN = 'INTERN', // 인턴
   PART_TIME = 'PART_TIME', // 알바
   STAFF = 'STAFF', // 사원
@@ -37,6 +73,7 @@ export enum Position {
   CEO = 'CEO', // 대표
 }
 
+//직무
 export enum Job {
   //공통
   MAINTENANCE = 'MAINTENANCE', // 시설 관리
@@ -93,4 +130,94 @@ export enum SalaryType {
   ANNUAL = 'ANNUAL', // 연봉
   MONTHLY = 'MONTHLY', // 월급 (기본급 + 수당)
   DAILY = 'DAILY', // 일급
+  HOURLY = 'HOURLY', // 시급
+}
+
+export enum Language {
+  NONE = 'NONE', // 선택되지 않음
+  ENGLISH = 'ENGLISH', // 영어
+  KOREAN = 'KOREAN', // 한국어
+  SPANISH = 'SPANISH', // 스페인어
+  FRENCH = 'FRENCH', // 프랑스어
+  CHINESE = 'CHINESE', // 중국어
+  RUSSIAN = 'RUSSIAN', // 러시아어
+  MONGOLIAN = 'MONGOLIAN', // 몽골어
+  JAPANESE = 'JAPANESE', // 일본어
+}
+
+export enum Proficiency {
+  BEGINNER = 'BEGINNER',
+  INTERMEDIATE = 'INTERMEDIATE',
+  ADVANCED = 'ADVANCED',
+  NATIVE = 'NATIVE',
+}
+
+export enum LicenseStage {
+  FIRST = 'FIRST', // 1차 합격
+  SECOND = 'SECOND', // 2차 합격
+  WRITTEN = 'WRITTEN', // 필기 합격
+  PRACTICAL = 'PRACTICAL', // 실기 합격
+  FINAL = 'FINAL', // 최종 합격
+}
+
+export enum MilitaryStatus {
+  NONE = 'NONE', // 미선택
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // 대상 아님
+  COMPLETED = 'COMPLETED', // 군필
+  NOT_COMPLETED = 'NOT_COMPLETED', // 미필
+  EXEMPTED = 'EXEMPTED', // 면제
+  MEDICALLY_DISCHARGED = 'MEDICALLY_DISCHARGED', // 의가사 전역
+}
+
+export enum EducationLevel {
+  ELEMENTARY = 'ELEMENTARY', // 초등학교
+  MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
+  HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
+  COLLEGE_2_3_YEAR = 'COLLEGE_2_3_YEAR', // 대학교(2,3년)
+  COLLEGE_4_YEAR = 'COLLEGE_4_YEAR', // 대학교(4년)
+  MASTER = 'MASTER', // 대학원(석사)
+  DOCTORATE = 'DOCTORATE', // 대학원(박사)
+}
+
+export enum EducationConditionLevel {
+  NOT_REQUIRED = 'NOT_REQUIRED', // 학력무관
+  ELEMENTARY = 'ELEMENTARY', // 초등학교
+  MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
+  HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
+  COLLEGE_2_3_YEAR = 'COLLEGE_2_3_YEAR', // 대학교(2,3년)
+  COLLEGE_4_YEAR = 'COLLEGE_4_YEAR', // 대학교(4년)
+  MASTER = 'MASTER', // 대학원(석사)
+  DOCTORATE = 'DOCTORATE', // 대학원(박사)
+}
+
+export enum ResumeType {
+  FILE = 'FILE', // 파일로 등록
+  GENERAL = 'GENERAL', // 일반적인 등록
+}
+
+export enum CareerLevel {
+  NEWBIE = 'NEWBIE', // 신입
+  EXPERIENCED = 'EXPERIENCED', // 경력
+}
+
+// 고용 형태
+export enum EmploymentType {
+  FULL_TIME = 'FULL_TIME', // 정규직
+  CONTRACT = 'CONTRACT', // 계약직
+  PART_TIME = 'PART_TIME', // 아르바이트
+  DAILY_WORKER = 'DAILY_WORKER', // 파출부
+  INTERN = 'INTERN', // 인턴
+}
+
+// 복리후생
+export enum Benefits {
+  HEALTH_INSURANCE = 'HEALTH_INSURANCE', // 건강보험
+  MEAL_SUPPORT = 'MEAL_SUPPORT', // 식사 지원
+  TRANSPORTATION_SUPPORT = 'TRANSPORTATION_SUPPORT', // 교통비 지원
+  HOUSING_SUPPORT = 'HOUSING_SUPPORT', // 숙식제공
+  BONUS = 'BONUS', // 보너스 지급
+  PAID_LEAVE = 'PAID_LEAVE', // 유급 휴가
+  FLEXIBLE_WORK = 'FLEXIBLE_WORK', // 유연 근무제
+  CHILDCARE_SUPPORT = 'CHILDCARE_SUPPORT', // 육아 지원
+  RETIREMENT_PLAN = 'RETIREMENT_PLAN', // 퇴직금 제도
 }

@@ -12,7 +12,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
 
     const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    this.logger.error(`stack: ${exception.stack}`);
+    this.logger.error(`stack: ${exception.message}`);
 
     const responseBody = {
       success: false,

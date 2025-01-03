@@ -8,6 +8,7 @@ export interface KakaoPayload {
   nickname: string;
   exp: number;
   iat: number;
+  email: string;
 }
 
 export interface RequestUser {

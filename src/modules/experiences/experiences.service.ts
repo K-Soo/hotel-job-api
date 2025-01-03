@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { Experience } from './entities/experience.entity';
+import { Resume } from '../resumes/entities/resume.entity';
 
 @Injectable()
 export class ExperiencesService {
-  create(createExperienceDto: CreateExperienceDto) {
-    return 'This action adds a new experience';
+  constructor(
+    @InjectRepository(Experience)
+    private readonly experienceRepo: Repository<Experience>,
+  ) {}
+
+  async create(experiences: CreateExperienceDto[], resume: Resume, manager: EntityManager) {
+    const experienceEntities = experiences.map((experience) => this.experienceRepo.create({ ...experience, resume }));
+
+    await manager.save(Experience, experienceEntities);
   }
 
   findAll() {

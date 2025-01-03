@@ -16,6 +16,7 @@ export class SwaggerConfigService {
       swaggerOptions: {
         defaultModelExpandDepth: 3, // 모든 모델을 기본 확장
         filter: true, // 엔드포인트 검색 활성화
+        persistAuthorization: true,
       },
     });
   }
