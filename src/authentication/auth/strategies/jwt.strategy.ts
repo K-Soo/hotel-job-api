@@ -38,13 +38,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, payload: JwtPayload) {
     const accessToken = req.headers.authorization.split(' ')[1];
+
     const refreshToken = req.cookies['refresh_token'];
 
     try {
       const { exp } = payload;
       const currentTimeInSeconds = Math.floor(Date.now() / 1000);
       const secondsRemaining = exp - currentTimeInSeconds;
-      console.log('token exp: ', secondsRemaining);
 
       const decodedRefreshToken: JwtPayload = this.jwtService.decode(refreshToken);
 
