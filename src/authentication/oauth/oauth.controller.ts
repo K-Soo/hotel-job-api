@@ -28,6 +28,7 @@ export class OauthController {
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
+      domain: '.hotel-job-connect.com',
     });
 
     return {
