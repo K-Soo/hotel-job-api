@@ -62,7 +62,7 @@ export class AuthController {
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
-      domain: '.hotel-job-connect.com',
+      domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
 
     return { ...req.user, accessToken };
@@ -102,7 +102,7 @@ export class AuthController {
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
-      domain: '.hotel-job-connect.com',
+      domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
 
     // accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2IyODNmMC1kOTQyLTQyY2EtYTdiZC1iNjAzOWQ2YTNmZTIiLCJwcm92aWRlciI6IkxPQ0FMIiwiaXNzIjoiaG90ZWwtam9iLWNvbm5lY3QiLCJyb2xlIjoiRU1QTE9ZRVIiLCJpYXQiOjE3MzU5MTAyMTQsImV4cCI6MTczNjUxNTAxNH0.v3iS_UUMsNSoqRcHY0QeFsP1ZeKE3si8uwDO2KYI0cM';
@@ -164,7 +164,7 @@ export class AuthController {
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
-      domain: '.hotel-job-connect.com',
+      domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
 
     return { accessToken: newAccessToken };
