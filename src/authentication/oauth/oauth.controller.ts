@@ -29,6 +29,7 @@ export class OauthController {
       secure: true,
       sameSite: 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
+      domain: 'dev.hotel-job-connect.com',
     });
 
     return {
