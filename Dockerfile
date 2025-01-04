@@ -2,6 +2,10 @@
 FROM node:20.18.0-alpine AS base
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@9.14.4 --activate
+
+# curl 설치 추가
+RUN apt-get update && apt-get install -y curl && apt-get clean
+
 COPY pnpm-lock.yaml package.json ./
 
 # Stage - Production Build

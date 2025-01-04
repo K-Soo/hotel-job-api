@@ -7,7 +7,7 @@ export class SecretsManagerService {
   private readonly logger = new Logger(SecretsManagerService.name);
 
   constructor() {
-    this.client = new SecretsManagerClient({ region: 'ap-northeast-2' });
+    this.client = new SecretsManagerClient({ region: 'ap-northeast-2', logger: console });
   }
 
   async getSecret(secretName: string): Promise<string> {
