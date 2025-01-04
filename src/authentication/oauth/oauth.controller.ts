@@ -26,7 +26,7 @@ export class OauthController {
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       // secure: this.configService.get('APP_ENV') !== 'local',
-      secure: false,
+      secure: true,
       sameSite: 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
