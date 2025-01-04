@@ -60,8 +60,9 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'lax',
+      sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
+      domain: '.hotel-job-connect.com',
     });
 
     return { ...req.user, accessToken };
@@ -99,8 +100,9 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'lax',
+      sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
+      domain: '.hotel-job-connect.com',
     });
 
     // accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2IyODNmMC1kOTQyLTQyY2EtYTdiZC1iNjAzOWQ2YTNmZTIiLCJwcm92aWRlciI6IkxPQ0FMIiwiaXNzIjoiaG90ZWwtam9iLWNvbm5lY3QiLCJyb2xlIjoiRU1QTE9ZRVIiLCJpYXQiOjE3MzU5MTAyMTQsImV4cCI6MTczNjUxNTAxNH0.v3iS_UUMsNSoqRcHY0QeFsP1ZeKE3si8uwDO2KYI0cM';
