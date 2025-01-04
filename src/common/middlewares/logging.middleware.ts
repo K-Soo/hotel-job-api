@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
-  private logger = new Logger('HTTP');
+  private logger = new Logger('HTTP-RESPONSE');
   private isLocal: boolean;
 
   constructor(private readonly configService: ConfigService) {

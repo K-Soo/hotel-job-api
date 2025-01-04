@@ -34,14 +34,6 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
 
   app.enableCors({
-    // origin: (origin, callback) => {
-    //   // origin이 undefined이면 허용 (e.g., Postman 또는 서버 간 요청)
-    //   if (!origin || originUrls.includes(origin)) {
-    //     callback(null, true); // 허용
-    //   } else {
-    //     callback(new Error('Not allowed by CORS')); // 거부
-    //   }
-    // },
     origin: originUrls,
     credentials: true,
     // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

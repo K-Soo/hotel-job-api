@@ -7,7 +7,7 @@ import { EmployerUserIdDto } from './dto/employer-user-id.dto';
 export class VerificationsController {
   constructor(private readonly verificationsService: VerificationsService) {}
 
-  @ApiOperation({ summary: '사업자 아이디 검증' })
+  @ApiOperation({ summary: '아이디 중복체크' })
   @ApiResponse({
     status: 200,
     description: '사용 가능 아이디 { status: "available" }, 중복 아이디 { status: "duplicate" }',
