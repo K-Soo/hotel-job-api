@@ -4,6 +4,8 @@ import { AuthService } from '../auth/auth.service';
 import { Request, Response } from 'express';
 import { RequestUser } from './interfaces/user.interface';
 import { ConfigService } from '@nestjs/config';
+import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
+
 @Controller('oauth')
 export class OauthController {
   constructor(
@@ -19,11 +21,14 @@ export class OauthController {
     const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
 
+    const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
+
     res.cookie('refresh_token', refreshToken, {
-      httpOnly: false,
-      secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 15, // 15분
+      httpOnly: true,
+      // secure: this.configService.get('APP_ENV') !== 'local',
+      secure: false,
+      sameSite: 'none',
+      maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
 
     return {
