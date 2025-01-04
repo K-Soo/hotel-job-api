@@ -15,9 +15,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
   const originUrls = configService.get('ORIGIN');
-  console.log('originUrls: ', originUrls);
 
-  app.use(helmet());
+  // app.use(helmet());
+
   app.use(cookieParser());
 
   app.useGlobalPipes(

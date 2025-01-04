@@ -25,11 +25,9 @@ export class OauthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      // secure: this.configService.get('APP_ENV') !== 'local',
-      secure: true,
-      sameSite: 'none',
+      secure: this.configService.get('APP_ENV') !== 'local',
+      sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
-      domain: 'dev.hotel-job-connect.com',
     });
 
     return {
