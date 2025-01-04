@@ -20,7 +20,7 @@ export class OauthController {
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
 
     res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
+      httpOnly: false,
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: 'lax',
       maxAge: 1000 * 60 * 15, // 15분
