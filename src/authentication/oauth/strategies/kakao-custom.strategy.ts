@@ -81,6 +81,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
           client_id: this.configService.get('KAKAO_CLIENT_ID'),
           code,
         },
+        timeout: 3000,
       });
       const { data } = await lastValueFrom(response);
       return data;
@@ -92,7 +93,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
         throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
       }
 
-      throw new BadRequestException(customHttpException.OAUTH_SIGN_IN_TOKEN);
+      throw new BadRequestException(customHttpException.OAUTH_GET_TOKEN_ERROR);
     }
   }
 }
