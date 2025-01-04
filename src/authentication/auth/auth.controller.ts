@@ -164,7 +164,7 @@ export class AuthController {
       secure: this.configService.get('APP_ENV') !== 'local',
       sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
-      domain: 'dev.hotel-job-connect.com',
+      domain: '.hotel-job-connect.com',
     });
 
     return { accessToken: newAccessToken };
