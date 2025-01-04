@@ -14,8 +14,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
+  console.log('port: ', port);
   const originUrls = configService.get('ORIGIN');
-  console.log('originUrls: ', originUrls);
 
   app.use(helmet());
   app.use(cookieParser());
@@ -34,16 +34,15 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost), new HttpExceptionFilter());
 
   app.enableCors({
-    // origin: (origin, callback) => {
-    //   console.log('origin: ', origin);
-    //   // origin이 undefined이면 허용 (e.g., Postman 또는 서버 간 요청)
-    //   if (!origin || originUrls.includes(origin)) {
-    //     callback(null, true); // 허용
-    //   } else {
-    //     callback(new Error('Not allowed by CORS')); // 거부
-    //   }
-    // },
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+      console.log('origin: ', origin);
+      // origin이 undefined이면 허용 (e.g., Postman 또는 서버 간 요청)
+      if (!origin || originUrls.includes(origin)) {
+        callback(null, true); // 허용
+      } else {
+        callback(new Error('Not allowed by CORS')); // 거부
+      }
+    },
     credentials: true,
     // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     // allowedHeaders: 'Content-Type, Accept',
