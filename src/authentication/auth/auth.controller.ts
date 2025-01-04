@@ -160,7 +160,7 @@ export class AuthController {
     res.cookie('refresh_token', newRefreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'none',
+      sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
       domain: 'dev.hotel-job-connect.com',
     });
