@@ -61,11 +61,11 @@ export class CertificationService {
       console.log('requestData: ', requestData);
       const response = await firstValueFrom(
         this.httpService.post(certpassUrl, requestData, {
-          httpsAgent, // HTTPS Agent 설정
+          httpsAgent,
           headers: {
             'Content-Type': 'application/json',
           },
-          timeout: 5000,
+          timeout: 3000,
         }),
       );
 
