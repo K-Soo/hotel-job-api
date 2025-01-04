@@ -35,9 +35,9 @@ export const customHttpException = {
     message: 'Permission denied',
   },
 
-  OAUTH_SIGN_IN_TOKEN: {
+  OAUTH_GET_TOKEN_ERROR: {
     customCode: 2000,
-    message: 'Authentication failed',
+    message: 'oauth get access token failed',
   },
   OAUTH_SIGN_IN_USER_INFO: {
     customCode: 2001,
