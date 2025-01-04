@@ -29,48 +29,38 @@ export class CertificationService {
     const pemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
     const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
 
-    // const kcp_sign_data = await makeSignature(hash_data, pemKey, cryptoPassword); //서명 데이터(무결성 검증)
+    const kcp_sign_data = await makeSignature(hash_data, pemKey, cryptoPassword); //서명 데이터(무결성 검증)
 
-    // const time = new Date().getTime();
-    // const ordr_idxx = make_req_dt + time;
+    const time = new Date().getTime();
+    const ordr_idxx = make_req_dt + time;
 
-    // const requestData = {
-    //   site_cd: site_cd,
-    //   kcp_cert_info: JSON.stringify(kcpCertPemKey),
-    //   ct_type: 'HAS',
-    //   ordr_idxx: ordr_idxx,
-    //   web_siteid: web_siteid,
-    //   make_req_dt: make_req_dt,
-    //   kcp_sign_data: kcp_sign_data,
-    // };
+    const requestData = {
+      site_cd: site_cd,
+      kcp_cert_info: JSON.stringify(kcpCertPemKey),
+      ct_type: 'HAS',
+      ordr_idxx: ordr_idxx,
+      web_siteid: web_siteid,
+      make_req_dt: make_req_dt,
+      kcp_sign_data: kcp_sign_data,
+    };
 
-    // const httpsAgent = new https.Agent({
-    //   secureProtocol: 'TLSv1_2_method',
-    // });
+    const httpsAgent = new https.Agent({
+      secureProtocol: 'TLSv1_2_method',
+    });
 
     try {
-      // const response = await firstValueFrom(
-      //   this.httpService.post(url, requestData, {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     timeout: 5000,
-      //   }),
-      // );
+      const response = await firstValueFrom(
+        this.httpService.post(certpassUrl, requestData, {
+          httpsAgent,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 3000,
+        }),
+      );
 
-      // const response = await firstValueFrom(
-      //   this.httpService.post(certpassUrl, requestData, {
-      //     httpsAgent,
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     timeout: 3000,
-      //   }),
-      // );
-
-      // console.log('Response from KCP:', response.data);
-
-      return 'asd';
+      console.log('Response from KCP:', response.data);
+      return 'Success';
     } catch (error) {
       console.error('Error during KCP API call:', error.message);
       throw error;
