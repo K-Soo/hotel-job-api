@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { ConfigModule } from '@nestjs/config';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 ConfigModule.forRoot();
 const configService = new ConfigService();
@@ -12,7 +13,7 @@ export const postgresDataSource = new DataSource({
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_NAME'),
-
+  namingStrategy: new SnakeNamingStrategy(),
   entities: [`dist/**/*.entity.js`],
   migrations: [`dist/database/migrations/*.js`],
 
