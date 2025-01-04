@@ -160,7 +160,7 @@ export class AuthController {
     res.cookie('refresh_token', newRefreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: parseTimeToMs(jwtRefreshExpiration),
     });
 
