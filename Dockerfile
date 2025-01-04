@@ -4,7 +4,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@9.14.4 --activate
 
 # curl 설치 추가
-RUN apt-get update && apt-get install -y curl && apt-get clean
+RUN apk add --no-cache curl
 
 COPY pnpm-lock.yaml package.json ./
 
