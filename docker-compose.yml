@@ -1,0 +1,13 @@
+services:
+  server:
+    build:
+      context: .
+      target: local
+    image: hotel-job-api
+    container_name: hotel-job-api_container
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '8010:8010'
+    # restart: always
