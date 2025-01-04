@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/K-Soo/hotel-job-api/compare/v0.0.2...v0.0.3) (2025-01-04)
+
+
+### Features
+
+* 데이터베이스 오류 로깅 개선 및 CORS 설정 수정, 아이디 중복체크 API 문서화 ([2beaf47](https://github.com/K-Soo/hotel-job-api/commit/2beaf477199dc7bdb3fd47a6ed8acdddf5fd38b5))
+* CORS 설정 개선 및 origin 처리 방식 변경 ([d41cd55](https://github.com/K-Soo/hotel-job-api/commit/d41cd5552d2d868f33554b6764062003fd36a865))
+* Dockerfile에 curl 설치 추가 및 인증 서비스의 타임아웃을 3000ms로 변경, 비밀 관리 클라이언트에 로거 추가 ([2cc3295](https://github.com/K-Soo/hotel-job-api/commit/2cc329546d68c469045ec6a0b3e235ac419dc3b8))
+* Dockerfile에서 curl 설치 방식을 apt-get에서 apk로 변경 ([31ee927](https://github.com/K-Soo/hotel-job-api/commit/31ee927ed02fd143309e74b5255bcca5e5f215e4))
+* originUrls 로깅 추가 ([fea127a](https://github.com/K-Soo/hotel-job-api/commit/fea127a525c067e07f40f2edacf0bb97d251c657))
+
+
+### Updates
+
+* 쿠키설정 변경 ([7e81fc3](https://github.com/K-Soo/hotel-job-api/commit/7e81fc321626b0a0330bc32c439adb86a2aba00f))
+* kakao axios timeout ([3fc9b64](https://github.com/K-Soo/hotel-job-api/commit/3fc9b64bc38669ed58ae6161dcc2ed16a902315d))
+* package.json [skip ci] ([9fc7ade](https://github.com/K-Soo/hotel-job-api/commit/9fc7adeb0c1cd29d79cee65a2ec8d1fe3252e2f7))
+
 ### 0.0.2 (2025-01-04)
 
 
