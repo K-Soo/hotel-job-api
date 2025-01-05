@@ -55,12 +55,11 @@ export class CertificationService {
           headers: {
             'Content-Type': 'application/json',
           },
-          timeout: 3000,
+          timeout: 5000,
         }),
       );
 
-      console.log('Response from KCP:', response.data);
-      return 'Success';
+      return response.data;
     } catch (error) {
       console.error('Error during KCP API call:', error.message);
       throw error;
