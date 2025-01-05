@@ -1,10 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitTable1736080113580 implements MigrationInterface {
-    name = 'InitTable1736080113580'
+export class InitTable1736114199116 implements MigrationInterface {
+    name = 'InitTable1736114199116'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "test" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_5417af0062cf987495b611b59c7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "company" ("id" SERIAL NOT NULL, "business_registration_number" character varying NOT NULL, "company_name" character varying NOT NULL, "business_owner" character varying NOT NULL, "address" character varying NOT NULL, "address_detail" character varying NOT NULL, "manager_name" character varying NOT NULL, "manager_email" character varying NOT NULL, "manager_number" character varying NOT NULL, "employer_id" uuid, CONSTRAINT "REL_0301efca2c4d6ccc7ba4db5a39" UNIQUE ("employer_id"), CONSTRAINT "PK_056f7854a7afdba7cbd6d45fc20" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."employer_provider_enum" AS ENUM('LOCAL', 'KAKAO')`);
         await queryRunner.query(`CREATE TYPE "public"."employer_role_enum" AS ENUM('ADMIN', 'EMPLOYER', 'JOB_SEEKER')`);
@@ -38,6 +37,7 @@ export class InitTable1736080113580 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "applicant" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" character varying NOT NULL, "provider" "public"."applicant_provider_enum" NOT NULL, "role" "public"."applicant_role_enum" NOT NULL DEFAULT 'JOB_SEEKER', "created_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_1c33583f19967b0e56ee23bafce" UNIQUE ("user_id"), CONSTRAINT "PK_f4a6e907b8b17f293eb073fc5ea" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."user_gender_enum" AS ENUM('NONE', 'MAIL', 'FEMALE')`);
         await queryRunner.query(`CREATE TABLE "user" ("id" SERIAL NOT NULL, "name" character varying(50) NOT NULL DEFAULT '', "gender" "public"."user_gender_enum" NOT NULL DEFAULT 'NONE', "date_of_birth" TIMESTAMP(0) WITH TIME ZONE, "profile_image" character varying NOT NULL DEFAULT '', "email" character varying(255) NOT NULL DEFAULT '', "is_email_verified" boolean NOT NULL DEFAULT false, "email_verification_code" character varying(255), "phone" character varying(11) NOT NULL DEFAULT '', "is_overseas_phone" boolean NOT NULL DEFAULT false, "phone_verification_code" character varying(255), "address" character varying(255) NOT NULL DEFAULT '', "address_detail" character varying(255) NOT NULL DEFAULT '', "is_overseas_resident" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), "applicant_id" uuid, CONSTRAINT "REL_52b0e8ed3202f5cdc36f7da279" UNIQUE ("applicant_id"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "test" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_5417af0062cf987495b611b59c7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "company" ADD CONSTRAINT "FK_0301efca2c4d6ccc7ba4db5a393" FOREIGN KEY ("employer_id") REFERENCES "employer"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "consent" ADD CONSTRAINT "FK_001277a5e6265d6fcc6d6dd2ef8" FOREIGN KEY ("employer_id") REFERENCES "employer"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "consent" ADD CONSTRAINT "FK_c7bb556e83eddfd004f57b33229" FOREIGN KEY ("applicant_id") REFERENCES "applicant"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
@@ -59,6 +59,7 @@ export class InitTable1736080113580 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "consent" DROP CONSTRAINT "FK_c7bb556e83eddfd004f57b33229"`);
         await queryRunner.query(`ALTER TABLE "consent" DROP CONSTRAINT "FK_001277a5e6265d6fcc6d6dd2ef8"`);
         await queryRunner.query(`ALTER TABLE "company" DROP CONSTRAINT "FK_0301efca2c4d6ccc7ba4db5a393"`);
+        await queryRunner.query(`DROP TABLE "test"`);
         await queryRunner.query(`DROP TABLE "user"`);
         await queryRunner.query(`DROP TYPE "public"."user_gender_enum"`);
         await queryRunner.query(`DROP TABLE "applicant"`);
@@ -92,7 +93,6 @@ export class InitTable1736080113580 implements MigrationInterface {
         await queryRunner.query(`DROP TYPE "public"."employer_role_enum"`);
         await queryRunner.query(`DROP TYPE "public"."employer_provider_enum"`);
         await queryRunner.query(`DROP TABLE "company"`);
-        await queryRunner.query(`DROP TABLE "test"`);
     }
 
 }
