@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/K-Soo/hotel-job-api/compare/v0.0.3...v0.0.4) (2025-01-05)
+
+
+### Features
+
+* 데이터베이스 마이그레이션 파일 삭제 및 migration 명령어 수정 ([3d824e7](https://github.com/K-Soo/hotel-job-api/commit/3d824e7fd7a9f59cf2bd9deceef8fd9986e654e7))
+* 인증 서비스에서 KCP API 호출 관련 코드 주석 처리 ([ce8607e](https://github.com/K-Soo/hotel-job-api/commit/ce8607e4a6b9efcbfc8ec7ea6e4c87e5b5cf7bcc))
+* CORS 설정에서 allowedHeaders 주석 해제 ([59a31cf](https://github.com/K-Soo/hotel-job-api/commit/59a31cf609301c715baa00fa854e7adf9da647ef))
+* KCP API 호출 관련 코드 주석 해제 및 요청 데이터 구성 추가 ([7beb261](https://github.com/K-Soo/hotel-job-api/commit/7beb261bd08554f6e622aceda502915ec6fd184d))
+* OAuth 컨트롤러에서 refresh_token 쿠키 설정 변경 및 만료 시간 파싱 기능 추가 ([cb90455](https://github.com/K-Soo/hotel-job-api/commit/cb904552797aeb30ddf11dd67cca815ffb260bcd))
+* refresh_token 쿠키에 domain 속성을 'dev.hotel-job-connect.com'으로 추가 ([096ad77](https://github.com/K-Soo/hotel-job-api/commit/096ad77543db21382fc2afdf972740f7f29ac839))
+* refresh_token 쿠키의 domain 속성을 '.hotel-job-connect.com'으로 변경 ([3a04c9a](https://github.com/K-Soo/hotel-job-api/commit/3a04c9a0990c175a0d0c25c1485bd83fb15e53d9))
+* refresh_token 쿠키의 domain 속성을 환경에 따라 동적으로 설정 ([0f05a04](https://github.com/K-Soo/hotel-job-api/commit/0f05a04a24c445d1ba0c55c4b6e441946ad64784))
+* refresh_token 쿠키의 sameSite 속성을 'none'으로 변경하고, OAuth 컨트롤러에서 secure 속성을 true로 설정 ([cb312cb](https://github.com/K-Soo/hotel-job-api/commit/cb312cb2e3115780dae22899d486d7f1a223432a))
+* refresh_token 쿠키의 sameSite 속성을 환경에 따라 동적으로 설정하고, domain 속성을 '.hotel-job-connect.com'으로 추가 ([8d90a66](https://github.com/K-Soo/hotel-job-api/commit/8d90a6607c3dc159a3314b685a6292601de2fa2b))
+* refresh_token 쿠키의 sameSite 속성을 환경에 따라 동적으로 설정하고, secure 속성 조정 ([0d82093](https://github.com/K-Soo/hotel-job-api/commit/0d820932545d1ca2a5b73cc4e9a3cd6e03720899))
+* SecretsManagerClient 초기화 시 logger 옵션 제거 ([e0151c9](https://github.com/K-Soo/hotel-job-api/commit/e0151c9ddbf7125d8a2ca3cac1696f13f24e7afa))
+
+
+### Bug Fixes
+
+* .gitattributes에서 migration 경로 수정 및 main.ts에 주석 추가 ([3f5de2f](https://github.com/K-Soo/hotel-job-api/commit/3f5de2f1e81f621d4bde3908eb061c202a3530d3))
+* KCP API 호출 시 timeout 값을 5000으로 수정하고 성공 메시지 반환 방식 변경 ([2f5ce13](https://github.com/K-Soo/hotel-job-api/commit/2f5ce135a85dc3a1be228b36a9306c32d6a7f6a3))
+
+
+### Chore
+
+* resolve merge conflicts ([1d349d3](https://github.com/K-Soo/hotel-job-api/commit/1d349d3cf06b00ca99a82f0bf50b66d7719c3c03))
+
+
+### Updates
+
+* docs ([4ba398b](https://github.com/K-Soo/hotel-job-api/commit/4ba398b1b6f41092906b8f1b48614e9d7bcd7e23))
+
 ### [0.0.3](https://github.com/K-Soo/hotel-job-api/compare/v0.0.2...v0.0.3) (2025-01-04)
 
 
