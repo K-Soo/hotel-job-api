@@ -8,6 +8,7 @@ import { SwaggerConfigService } from './config/swagger/swagger.config.service';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
+// test
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const httpAdapterHost = app.get(HttpAdapterHost);
