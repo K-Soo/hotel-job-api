@@ -22,7 +22,7 @@ export class CertificationService {
     private readonly httpService: HttpService,
   ) {}
 
-  async hashUp() {
+  async start() {
     try {
       const appEnv = this.configService.get('APP_ENV');
       const certpassUrl = this.configService.get('CERTPASS_URL');
@@ -137,5 +137,9 @@ export class CertificationService {
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
+  }
+
+  async verify(body: any) {
+    return { status: ResponseStatus.SUCCESS };
   }
 }
