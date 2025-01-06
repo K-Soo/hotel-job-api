@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/K-Soo/hotel-job-api/compare/v0.0.5...v0.0.6) (2025-01-06)
+
+
+### Features
+
+* 로컬 환경에서 인증 서비스의 설정 값 추가 및 수정 ([b856d87](https://github.com/K-Soo/hotel-job-api/commit/b856d871c38af43c846bd439e088b56c8c9a9042))
+* 응답 상태를 정의하는 ResponseStatus 열거형 추가 ([4ae305e](https://github.com/K-Soo/hotel-job-api/commit/4ae305e72de5a2cc21b6564e1fb90bb5483a7e85))
+* 인증 서비스에서 요청 및 응답 로깅 메시지 수정 ([a46caef](https://github.com/K-Soo/hotel-job-api/commit/a46caeffce20dc3187eecadaf641b15b957be0cc))
+* 인증 서비스에서 KCP API 호출 시 오류 처리 개선 및 응답 구조 수정 ([8907bad](https://github.com/K-Soo/hotel-job-api/commit/8907bad61bae75e9ad0d108eaba751d060efd685))
+* 인증 서비스의 메서드 이름 변경 및 검증 메서드 추가 ([3471687](https://github.com/K-Soo/hotel-job-api/commit/3471687b154ae29b37f941c1f8a108e1eb4c2a43))
+* 인증 서비스의 인증 시작 및 검증 메서드 추가 ([97b24bf](https://github.com/K-Soo/hotel-job-api/commit/97b24bfe498ecc21834ebc0875c956747cac44ea))
+* 인증 서비스의 verify 메서드에 데이터 검증 요청 로직 추가 ([09cee05](https://github.com/K-Soo/hotel-job-api/commit/09cee0584529282b4d226c0d9e6a44bc709d5031))
+* hashUp 메서드에 응답 로깅 추가 및 비동기 처리로 변경 ([a558a9e](https://github.com/K-Soo/hotel-job-api/commit/a558a9e5e870c825016d1f4f1b718edb32cec0de))
+* hashUp 메서드에서 응답 로깅 제거 ([c996957](https://github.com/K-Soo/hotel-job-api/commit/c99695722f16feb243b599c410d8ef65d4f020cf))
+
+
+### Bug Fixes
+
+* conflict ([03c9bf5](https://github.com/K-Soo/hotel-job-api/commit/03c9bf5ab2a19e65441a090e497d76dd0828edad))
+
+
+### Chore
+
+* **release:** 0.0.5 ([81e2db1](https://github.com/K-Soo/hotel-job-api/commit/81e2db102b8499affb46ffdb43c78e5378dd2316))
+* **release:** 0.0.5 ([befa4a8](https://github.com/K-Soo/hotel-job-api/commit/befa4a8e8a0904c4f907d406796cfaf5e5f01614))
+
+### [0.0.4](https://github.com/K-Soo/hotel-job-api/compare/v0.0.3...v0.0.4) (2025-01-05)
+
+
+### Chore
+
+* **release:** 0.0.4 ([e9fe832](https://github.com/K-Soo/hotel-job-api/commit/e9fe832d9faff68fffd4348a5601eeb7d8e56f55))
+* resolve merge conflicts ([1d349d3](https://github.com/K-Soo/hotel-job-api/commit/1d349d3cf06b00ca99a82f0bf50b66d7719c3c03))
+
 ### [0.0.4](https://github.com/K-Soo/hotel-job-api/compare/v0.0.3...v0.0.4) (2025-01-05)
 
 
