@@ -24,32 +24,45 @@ export class CertificationService {
 
   async hashUp() {
     try {
+      const appEnv = this.configService.get('APP_ENV');
       const certpassUrl = this.configService.get('CERTPASS_URL');
 
       const ct_type = this.configService.get('CT_TYPE');
 
+      const web_siteid_hashYN = 'Y';
+
       // eslint-disable-next-line prefer-const
       let site_cd = this.configService.get('SITE_CODE');
-      // site_cd = 'AO0QE'; //test
+      if (appEnv === 'local') {
+        site_cd = 'AO0QE'; //test
+      }
 
       // eslint-disable-next-line prefer-const
       let web_siteid = this.configService.get('WEB_SIDE_ID');
-      // web_siteid = ''; //test
+      if (appEnv === 'local') {
+        web_siteid = '';
+      }
 
       // eslint-disable-next-line prefer-const
       let cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
-      // cryptoPassword = 'changeit'; //test
+      if (appEnv === 'local') {
+        cryptoPassword = 'changeit';
+      }
 
       // eslint-disable-next-line prefer-const
       let secretPemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
       //test
-      // const key_file_path = path.join(__dirname, '../../../splPrikeyPKCS8.pem');
-      // secretPemKey = fs.readFileSync(key_file_path).toString();
+      if (appEnv === 'local') {
+        const key_file_path = path.join(__dirname, '../../../splPrikeyPKCS8.pem');
+        secretPemKey = fs.readFileSync(key_file_path).toString();
+      }
 
       // eslint-disable-next-line prefer-const
       let kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
       //test
-      // kcpCertPemKey = g_conf_cert_info;
+      if (appEnv === 'local') {
+        kcpCertPemKey = g_conf_cert_info;
+      }
 
       const make_req_dt = generateDate();
 
@@ -59,8 +72,6 @@ export class CertificationService {
 
       const time = new Date().getTime();
       const ordr_idxx = make_req_dt + time;
-
-      const web_siteid_hashYN = '';
 
       const requestData = {
         site_cd: site_cd,
@@ -105,11 +116,11 @@ export class CertificationService {
               cert_method: '01', //인증수단 고정 01
               web_siteid: web_siteid, //사이트 식별코드: 옵션값
               site_cd: site_cd, //가맹점 사이트코드: 필수값
-              // Ret_URL: this.configService.get('CERT_VIEW_REDIRECT_URL'),
-              Ret_URL: 'http://localhost:3000/certification/result',
+              Ret_URL: this.configService.get('CERT_VIEW_REDIRECT_URL'),
+              // Ret_URL: 'http://localhost:3000/certification/result',
               cert_otp_use: 'Y', //본인확인 인증요청 시 OTP 승인여부: 필수값, Y:실명확인 + OTP 점유 확인
               cert_enc_use_ext: 'Y', //고도화 암호화 사용유무: 필수값, 고정값:Y
-              web_siteid_hashYN: '', //사이트 식별코드 사용유무: 옵션값, web_siteid 사용시 Y로 전달
+              web_siteid_hashYN: web_siteid_hashYN, //사이트 식별코드 사용유무: 옵션값, web_siteid 사용시 Y로 전달
               param_opt_1: 'opt1', //업체 추가 변수: 옵션값
               param_opt_2: 'opt2',
               param_opt_3: 'opt3',
