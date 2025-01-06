@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.0.4](https://github.com/K-Soo/hotel-job-api/compare/v0.0.3...v0.0.4) (2025-01-05)
 
+
+### Chore
+
+* **release:** 0.0.4 ([e9fe832](https://github.com/K-Soo/hotel-job-api/commit/e9fe832d9faff68fffd4348a5601eeb7d8e56f55))
+* resolve merge conflicts ([1d349d3](https://github.com/K-Soo/hotel-job-api/commit/1d349d3cf06b00ca99a82f0bf50b66d7719c3c03))
+
+### [0.0.4](https://github.com/K-Soo/hotel-job-api/compare/v0.0.3...v0.0.4) (2025-01-05)
+
 ### Features
 
 - 데이터베이스 마이그레이션 파일 삭제 및 migration 명령어 수정 ([3d824e7](https://github.com/K-Soo/hotel-job-api/commit/3d824e7fd7a9f59cf2bd9deceef8fd9986e654e7))
