@@ -133,7 +133,7 @@ export class CertificationService {
     }
   }
 
-  async verify(body: any) {
+  async verifyDnHash(body: any) {
     try {
       const dn_hash = body.dn_hash;
       const ordr_idxx = body.ordr_idxx;
