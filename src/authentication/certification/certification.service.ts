@@ -4,7 +4,6 @@ import { SecretsManagerService } from '../../providers/secrets-manager/secrets-m
 import { makeSignature } from '../../common/helpers/makeSignature.help';
 import { generateDate } from '../../common/utils/generateDate';
 import { ResponseStatus } from '../../common/constants/responseStatus';
-
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import * as https from 'https';
@@ -83,7 +82,6 @@ export class CertificationService {
         make_req_dt: make_req_dt,
         kcp_sign_data: kcp_sign_data,
       };
-      console.log('requestData: ', requestData);
 
       try {
         const response = await firstValueFrom(
@@ -91,12 +89,12 @@ export class CertificationService {
             headers: {
               'Content-Type': 'application/json',
             },
-            timeout: 5000,
+            // timeout: 15000,
           }),
         );
 
         const data = response.data;
-        console.log('data: ', data);
+        console.log('응답 결과: ', data);
 
         // 성공
         if (data.res_cd === '0000') {
@@ -117,7 +115,6 @@ export class CertificationService {
               web_siteid: web_siteid, //사이트 식별코드: 옵션값
               site_cd: site_cd, //가맹점 사이트코드: 필수값
               Ret_URL: this.configService.get('CERT_VIEW_REDIRECT_URL'),
-              // Ret_URL: 'http://localhost:3000/certification/result',
               cert_otp_use: 'Y', //본인확인 인증요청 시 OTP 승인여부: 필수값, Y:실명확인 + OTP 점유 확인
               cert_enc_use_ext: 'Y', //고도화 암호화 사용유무: 필수값, 고정값:Y
               web_siteid_hashYN: web_siteid_hashYN, //사이트 식별코드 사용유무: 옵션값, web_siteid 사용시 Y로 전달
@@ -140,6 +137,36 @@ export class CertificationService {
   }
 
   async verify(body: any) {
-    return { status: ResponseStatus.SUCCESS };
+    const dn_hash = body.dn_hash;
+    const cert_no = body.dn_hash;
+    try {
+      const certpassUrl = this.configService.get('CERTPASS_URL');
+      const site_cd = this.configService.get('SITE_CODE');
+      const ct_type = 'CHK';
+      // const hash_data = site_cd + '^' + ct_type + '^' + make_req_dt;
+
+      const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+
+      const requestData = {
+        //상점 정보
+        site_cd,
+        kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
+        // 등록 요청정보
+        ct_type,
+        //데이터 검증 요청정보
+        dn_hash,
+      };
+      const response = await firstValueFrom(
+        this.httpService.post(certpassUrl, requestData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // timeout: 15000,
+        }),
+      );
+      return { status: ResponseStatus.SUCCESS };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
