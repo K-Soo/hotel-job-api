@@ -20,25 +20,29 @@ export class CertificationService {
   ) {}
 
   async hashUp() {
+    // eslint-disable-next-line prefer-const
     let site_cd = this.configService.get('SITE_CODE');
     // site_cd = 'AO0QE'; //test
+
     const ct_type = this.configService.get('CT_TYPE');
 
+    // eslint-disable-next-line prefer-const
     let web_siteid = this.configService.get('WEB_SIDE_ID');
     // web_siteid = ''; //test
 
+    // eslint-disable-next-line prefer-const
     let cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
     // cryptoPassword = 'changeit'; //test
 
     const certpassUrl = this.configService.get('CERTPASS_URL');
-
+    // eslint-disable-next-line prefer-const
     let pemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
     //test
     // const key_file_path = path.join(__dirname, '../../../splPrikeyPKCS8.pem');
     // pemKey = fs.readFileSync(key_file_path).toString();
 
+    // eslint-disable-next-line prefer-const
     let kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
-    console.log('kcpCertPemKey: ', kcpCertPemKey);
     // kcpCertPemKey = g_conf_cert_info;
 
     const make_req_dt = generateDate();
