@@ -8,7 +8,9 @@ export class CertificationController {
 
   @ApiOperation({ summary: '본인인증 요청' })
   @Post('hash-up')
-  hashUp() {
-    return this.certificationService.hashUp();
+  async hashUp() {
+    const response = await this.certificationService.hashUp();
+
+    return response;
   }
 }
