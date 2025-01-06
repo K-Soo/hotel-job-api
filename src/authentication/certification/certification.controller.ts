@@ -18,8 +18,7 @@ export class CertificationController {
   @Post('verify')
   async certificationVerify(@Body() body: any) {
     const response = await this.certificationService.verifyDnHash(body);
-    console.log('response: ', response);
 
-    return { status: ResponseStatus.SUCCESS };
+    return response;
   }
 }

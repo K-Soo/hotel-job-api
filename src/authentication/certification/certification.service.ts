@@ -134,6 +134,7 @@ export class CertificationService {
   }
 
   async verifyDnHash(body: any) {
+    console.log('body: ', body);
     try {
       const dn_hash = body.dn_hash;
       const ordr_idxx = body.ordr_idxx;
