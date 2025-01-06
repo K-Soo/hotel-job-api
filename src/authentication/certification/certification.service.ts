@@ -137,6 +137,36 @@ export class CertificationService {
   }
 
   async verify(body: any) {
-    return { status: ResponseStatus.SUCCESS };
+    const dn_hash = body.dn_hash;
+    const cert_no = body.dn_hash;
+    try {
+      const certpassUrl = this.configService.get('CERTPASS_URL');
+      const site_cd = this.configService.get('SITE_CODE');
+      const ct_type = 'CHK';
+      // const hash_data = site_cd + '^' + ct_type + '^' + make_req_dt;
+
+      const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+
+      const requestData = {
+        //상점 정보
+        site_cd,
+        kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
+        // 등록 요청정보
+        ct_type,
+        //데이터 검증 요청정보
+        dn_hash,
+      };
+      const response = await firstValueFrom(
+        this.httpService.post(certpassUrl, requestData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // timeout: 15000,
+        }),
+      );
+      return { status: ResponseStatus.SUCCESS };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
