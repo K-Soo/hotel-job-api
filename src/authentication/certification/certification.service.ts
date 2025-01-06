@@ -77,9 +77,9 @@ export class CertificationService {
         // kcp_cert_info: JSON.stringify(kcpCertPemKey),
         kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
         ct_type: ct_type,
-        ordr_idxx: ordr_idxx,
+        ordr_idxx: ordr_idxx, //상점 관리 주문번호
         web_siteid: web_siteid,
-        make_req_dt: make_req_dt,
+        make_req_dt: make_req_dt, //해쉬 생성 요청 일시
         kcp_sign_data: kcp_sign_data,
       };
 
@@ -89,7 +89,7 @@ export class CertificationService {
             headers: {
               'Content-Type': 'application/json',
             },
-            // timeout: 15000,
+            timeout: 5000,
           }),
         );
 
@@ -102,8 +102,6 @@ export class CertificationService {
             status: ResponseStatus.SUCCESS,
             params: {
               // res default data
-              res_cd: data.res_cd,
-              res_msg: data.res_msg,
               up_hash: data.up_hash,
               kcp_merchant_time: data.kcp_merchant_time, //NHN KCP로 넘기는 상점 서버 시간: 필수값
               kcp_cert_lib_ver: data.kcp_cert_lib_ver, //NHN KCP CERT API 버전정보: 필수값
@@ -138,24 +136,37 @@ export class CertificationService {
 
   async verify(body: any) {
     const dn_hash = body.dn_hash;
-    const cert_no = body.dn_hash;
+    const ordr_idxx = body.ordr_idxx;
+    const cert_no = body.cert_no;
+    const enc_cert_Data = body.enc_cert_data2;
+
     try {
       const certpassUrl = this.configService.get('CERTPASS_URL');
       const site_cd = this.configService.get('SITE_CODE');
       const ct_type = 'CHK';
-      // const hash_data = site_cd + '^' + ct_type + '^' + make_req_dt;
+      const secretPemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
 
       const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+
+      const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
+
+      const hash_data = site_cd + '^' + ct_type + '^' + cert_no + dn_hash;
+
+      const kcp_sign_data = await makeSignature(hash_data, secretPemKey, cryptoPassword);
 
       const requestData = {
         //상점 정보
         site_cd,
         kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
+        ordr_idxx,
         // 등록 요청정보
         ct_type,
         //데이터 검증 요청정보
         dn_hash,
+        cert_no,
+        kcp_sign_data,
       };
+
       const response = await firstValueFrom(
         this.httpService.post(certpassUrl, requestData, {
           headers: {
@@ -164,9 +175,44 @@ export class CertificationService {
           // timeout: 15000,
         }),
       );
-      return { status: ResponseStatus.SUCCESS };
+      const data = response.data;
+
+      console.log('dn_hash 검증 요청 API : ', data);
+
+      if (data.res_cd === '0000') {
+        await this.decryptCertData({ ordr_idxx, enc_cert_Data: data.enc_cert_data2 });
+      }
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  async decryptCertData(data: { ordr_idxx: string; enc_cert_Data: string }) {
+    const site_cd = this.configService.get('SITE_CODE');
+    const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+    const certpassUrl = this.configService.get('CERTPASS_URL');
+
+    const ct_type = 'DEC';
+
+    // const hash_data = site_cd + '^' + ct_type + '^' + cert_no;
+
+    const requestData = {
+      site_cd,
+      kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
+      ordr_idxx: data.ordr_idxx,
+      ct_type,
+      enc_cert_Data: data.enc_cert_Data,
+    };
+
+    // const response = await firstValueFrom(
+    //   this.httpService.post(certpassUrl, requestData, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     // timeout: 15000,
+    //   }),
+    // );
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }
