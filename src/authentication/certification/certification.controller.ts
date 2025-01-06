@@ -10,7 +10,6 @@ export class CertificationController {
   @Post('hash-up')
   async hashUp() {
     const response = await this.certificationService.hashUp();
-    console.log('response: ', response);
 
     return response;
   }
