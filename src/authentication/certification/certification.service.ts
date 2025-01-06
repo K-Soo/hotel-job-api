@@ -26,7 +26,7 @@ export class CertificationService {
       const appEnv = this.configService.get('APP_ENV');
       const certpassUrl = this.configService.get('CERTPASS_URL');
 
-      const ct_type = this.configService.get('CT_TYPE');
+      const ct_type = 'HAS';
 
       const web_siteid_hashYN = 'Y';
 
@@ -74,7 +74,6 @@ export class CertificationService {
 
       const requestData = {
         site_cd: site_cd,
-        // kcp_cert_info: JSON.stringify(kcpCertPemKey),
         kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
         ct_type: ct_type,
         ordr_idxx: ordr_idxx, //상점 관리 주문번호
@@ -89,7 +88,7 @@ export class CertificationService {
             headers: {
               'Content-Type': 'application/json',
             },
-            timeout: 5000,
+            timeout: 7000,
           }),
         );
 
@@ -135,12 +134,16 @@ export class CertificationService {
   }
 
   async verify(body: any) {
-    const dn_hash = body.dn_hash;
-    const ordr_idxx = body.ordr_idxx;
-    const cert_no = body.cert_no;
-    const enc_cert_Data = body.enc_cert_data2;
-
     try {
+      const dn_hash = body.dn_hash;
+      const ordr_idxx = body.ordr_idxx;
+      const cert_no = body.cert_no;
+      const enc_cert_Data = body.enc_cert_data2;
+
+      if (!enc_cert_Data) {
+        throw new BadRequestException('cert data required');
+      }
+
       const certpassUrl = this.configService.get('CERTPASS_URL');
       const site_cd = this.configService.get('SITE_CODE');
       const ct_type = 'CHK';
@@ -167,52 +170,65 @@ export class CertificationService {
         kcp_sign_data,
       };
 
-      const response = await firstValueFrom(
-        this.httpService.post(certpassUrl, requestData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // timeout: 15000,
-        }),
-      );
-      const data = response.data;
+      try {
+        const response = await firstValueFrom(
+          this.httpService.post(certpassUrl, requestData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 7000,
+          }),
+        );
+        const data = response.data;
 
-      console.log('dn_hash 검증 요청 API : ', data);
+        console.log('dn_hash 검증 요청 API : ', data);
 
-      if (data.res_cd === '0000') {
-        await this.decryptCertData({ ordr_idxx, enc_cert_Data: data.enc_cert_data2 });
+        if (data.res_cd === '0000') {
+          await this.decryptCertData({ ordr_idxx, enc_cert_Data, dn_hash, cert_no });
+        }
+        return { status: ResponseStatus.FAILURE, message: data.res_msg };
+      } catch (error) {
+        throw error;
       }
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async decryptCertData(data: { ordr_idxx: string; enc_cert_Data: string }) {
+  async decryptCertData(certData: { ordr_idxx: string; enc_cert_Data: string; dn_hash: string; cert_no: string }) {
     const site_cd = this.configService.get('SITE_CODE');
     const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+    const secretPemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
+    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
     const certpassUrl = this.configService.get('CERTPASS_URL');
 
     const ct_type = 'DEC';
 
-    // const hash_data = site_cd + '^' + ct_type + '^' + cert_no;
+    const hash_data = site_cd + '^' + ct_type + '^' + certData.cert_no;
+
+    const kcp_sign_data = await makeSignature(hash_data, secretPemKey, cryptoPassword);
 
     const requestData = {
       site_cd,
       kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
-      ordr_idxx: data.ordr_idxx,
+      ordr_idxx: certData.ordr_idxx,
       ct_type,
-      enc_cert_Data: data.enc_cert_Data,
+      dn_hash: certData.dn_hash,
+      enc_cert_Data: certData.enc_cert_Data,
+      kcp_sign_data,
     };
 
-    // const response = await firstValueFrom(
-    //   this.httpService.post(certpassUrl, requestData, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     // timeout: 15000,
-    //   }),
-    // );
+    const response = await firstValueFrom(
+      this.httpService.post(certpassUrl, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 7000,
+      }),
+    );
+    const data = response.data;
+    console.log('복호화 응답데이터 PAI : ', data);
 
-    return { status: ResponseStatus.SUCCESS };
+    return { status: ResponseStatus.SUCCESS, data };
   }
 }
