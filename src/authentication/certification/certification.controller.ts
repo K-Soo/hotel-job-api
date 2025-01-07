@@ -16,7 +16,7 @@ export class CertificationController {
   }
 
   @Post('verify')
-  async certificationVerify(@Body() verify: VerifyDto) {
+  async certificationVerifyEmployer(@Body() verify: VerifyDto) {
     if (!verify) {
       throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
     }
@@ -27,4 +27,30 @@ export class CertificationController {
 
     return decryptCert;
   }
+
+  @Post('verify/applicant')
+  async certificationVerifyApplicant(@Body() verify: VerifyDto) {
+    if (!verify) {
+      throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
+    }
+
+    const verifyDnHash = await this.certificationService.verifyDnHash(verify);
+
+    const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
+
+    return decryptCert;
+  }
+
+  // @Post('verify')
+  // async certificationVerify(@Body() verify: VerifyDto) {
+  //   if (!verify) {
+  //     throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
+  //   }
+
+  //   const verifyDnHash = await this.certificationService.verifyDnHash(verify);
+
+  //   const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
+
+  //   return decryptCert;
+  // }
 }
