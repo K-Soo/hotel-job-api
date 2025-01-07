@@ -1,15 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  Res,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
-import { EmployerResponseDto } from './dto/employer-response.dto';
+import { EmployerResponseDto } from './dto/employer.response.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { AuthService } from '../../authentication/auth/auth.service';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
+import { Roles } from '../../common/decorators/metadata/roles.decorator';
 
 @ApiTags('사업자 유저')
+@ApiBearerAuth()
+@UseGuards(PassportJwtGuard, RolesGuard)
+@Roles('EMPLOYER')
 @Controller('employers')
 export class EmployersController {
   constructor(
@@ -18,10 +36,17 @@ export class EmployersController {
     private readonly configService: ConfigService,
   ) {}
 
-  @ApiOperation({ summary: '회원가입' })
-  @Post()
-  @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
-  async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {}
+  @ApiOperation({ summary: '계정정보' })
+  @ApiResponse({
+    status: 200,
+    description: '계정정보 응답값',
+    type: EmployerResponseDto,
+  })
+  // @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
+  @Get()
+  accountInfo(@Req() req: Request) {
+    return this.employersService.accountInfo(req.user['uuid']);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
