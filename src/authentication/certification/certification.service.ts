@@ -154,7 +154,7 @@ export class CertificationService {
 
       const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
 
-      const hash_data = site_cd + '^' + ct_type + '^' + cert_no + dn_hash;
+      const hash_data = site_cd + '^' + ct_type + '^' + cert_no + '^' + dn_hash;
 
       const kcp_sign_data = await makeSignature(hash_data, secretPemKey, cryptoPassword);
 
