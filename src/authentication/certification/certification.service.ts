@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SecretsManagerService } from '../../providers/secrets-manager/secrets-manager.service';
 import { makeSignature } from '../../common/helpers/makeSignature.help';
 import { generateDate } from '../../common/utils/generateDate';
@@ -262,6 +262,13 @@ export class CertificationService {
           throw new Error('Employer not found');
         }
 
+        const existingCertification = await this.certificationRepository.findOne({
+          where: { employer, certificationType: CertificationType.EMPLOYER },
+        });
+        if (existingCertification) {
+          throw new ConflictException('already exists');
+        }
+
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,
@@ -283,6 +290,16 @@ export class CertificationService {
         if (!applicant) {
           throw new Error('Applicant not found');
         }
+
+        // 기존 인증 데이터 확인
+        const existingCertification = await this.certificationRepository.findOne({
+          where: { applicant, certificationType: CertificationType.APPLICANT },
+        });
+
+        if (existingCertification) {
+          throw new ConflictException('already exists');
+        }
+
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,

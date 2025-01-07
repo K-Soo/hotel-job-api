@@ -38,9 +38,7 @@ export class CertificationController {
 
     const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
 
-    this.certificationService.saveCertification(decryptCert, existingUser, user.role);
-
-    return decryptCert;
+    return this.certificationService.saveCertification(decryptCert, existingUser, user.role);
   }
 
   @ApiOperation({ summary: '아이디 찾기 인증' })

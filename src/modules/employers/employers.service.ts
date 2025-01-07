@@ -37,6 +37,17 @@ export class EmployersService {
     return safeQuery(() => this.repo.findOne({ where: { id } }));
   }
 
+  // 계정정보
+  accountInfo(id: string) {
+    return safeQuery(async () => {
+      const account = await this.repo.findOne({ where: { id }, relations: ['certification'] });
+      return {
+        ...account,
+        certification: account.certification ?? null,
+      };
+    });
+  }
+
   async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
     try {
       const doesExist = await this.findOneUserId(userId);

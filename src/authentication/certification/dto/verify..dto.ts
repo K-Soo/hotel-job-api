@@ -2,36 +2,46 @@ import { IsString, IsIn, IsNotEmpty, IsOptional, IsEnum } from 'class-validator'
 import { CommType } from '../../../common/constants/app.enum';
 export class VerifyDto {
   @IsString()
+  @IsOptional()
   CI: string;
 
-  @IsIn(['Y', 'N'])
-  CI_ENC_YN: 'Y' | 'N';
+  @IsString()
+  @IsOptional()
+  CI_ENC_YN: string;
 
   @IsString()
+  @IsOptional()
   CI_URL: string;
 
   @IsString()
+  @IsOptional()
   DI: string;
 
   @IsString()
+  @IsOptional()
   DI_URL: string;
 
   @IsString()
+  @IsOptional()
   Logo_URL: string;
 
   @IsIn(['Y', 'N'])
   PRE_USE_YN: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   Ret_Noti: string;
 
   @IsString()
+  @IsOptional()
   Ret_URL: string;
 
   @IsString()
+  @IsOptional()
   auth_tx_id: string;
 
   @IsString()
+  @IsOptional()
   birth_day: string;
 
   @IsIn(['Y', 'N'])
@@ -47,9 +57,11 @@ export class VerifyDto {
   cert_enc_use_ext: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   cert_method: string;
 
   @IsString()
+  @IsOptional()
   cert_no: string;
 
   @IsIn(['Y', 'N'])
@@ -57,10 +69,11 @@ export class VerifyDto {
   cert_otp_use: 'Y' | 'N';
 
   @IsEnum(CommType)
-  @IsNotEmpty()
+  @IsOptional()
   comm_id: CommType;
 
   @IsString()
+  @IsOptional()
   day: string;
 
   @IsString()
@@ -72,10 +85,11 @@ export class VerifyDto {
   enc_cert_data2: string;
 
   @IsString()
+  @IsOptional()
   info_code: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   kcp_merchant_time: string;
 
   @IsString()
@@ -104,26 +118,30 @@ export class VerifyDto {
   param_opt_3: string;
 
   @IsString()
+  @IsOptional()
   per_cert_no: string;
 
   @IsString()
+  @IsOptional()
   phone_no: string;
 
   @IsString()
+  @IsOptional()
   req_tx: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   res_cd: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   res_msg: string;
 
   @IsIn(['Y', 'N'])
   safe_guard_yn: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   session_id: string;
 
   @IsString()
@@ -136,6 +154,7 @@ export class VerifyDto {
   site_key: string;
 
   @IsString()
+  @IsOptional()
   tx_type: string;
 
   @IsString()
@@ -143,15 +162,19 @@ export class VerifyDto {
   up_hash: string;
 
   @IsString()
+  @IsOptional()
   user_name: string;
 
   @IsString()
+  @IsOptional()
   user_name_url_yn: string;
 
   @IsString()
+  @IsOptional()
   van_sms_yn: string;
 
   @IsString()
+  @IsOptional()
   van_tx_id: string;
 
   @IsString()
@@ -161,5 +184,22 @@ export class VerifyDto {
   web_siteid_hashYN: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   year: string;
+
+  @IsString()
+  @IsOptional()
+  site_url: string;
+
+  @IsString()
+  @IsOptional()
+  server_hash: string;
+
+  @IsString()
+  @IsOptional()
+  reg_dt: string;
+
+  @IsString()
+  @IsOptional()
+  re_otp: string;
 }
