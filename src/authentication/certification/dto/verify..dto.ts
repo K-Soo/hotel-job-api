@@ -4,8 +4,8 @@ export class VerifyDto {
   @IsString()
   CI: string;
 
-  @IsIn(['Y', 'N'])
-  CI_ENC_YN: 'Y' | 'N';
+  @IsString()
+  CI_ENC_YN: string;
 
   @IsString()
   CI_URL: string;
@@ -29,6 +29,7 @@ export class VerifyDto {
   Ret_URL: string;
 
   @IsString()
+  @IsOptional()
   auth_tx_id: string;
 
   @IsString()
@@ -47,6 +48,7 @@ export class VerifyDto {
   cert_enc_use_ext: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   cert_method: string;
 
   @IsString()
@@ -75,7 +77,7 @@ export class VerifyDto {
   info_code: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   kcp_merchant_time: string;
 
   @IsString()
@@ -124,6 +126,7 @@ export class VerifyDto {
   safe_guard_yn: 'Y' | 'N';
 
   @IsString()
+  @IsOptional()
   session_id: string;
 
   @IsString()
@@ -136,6 +139,7 @@ export class VerifyDto {
   site_key: string;
 
   @IsString()
+  @IsOptional()
   tx_type: string;
 
   @IsString()
@@ -149,9 +153,11 @@ export class VerifyDto {
   user_name_url_yn: string;
 
   @IsString()
+  @IsNotEmpty()
   van_sms_yn: string;
 
   @IsString()
+  @IsOptional()
   van_tx_id: string;
 
   @IsString()
@@ -162,4 +168,16 @@ export class VerifyDto {
 
   @IsString()
   year: string;
+
+  @IsString()
+  site_url: string;
+
+  @IsString()
+  server_hash: string;
+
+  @IsString()
+  reg_dt: string;
+
+  @IsString()
+  re_otp: string;
 }
