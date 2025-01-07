@@ -32,7 +32,7 @@ import { ConsentsService } from '../../modules/consents/consents.service';
 import { DataSource } from 'typeorm';
 import { CreateSignupDto } from './interfaces/create-sign-up.dto';
 import { ResponseSignUpDto } from './interfaces/response-sign-up.dto';
-
+import { Employer } from '../../modules/employers/entities/employer.entity';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -50,7 +50,7 @@ export class AuthController {
   // @Throttle(5, 60)
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
   async signIn(@Body() _: SignInDto, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
-    const { id, provider, role } = req.user as EmployerUser;
+    const { id, provider, role } = req.user as Employer;
 
     const accessToken = await this.authService.generateAccessToken(id, provider, role);
     const refreshToken = await this.authService.generateRefreshToken(id, provider);

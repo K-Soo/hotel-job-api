@@ -1,5 +1,5 @@
-import { IsString, IsIn, IsNotEmpty, IsOptional } from 'class-validator';
-
+import { IsString, IsIn, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { CommType } from '../../../common/constants/app.enum';
 export class VerifyDto {
   @IsString()
   CI: string;
@@ -56,9 +56,9 @@ export class VerifyDto {
   @IsString()
   cert_otp_use: 'Y' | 'N';
 
-  @IsString()
+  @IsEnum(CommType)
   @IsNotEmpty()
-  comm_id: string;
+  comm_id: CommType;
 
   @IsString()
   day: string;

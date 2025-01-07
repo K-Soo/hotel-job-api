@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { RequestUser } from './interfaces/user.interface';
 import { ConfigService } from '@nestjs/config';
 import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
-
+import { Applicant } from '../../modules/applicants/entities/applicant.entity';
 @Controller('oauth')
 export class OauthController {
   constructor(
@@ -16,7 +16,8 @@ export class OauthController {
   @Post('kakao')
   @UseGuards(AuthGuard('kakao-custom'))
   async kakaoSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const user = req.user as RequestUser;
+    const user = req.user as Applicant;
+    console.log('@@@@@@@', user.constructor.name === 'Applicant');
 
     const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
@@ -35,6 +36,9 @@ export class OauthController {
       provider: user.provider,
       role: user.role,
       accessToken: accessToken,
+      certificationStatus: user.certificationStatus,
+      accountStatus: user.accountStatus,
+      nickname: user.nickname,
     };
   }
 }

@@ -8,13 +8,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Consent } from '../../consents/entities/consent.entity';
-import { Role, Provider, AccountStatus, VerificationStatus } from '../../../common/constants/app.enum';
+import {
+  Role,
+  Provider,
+  AccountStatus,
+  VerificationStatus,
+  CertificationStatus,
+} from '../../../common/constants/app.enum';
 import { Company } from '../company/entities/company.entity';
 import { Exclude } from 'class-transformer';
+import { Certification } from '../../../authentication/certification/entities/certification.entity';
 
-// 8자리 난수 추가
-function generateRandom8Digit(): string {
-  return Math.floor(10000000 + Math.random() * 90000000).toString();
+function generateRandom10Digit(): string {
+  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
 }
 
 @Entity()
@@ -24,6 +30,13 @@ export class Employer {
 
   @OneToOne(() => Company, (company) => company.employer)
   company: Company;
+
+  @OneToOne(() => Certification, (certification) => certification.employer)
+  certification: Certification;
+
+  //본인인증
+  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
+  certificationStatus: CertificationStatus;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -52,13 +65,8 @@ export class Employer {
 
   @BeforeInsert()
   async generateUniqueNickname() {
-    const adjectives = ['열정적인', '귀여운', '사랑스러운', '활기찬', '배고픈'];
-    const nouns = ['호랑이', '하마', '고양이', '강아지', '늑대'];
-
-    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-    const randomNumber = generateRandom8Digit();
-    this.nickname = `${randomAdjective}${randomNoun}${randomNumber}`;
+    const randomNumber = generateRandom10Digit();
+    this.nickname = `${randomNumber}`;
   }
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })

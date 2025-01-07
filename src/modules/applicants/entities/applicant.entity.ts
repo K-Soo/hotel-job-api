@@ -6,14 +6,37 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm';
-import { Role, Provider } from '../../../common/constants/app.enum';
+import { Role, Provider, CertificationStatus, AccountStatus } from '../../../common/constants/app.enum';
 import { Consent } from '../../consents/entities/consent.entity';
 import { Exclude } from 'class-transformer';
 import { Resume } from '../../resumes/entities/resume.entity';
 import { User } from '../../users/entities/user.entity';
+import { Certification } from '../../../authentication/certification/entities/certification.entity';
+
+function generateRandom10Digit(): string {
+  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+}
+
 @Entity('applicant')
 export class Applicant {
+  @OneToOne(() => Consent, (consent) => consent.applicant)
+  consent: Consent;
+
+  @OneToMany(() => Resume, (resumes) => resumes.applicant)
+  resumes: Resume[];
+
+  @OneToOne(() => User, (user) => user.applicant)
+  user: User;
+
+  @OneToOne(() => Certification, (certification) => certification.applicant)
+  certification: Certification;
+
+  //본인인증
+  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
+  certificationStatus: CertificationStatus;
+
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,14 +52,18 @@ export class Applicant {
   @Column({ type: 'enum', enum: Role, default: Role.JOB_SEEKER })
   role: Role;
 
-  @OneToMany(() => Resume, (resumes) => resumes.applicant)
-  resumes: Resume[];
+  //계정상태
+  @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.ACTIVE })
+  accountStatus: AccountStatus;
 
-  @OneToOne(() => Consent, (consent) => consent.applicant)
-  consent: Consent;
+  @Column({ unique: true, default: generateRandom10Digit() })
+  nickname: string;
 
-  @OneToOne(() => User, (user) => user.applicant)
-  user: User;
+  @BeforeInsert()
+  async generateUniqueNickname() {
+    const randomNumber = generateRandom10Digit();
+    this.nickname = `${randomNumber}`;
+  }
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
