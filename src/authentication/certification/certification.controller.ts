@@ -1,8 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { CertificationService } from './certification.service';
-import { ResponseStatus } from '../../common/constants/responseStatus';
+import { customHttpException } from '../../common/constants/custom-http-exception';
 import { ApiOperation } from '@nestjs/swagger';
-
+import { VerifyDto } from './dto/verify..dto';
 @Controller('certification')
 export class CertificationController {
   constructor(private readonly certificationService: CertificationService) {}
@@ -10,16 +10,21 @@ export class CertificationController {
   @ApiOperation({ summary: '본인인증 요청' })
   @Post('start')
   async certificationStart() {
-    const response = await this.certificationService.start();
+    const response = await this.certificationService.startCertification();
 
     return response;
   }
 
   @Post('verify')
-  async certificationVerify(@Body() body: any) {
-    const response = await this.certificationService.verify(body);
-    console.log('response: ', response);
+  async certificationVerify(@Body() verify: VerifyDto) {
+    if (!verify) {
+      throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
+    }
 
-    return { status: ResponseStatus.SUCCESS };
+    const verifyDnHash = await this.certificationService.verifyDnHash(verify);
+
+    const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
+
+    return decryptCert;
   }
 }

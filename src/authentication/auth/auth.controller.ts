@@ -105,13 +105,6 @@ export class AuthController {
       domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
 
-    // accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2IyODNmMC1kOTQyLTQyY2EtYTdiZC1iNjAzOWQ2YTNmZTIiLCJwcm92aWRlciI6IkxPQ0FMIiwiaXNzIjoiaG90ZWwtam9iLWNvbm5lY3QiLCJyb2xlIjoiRU1QTE9ZRVIiLCJpYXQiOjE3MzU5MTAyMTQsImV4cCI6MTczNjUxNTAxNH0.v3iS_UUMsNSoqRcHY0QeFsP1ZeKE3si8uwDO2KYI0cM';
-    // accountStatus: 'ACTIVE';
-    // nickname: '활기찬강아지38663150';
-    // provider: 'LOCAL';
-    // role: 'EMPLOYER';
-    // companyVerificationStatus
-
     return {
       ...employerUser,
       accessToken,
