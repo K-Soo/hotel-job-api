@@ -1,6 +1,7 @@
 export enum Provider {
   LOCAL = 'LOCAL',
   KAKAO = 'KAKAO',
+  GOOGLE = 'GOOGLE',
 }
 
 export enum Role {
@@ -36,6 +37,30 @@ export enum VerificationStatus {
   PENDING = 'PENDING',
   VERIFIED = 'VERIFIED',
   REJECTED = 'REJECTED',
+}
+
+export enum CertificationStatus {
+  PENDING = 'PENDING', // 인증 대기 중
+  VERIFIED = 'VERIFIED', // 인증 완료
+  REJECTED = 'REJECTED', // 인증 거부
+  UNVERIFIED = 'UNVERIFIED', // 인증되지 않음
+}
+
+export enum CertificationType {
+  FIND_ID = 'FIND_ID',
+  RESET_PASSWORD = 'RESET_PASSWORD',
+  EMPLOYER = 'EMPLOYER',
+  APPLICANT = 'APPLICANT',
+  RECOVER_PASSWORD = 'RECOVER_PASSWORD',
+}
+
+export enum CommType {
+  SKT = 'SKT', //SK 텔레콤
+  LGT = 'LGT', // LG U+
+  KTF = 'KTF', //KT
+  SKM = 'SKM', //SKT 알뜰폰
+  LGM = 'LGM', //LG U+ 알뜰폰
+  KTM = 'KTM', //KT 알뜰폰
 }
 
 export enum Gender {
