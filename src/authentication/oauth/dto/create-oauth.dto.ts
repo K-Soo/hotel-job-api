@@ -11,6 +11,5 @@ export class CreateOAuthDto extends CreateConsentDto {
   @IsString()
   @IsNotEmpty()
   @Matches(regex.ALL_SPACE)
-  @IsIn(['Y', 'N'])
   requestType: 'signIn' | 'signUp';
 }
