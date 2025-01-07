@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/K-Soo/hotel-job-api/compare/v0.0.8...v0.0.9) (2025-01-07)
+
+
+### Features
+
+* 요청에서 사용자 정보 가져오는 주석 제거 ([28cee66](https://github.com/K-Soo/hotel-job-api/commit/28cee66312db9f0f7f0868253e6e19e755e05dfd))
+* 인증 모듈에 TypeORM 및 관련 엔티티 추가 ([1538ec7](https://github.com/K-Soo/hotel-job-api/commit/1538ec7af81c551aae6eb85df4a58337bba4c881))
+* 인증 상태 및 유형을 정의하는 CertificationStatus, CertificationType, CommType 열거형 추가 ([50a134f](https://github.com/K-Soo/hotel-job-api/commit/50a134f3066cb165c23a78be7c0456126ec9e1e3))
+* 인증 서비스에 인증 저장 및 처리 로직 추가 ([4b09ff5](https://github.com/K-Soo/hotel-job-api/commit/4b09ff549c39c95c08d66bd92a771e14c5a5f104))
+* 인증 엔티티에 Applicant 및 Employer와의 관계 추가 및 certificationType, comm_id 필드 추가 ([21e0639](https://github.com/K-Soo/hotel-job-api/commit/21e0639fc251bcb39e9d8f6d51425db0cd17fbdc))
+* 인증 컨트롤러에 본인인증 복호화 및 계정/비밀번호 찾기 인증 메서드 추가 ([c52c2be](https://github.com/K-Soo/hotel-job-api/commit/c52c2be1001707483d14059b1bcd90a4e02958c5))
+* 인증 테이블 및 관련 열거형 추가, 지원자 및 고용주 테이블에 인증 상태 및 닉네임 필드 추가 ([068ca06](https://github.com/K-Soo/hotel-job-api/commit/068ca0670e98a98ac3e3487d5be928227a3d6a57))
+* 인증서 저장 로직을 반환값으로 변경 ([133439a](https://github.com/K-Soo/hotel-job-api/commit/133439a36bc3442088199903df42310e6fbaad45))
+* Applicant 엔티티에 인증 상태 및 계정 상태 필드 추가, 고유한 닉네임 생성 로직 구현 ([5edf2b7](https://github.com/K-Soo/hotel-job-api/commit/5edf2b7df0915457beb6a516d120cc93b64f82b7))
+* Applicant 엔티티의 닉네임 필드에 기본값으로 고유한 10자리 랜덤 값 생성 로직 추가 ([55df784](https://github.com/K-Soo/hotel-job-api/commit/55df784aaef82f015e8ad24aee75338f719c94b2))
+* AuthController에서 req.user 타입을 Employer로 변경 ([d70fa02](https://github.com/K-Soo/hotel-job-api/commit/d70fa0221955e465908fab1cbbf87b78c41f9528))
+* DecryptCertResponse 인터페이스 추가 및 필드 정의 ([964ed21](https://github.com/K-Soo/hotel-job-api/commit/964ed2161b40e5bf6f6387625f22afc4b9e285ba))
+* Employer 엔티티에 인증 관련 필드 추가 및 닉네임 생성 로직 수정 ([fec23cf](https://github.com/K-Soo/hotel-job-api/commit/fec23cfcb39c46ab880d8c80471d030bb1b40657))
+* EmployersController의 create 메서드에서 주석 제거 및 빈 구현으로 변경 ([4e532c9](https://github.com/K-Soo/hotel-job-api/commit/4e532c9055b3915c990dec1b98d5fd966c3b559e))
+* MeResponseDto에 certificationStatus 필드 추가 ([daed526](https://github.com/K-Soo/hotel-job-api/commit/daed526b4701cced5ffbb7d66ddbf89e308d3be9))
+* OauthController에서 RequestUser를 Applicant로 변경 및 추가 필드 포함 ([af53c00](https://github.com/K-Soo/hotel-job-api/commit/af53c00af5fad9b1225b7b8ad0474c2cacf3d8e3))
+* ResponseSignUpDto에 certificationStatus 및 companyVerificationStatus 필드 추가 ([4903e54](https://github.com/K-Soo/hotel-job-api/commit/4903e5446504b773e248fac52f7f37e27a1dd5d6))
+* SignInResponseDto에 certificationStatus 및 companyVerificationStatus 필드 추가 ([0656fc1](https://github.com/K-Soo/hotel-job-api/commit/0656fc1c20037af6222f67115e23a046162a2c06))
+* VerifyDto에 선택적 필드 추가 및 기존 필드의 유효성 검사 수정 ([17db5d3](https://github.com/K-Soo/hotel-job-api/commit/17db5d3c5a05075b6984d6029047d9cab30a7c46))
+* VerifyDto에 선택적 필드 추가 및 기존 필드의 유효성 검사 수정 ([019fa2d](https://github.com/K-Soo/hotel-job-api/commit/019fa2d3aa3333f3f3cf088f396e570d59078de9))
+* VerifyDto에 comm_id 필드를 Enum으로 변경 및 class-validator 추가 ([124ae38](https://github.com/K-Soo/hotel-job-api/commit/124ae38c72ad4d1d563004b91ca20e7b7111e2b6))
+
 ### [0.0.8](https://github.com/K-Soo/hotel-job-api/compare/v0.0.7...v0.0.8) (2025-01-07)
 
 
