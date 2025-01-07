@@ -214,6 +214,7 @@ export class CertificationService {
       kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
       ordr_idxx: certData.ordr_idxx,
       ct_type,
+      cert_no: certData.cert_no,
       dn_hash: certData.dn_hash,
       enc_cert_Data: certData.enc_cert_Data,
       kcp_sign_data,
@@ -229,6 +230,10 @@ export class CertificationService {
     );
     const data = response.data;
     console.log('복호화 응답데이터 PAI : ', data);
+
+    if (data.res_cd !== '0000') {
+      return { status: ResponseStatus.FAILURE, message: data.res_msg };
+    }
 
     return { status: ResponseStatus.SUCCESS, data };
   }
