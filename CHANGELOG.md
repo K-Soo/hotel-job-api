@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/K-Soo/hotel-job-api/compare/v0.0.7...v0.0.8) (2025-01-07)
+
+
+### Features
+
+* 인증 서비스에 지원자 인증 검증 메서드 추가 ([644e9c7](https://github.com/K-Soo/hotel-job-api/commit/644e9c7673bc7989d8adc7d9fe9893d704986b0e))
+* VerifyDto에 선택적 필드(param_opt_1, param_opt_2, param_opt_3) 추가 ([2dcb509](https://github.com/K-Soo/hotel-job-api/commit/2dcb509e90041b9c270062bba900156f892827ce))
+
 ### [0.0.7](https://github.com/K-Soo/hotel-job-api/compare/v0.0.6...v0.0.7) (2025-01-07)
 
 
