@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/K-Soo/hotel-job-api/compare/v0.0.6...v0.0.7) (2025-01-07)
+
+
+### Features
+
+* 인증 서비스에 인증 관련 HTTP 예외 추가 ([f0c3c7e](https://github.com/K-Soo/hotel-job-api/commit/f0c3c7eb554e00dd3e38d98cda89cd74ff0d0896))
+* 인증 서비스에 VerifyDto 추가 및 데이터 검증을 위한 클래스-validator 적용 ([c9eeb62](https://github.com/K-Soo/hotel-job-api/commit/c9eeb6254abb53021e9e6782acf87b5a7b59396f))
+* 인증 서비스에서 인증 데이터에 cert_no 추가 및 응답 코드 검증 로직 추가 ([fb0d0f1](https://github.com/K-Soo/hotel-job-api/commit/fb0d0f11a8481981864950b3d94face28131c578))
+* 인증 서비스에서 인증 엔티티 추가 및 불필요한 주석 제거 ([0eb009a](https://github.com/K-Soo/hotel-job-api/commit/0eb009ae117aafaab1ece5b876c6d0db80469423))
+* 인증 서비스의 해시 데이터 구성에 dn_hash 추가 ([6cedfac](https://github.com/K-Soo/hotel-job-api/commit/6cedfacaa77c199f789f624f64d33abf71572f42))
+* 인증 서비스의 verify 메서드 이름을 verifyDnHash로 변경 ([f456803](https://github.com/K-Soo/hotel-job-api/commit/f45680311b79731f25ad317eeebc60f159ec12c6))
+* 인증 서비스의 verify 메서드에 데이터 검증 로직 추가 및 decryptCertData 메서드 구현 ([ae766e9](https://github.com/K-Soo/hotel-job-api/commit/ae766e9b45cdb189473bd1231b066ebf1328b171))
+* 인증 서비스의 verify 메서드에서 요청 본문 검증 추가 및 응답 처리 로직 수정 ([9c1e100](https://github.com/K-Soo/hotel-job-api/commit/9c1e100e19ee3e5005d4c7c719052b6a2b2c5c17))
+* 인증 서비스의 verify 메서드에서 응답을 반환하도록 수정 및 요청 본문 로깅 추가 ([da58446](https://github.com/K-Soo/hotel-job-api/commit/da58446367e87e7b8469e35195f1b66e99b6d995))
+* 인증 서비스의 verify 및 decryptCertData 메서드 수정, 데이터 검증 로직 추가 ([89ec290](https://github.com/K-Soo/hotel-job-api/commit/89ec29053c68e0ce22ac97ee5d6dc2045a46ac9f))
+* 인증 서비스의 verifyDnHash 및 decryptCert 메서드에서 DTO 사용으로 코드 개선 및 오류 처리 로직 수정 ([08cbf72](https://github.com/K-Soo/hotel-job-api/commit/08cbf729e2a0808a6bde27420e03c24ecc543f4a))
+* CreateOAuthDto에서 requestType 필드의 유효성 검사 조건 수정 ([90edb2f](https://github.com/K-Soo/hotel-job-api/commit/90edb2f21ba8e0f5564e51c8413a623114aa8579))
+* DecryptCertDto 클래스 추가 및 VerifyDto에서 필드 선택 ([031515a](https://github.com/K-Soo/hotel-job-api/commit/031515af86190a6dfe4f36717c7a2094a4152c8c))
+
 ### [0.0.6](https://github.com/K-Soo/hotel-job-api/compare/v0.0.5...v0.0.6) (2025-01-06)
 
 
