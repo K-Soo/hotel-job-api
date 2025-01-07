@@ -1,4 +1,4 @@
-import { IsString, IsIn, IsNotEmpty } from 'class-validator';
+import { IsString, IsIn, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class VerifyDto {
   @IsString()
@@ -92,12 +92,15 @@ export class VerifyDto {
   ordr_idxx: string;
 
   @IsString()
+  @IsOptional()
   param_opt_1: string;
 
   @IsString()
+  @IsOptional()
   param_opt_2: string;
 
   @IsString()
+  @IsOptional()
   param_opt_3: string;
 
   @IsString()
