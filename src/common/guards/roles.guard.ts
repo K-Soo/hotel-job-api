@@ -15,7 +15,6 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    // 요청에서 사용자 정보 가져오기
     const { user } = context.switchToHttp().getRequest();
 
     if (!user || !user.role) {

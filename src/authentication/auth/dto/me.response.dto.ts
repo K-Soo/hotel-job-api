@@ -1,5 +1,11 @@
 import { Expose } from 'class-transformer';
-import { AccountStatus, VerificationStatus, Role, Provider } from '../../../common/constants/app.enum';
+import {
+  AccountStatus,
+  VerificationStatus,
+  Role,
+  Provider,
+  CertificationStatus,
+} from '../../../common/constants/app.enum';
 export class MeResponseDto {
   @Expose()
   role: Role;
@@ -15,4 +21,7 @@ export class MeResponseDto {
 
   @Expose()
   companyVerificationStatus: VerificationStatus;
+
+  @Expose()
+  certificationStatus: CertificationStatus;
 }

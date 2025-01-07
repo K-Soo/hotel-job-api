@@ -21,21 +21,7 @@ export class EmployersController {
   @ApiOperation({ summary: '회원가입' })
   @Post()
   @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
-  async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {
-    // console.log('인스턴스?: ', createEmployerDto instanceof CreateEmployerDto);
-    // const user = await this.employersService.create(createEmployerDto);
-    // const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
-    // res.cookie('refresh_token', accessToken, {
-    //   httpOnly: true,
-    //   secure: this.configService.get('APP_ENV') !== 'local',
-    //   sameSite: 'lax',
-    //   maxAge: 1000 * 60 * 15, // 15분
-    // });
-    // return {
-    //   ...user,
-    //   accessToken,
-    // };
-  }
+  async create(@Body() createEmployerDto: CreateEmployerDto, @Res({ passthrough: true }) res: Response) {}
 
   @Delete(':id')
   remove(@Param('id') id: string) {
