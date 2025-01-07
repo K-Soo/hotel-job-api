@@ -39,6 +39,7 @@ export const customHttpException = {
     customCode: 2000,
     message: 'oauth get access token failed',
   },
+
   OAUTH_SIGN_IN_USER_INFO: {
     customCode: 2001,
     message: 'Authentication failed.',
@@ -56,6 +57,15 @@ export const customHttpException = {
     customCode: 3000,
     message: 'Creation limit exceeded for the resource',
   },
+
+  CERTIFICATION_BAD_REQUEST: {
+    customCode: 3010,
+    message: 'Required field missing in the request body',
+  },
+  CERTIFICATION_FAILED: (message: string) => ({
+    customCode: 3011,
+    message: message,
+  }),
   //데이터베이스
   DATABASE_OPERATION_FAILED: {
     customCode: 6000,

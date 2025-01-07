@@ -10,6 +10,9 @@ import * as https from 'https';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Response, Request } from 'express';
+import { customHttpException } from '../../common/constants/custom-http-exception';
+import { VerifyDto } from './dto/verify..dto';
+import { DecryptCertDto } from './dto/decrypt-cert.dto';
 
 const g_conf_cert_info =
   '-----BEGIN CERTIFICATE-----MIIDgTCCAmmgAwIBAgIHBy4lYNG7ojANBgkqhkiG9w0BAQsFADBzMQswCQYDVQQGEwJLUjEOMAwGA1UECAwFU2VvdWwxEDAOBgNVBAcMB0d1cm8tZ3UxFTATBgNVBAoMDE5ITktDUCBDb3JwLjETMBEGA1UECwwKSVQgQ2VudGVyLjEWMBQGA1UEAwwNc3BsLmtjcC5jby5rcjAeFw0yMTA2MjkwMDM0MzdaFw0yNjA2MjgwMDM0MzdaMHAxCzAJBgNVBAYTAktSMQ4wDAYDVQQIDAVTZW91bDEQMA4GA1UEBwwHR3Vyby1ndTERMA8GA1UECgwITG9jYWxXZWIxETAPBgNVBAsMCERFVlBHV0VCMRkwFwYDVQQDDBAyMDIxMDYyOTEwMDAwMDI0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAppkVQkU4SwNTYbIUaNDVhu2w1uvG4qip0U7h9n90cLfKymIRKDiebLhLIVFctuhTmgY7tkE7yQTNkD+jXHYufQ/qj06ukwf1BtqUVru9mqa7ysU298B6l9v0Fv8h3ztTYvfHEBmpB6AoZDBChMEua7Or/L3C2vYtU/6lWLjBT1xwXVLvNN/7XpQokuWq0rnjSRThcXrDpWMbqYYUt/CL7YHosfBazAXLoN5JvTd1O9C3FPxLxwcIAI9H8SbWIQKhap7JeA/IUP1Vk4K/o3Yiytl6Aqh3U1egHfEdWNqwpaiHPuM/jsDkVzuS9FV4RCdcBEsRPnAWHz10w8CX7e7zdwIDAQABox0wGzAOBgNVHQ8BAf8EBAMCB4AwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAg9lYy+dM/8Dnz4COc+XIjEwr4FeC9ExnWaaxH6GlWjJbB94O2L26arrjT2hGl9jUzwd+BdvTGdNCpEjOz3KEq8yJhcu5mFxMskLnHNo1lg5qtydIID6eSgew3vm6d7b3O6pYd+NHdHQsuMw5S5z1m+0TbBQkb6A9RKE1md5/Yw+NymDy+c4NaKsbxepw+HtSOnma/R7TErQ/8qVioIthEpwbqyjgIoGzgOdEFsF9mfkt/5k6rR0WX8xzcro5XSB3T+oecMS54j0+nHyoS96/llRLqFDBUfWn5Cay7pJNWXCnw4jIiBsTBa3q95RVRyMEcDgPwugMXPXGBwNoMOOpuQ==-----END CERTIFICATE-----';
@@ -21,7 +24,7 @@ export class CertificationService {
     private readonly httpService: HttpService,
   ) {}
 
-  async start() {
+  async startCertification() {
     try {
       const appEnv = this.configService.get('APP_ENV');
       const certpassUrl = this.configService.get('CERTPASS_URL');
@@ -96,36 +99,35 @@ export class CertificationService {
         console.log('응답 결과: ', data);
 
         // 성공
-        if (data.res_cd === '0000') {
-          return {
-            status: ResponseStatus.SUCCESS,
-            params: {
-              // res default data
-              up_hash: data.up_hash,
-              kcp_merchant_time: data.kcp_merchant_time, //NHN KCP로 넘기는 상점 서버 시간: 필수값
-              kcp_cert_lib_ver: data.kcp_cert_lib_ver, //NHN KCP CERT API 버전정보: 필수값
-
-              url: this.configService.get('CERT_VIEW_URL'),
-              ordr_idxx: ordr_idxx,
-              req_tx: 'cert',
-              cert_method: '01', //인증수단 고정 01
-              web_siteid: web_siteid, //사이트 식별코드: 옵션값
-              site_cd: site_cd, //가맹점 사이트코드: 필수값
-              Ret_URL: this.configService.get('CERT_VIEW_REDIRECT_URL'),
-              cert_otp_use: 'Y', //본인확인 인증요청 시 OTP 승인여부: 필수값, Y:실명확인 + OTP 점유 확인
-              cert_enc_use_ext: 'Y', //고도화 암호화 사용유무: 필수값, 고정값:Y
-              web_siteid_hashYN: web_siteid_hashYN, //사이트 식별코드 사용유무: 옵션값, web_siteid 사용시 Y로 전달
-              param_opt_1: 'opt1', //업체 추가 변수: 옵션값
-              param_opt_2: 'opt2',
-              param_opt_3: 'opt3',
-              kcp_page_submit_yn: 'Y', //페이지 전환방식 호출(반응형) 파라미터: 옵션값, 페이지 전환 방식으로 호출시 Y
-            },
-          };
+        if (data.res_cd !== '0000') {
+          throw new Error(data.res_msg);
         }
 
-        return { status: ResponseStatus.FAILURE, message: data.res_msg };
+        return {
+          status: ResponseStatus.SUCCESS,
+          params: {
+            // res default data
+            up_hash: data.up_hash,
+            kcp_merchant_time: data.kcp_merchant_time, //NHN KCP로 넘기는 상점 서버 시간: 필수값
+            kcp_cert_lib_ver: data.kcp_cert_lib_ver, //NHN KCP CERT API 버전정보: 필수값
+
+            url: this.configService.get('CERT_VIEW_URL'),
+            ordr_idxx: ordr_idxx,
+            req_tx: 'cert',
+            cert_method: '01', //인증수단 고정 01
+            web_siteid: web_siteid, //사이트 식별코드: 옵션값
+            site_cd: site_cd, //가맹점 사이트코드: 필수값
+            Ret_URL: this.configService.get('CERT_VIEW_REDIRECT_URL'),
+            cert_otp_use: 'Y', //본인확인 인증요청 시 OTP 승인여부: 필수값, Y:실명확인 + OTP 점유 확인
+            cert_enc_use_ext: 'Y', //고도화 암호화 사용유무: 필수값, 고정값:Y
+            web_siteid_hashYN: web_siteid_hashYN, //사이트 식별코드 사용유무: 옵션값, web_siteid 사용시 Y로 전달
+            param_opt_1: '', //업체 추가 변수: 옵션값
+            param_opt_2: '',
+            param_opt_3: '',
+            kcp_page_submit_yn: 'Y', //페이지 전환방식 호출(반응형) 파라미터: 옵션값, 페이지 전환 방식으로 호출시 Y
+          },
+        };
       } catch (error) {
-        console.error('Error during KCP API call:', error.message);
         throw error;
       }
     } catch (error) {
@@ -133,18 +135,13 @@ export class CertificationService {
     }
   }
 
-  async verifyDnHash(body: any) {
-    console.log('body: ', body);
+  async verifyDnHash(verifyDto: VerifyDto) {
+    const dn_hash = verifyDto.dn_hash;
+    const ordr_idxx = verifyDto.ordr_idxx;
+    const cert_no = verifyDto.cert_no;
+    const enc_cert_data2 = verifyDto.enc_cert_data2;
+
     try {
-      const dn_hash = body.dn_hash;
-      const ordr_idxx = body.ordr_idxx;
-      const cert_no = body.cert_no;
-      const enc_cert_Data = body.enc_cert_data2;
-
-      if (!enc_cert_Data) {
-        throw new BadRequestException('cert data required');
-      }
-
       const certpassUrl = this.configService.get('CERTPASS_URL');
       const site_cd = this.configService.get('SITE_CODE');
       const ct_type = 'CHK';
@@ -184,57 +181,61 @@ export class CertificationService {
 
         console.log('dn_hash 검증 요청 API : ', data);
 
-        if (data.res_cd === '0000') {
-          await this.decryptCertData({ ordr_idxx, enc_cert_Data, dn_hash, cert_no });
+        if (data.res_cd !== '0000') {
+          throw new Error(data.res_msg);
         }
-        return { status: ResponseStatus.FAILURE, message: data.res_msg };
+        return { ordr_idxx, enc_cert_data2, dn_hash, cert_no };
       } catch (error) {
         throw error;
       }
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_FAILED(error.message));
     }
   }
 
-  async decryptCertData(certData: { ordr_idxx: string; enc_cert_Data: string; dn_hash: string; cert_no: string }) {
-    const site_cd = this.configService.get('SITE_CODE');
-    const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
-    const secretPemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
-    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
-    const certpassUrl = this.configService.get('CERTPASS_URL');
+  async decryptCert(decryptCertDto: DecryptCertDto) {
+    try {
+      const site_cd = this.configService.get('SITE_CODE');
+      const kcpCertPemKey = await this.secretsManagerService.getSecret('kcp-cert-pem-key');
+      const secretPemKey = await this.secretsManagerService.getSecret('kcp-pem-key');
+      const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
+      const certpassUrl = this.configService.get('CERTPASS_URL');
 
-    const ct_type = 'DEC';
+      const ct_type = 'DEC';
 
-    const hash_data = site_cd + '^' + ct_type + '^' + certData.cert_no;
+      const hash_data = site_cd + '^' + ct_type + '^' + decryptCertDto.cert_no;
 
-    const kcp_sign_data = await makeSignature(hash_data, secretPemKey, cryptoPassword);
+      const kcp_sign_data = await makeSignature(hash_data, secretPemKey, cryptoPassword);
 
-    const requestData = {
-      site_cd,
-      kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
-      ordr_idxx: certData.ordr_idxx,
-      ct_type,
-      cert_no: certData.cert_no,
-      dn_hash: certData.dn_hash,
-      enc_cert_Data: certData.enc_cert_Data,
-      kcp_sign_data,
-    };
+      const requestData = {
+        site_cd,
+        kcp_cert_info: kcpCertPemKey.replace(/\n/g, ''),
+        ordr_idxx: decryptCertDto.ordr_idxx,
+        ct_type,
+        cert_no: decryptCertDto.cert_no,
+        dn_hash: decryptCertDto.dn_hash,
+        enc_cert_Data: decryptCertDto.enc_cert_data2,
+        kcp_sign_data,
+      };
 
-    const response = await firstValueFrom(
-      this.httpService.post(certpassUrl, requestData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: 7000,
-      }),
-    );
-    const data = response.data;
-    console.log('복호화 응답데이터 PAI : ', data);
+      const response = await firstValueFrom(
+        this.httpService.post(certpassUrl, requestData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 7000,
+        }),
+      );
+      const data = response.data;
+      console.log('복호화 응답데이터 PAI : ', data);
 
-    if (data.res_cd !== '0000') {
-      return { status: ResponseStatus.FAILURE, message: data.res_msg };
+      if (data.res_cd !== '0000') {
+        throw new Error(data.res_msg);
+      }
+
+      return { status: ResponseStatus.SUCCESS, data };
+    } catch (error) {
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_FAILED(error.message));
     }
-
-    return { status: ResponseStatus.SUCCESS, data };
   }
 }
