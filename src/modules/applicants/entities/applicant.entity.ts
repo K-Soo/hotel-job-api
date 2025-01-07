@@ -56,7 +56,7 @@ export class Applicant {
   @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.ACTIVE })
   accountStatus: AccountStatus;
 
-  @Column({ unique: true })
+  @Column({ unique: true, default: generateRandom10Digit() })
   nickname: string;
 
   @BeforeInsert()
