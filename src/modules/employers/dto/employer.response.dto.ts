@@ -42,4 +42,9 @@ export class EmployerResponseDto {
   @ApiProperty({ description: '비밀번호 변경 일자', example: null })
   @Expose()
   passwordChangedAt: Date;
+
+  @ApiProperty({ description: '본인인증 정보', example: 'null' })
+  @Expose()
+  // @ValidateNested({ each: true }) // 배열의 각 요소를 검증
+  certification: string;
 }

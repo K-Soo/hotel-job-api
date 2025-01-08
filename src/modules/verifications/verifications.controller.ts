@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { VerificationsService } from './verifications.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EmployerUserIdDto } from './dto/employer-user-id.dto';
+import { BusinessNumberDto } from './dto/business-number.dto';
 
 @Controller('verifications')
 export class VerificationsController {
@@ -19,6 +20,16 @@ export class VerificationsController {
       return { status: 'available' };
     }
     return { status: 'duplicate' };
+  }
+
+  @ApiOperation({ summary: '사업자 번호 검증' })
+  @ApiResponse({
+    status: 200,
+    description: '응답값',
+  })
+  @Post('business-number')
+  businessNumber(@Body() businessNumberDto: BusinessNumberDto) {
+    return this.verificationsService.businessNumberCheck(businessNumberDto);
   }
 
   phone() {}

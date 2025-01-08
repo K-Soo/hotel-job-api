@@ -30,11 +30,7 @@ import { Roles } from '../../common/decorators/metadata/roles.decorator';
 @Roles('EMPLOYER')
 @Controller('employers')
 export class EmployersController {
-  constructor(
-    private readonly employersService: EmployersService,
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly employersService: EmployersService) {}
 
   @ApiOperation({ summary: '계정정보' })
   @ApiResponse({
