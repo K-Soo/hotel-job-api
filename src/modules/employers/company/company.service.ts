@@ -39,4 +39,8 @@ export class CompanyService {
     }
     return existingCompany;
   }
+
+  async findBusinessNumber(businessNumber: string) {
+    return safeQuery(() => this.companyRepo.findOne({ where: { businessRegistrationNumber: businessNumber } }));
+  }
 }
