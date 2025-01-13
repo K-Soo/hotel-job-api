@@ -10,6 +10,7 @@ import { SwaggerConfigModule } from './config/swagger/swagger.config.module';
 import { RefreshTokenMiddleware } from './common/middlewares/refresh-token.middleware';
 import { AccessTokenMiddleware } from './common/middlewares/access-token.middleware';
 import { LoggingMiddleware } from './common/middlewares/logging.middleware';
+import { DelayMiddleware } from './common/middlewares/delay.middleware';
 
 import { EmployersModule } from './modules/employers/employers.module';
 import { CompanyModule } from './modules/employers/company/company.module';
@@ -70,5 +71,6 @@ export class AppModule implements NestModule {
     consumer.apply(RefreshTokenMiddleware).forRoutes('*');
     consumer.apply(AccessTokenMiddleware).forRoutes('*');
     consumer.apply(LoggingMiddleware).forRoutes('*');
+    consumer.apply(DelayMiddleware).forRoutes('*');
   }
 }
