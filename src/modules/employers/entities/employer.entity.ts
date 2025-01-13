@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,6 +19,7 @@ import {
 import { Company } from '../company/entities/company.entity';
 import { Exclude } from 'class-transformer';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
+import { Recruitment } from '../recruitment/entities/recruitment.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -33,6 +35,9 @@ export class Employer {
 
   @OneToOne(() => Certification, (certification) => certification.employer)
   certification: Certification;
+
+  @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
+  recruitment: Recruitment;
 
   //본인인증
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
