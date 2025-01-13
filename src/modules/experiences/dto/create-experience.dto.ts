@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, IsDate, IsNumber, IsEnum, ValidateIf, Min, Length } from 'class-validator';
-import { Job, Position, SalaryType } from '../../../common/constants/app.enum';
+import { Jobs, Position, SalaryType } from '../../../common/constants/app.enum';
 import { City } from '../../../common/constants/location.enum';
 import { Type } from 'class-transformer';
 export class CreateExperienceDto {
@@ -17,8 +17,8 @@ export class CreateExperienceDto {
   @IsString()
   responsibility: string;
 
-  @IsEnum(Job, { message: 'job must be a valid Job' })
-  job: Job;
+  @IsEnum(Jobs, { message: 'job must be a valid Job' })
+  job: Jobs;
 
   @IsOptional()
   @IsEnum(Position, { message: 'job must be a valid position' })
