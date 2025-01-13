@@ -307,6 +307,7 @@ export class CertificationService {
             applicant,
           }),
         );
+
         await safeQuery(() => this.certificationRepository.save(createdCertification));
 
         await safeQuery(() =>
