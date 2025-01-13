@@ -99,7 +99,7 @@ export enum Position {
 }
 
 //직무
-export enum Job {
+export enum Jobs {
   //공통
   MAINTENANCE = 'MAINTENANCE', // 시설 관리
   SECURITY = 'SECURITY', // 보안
@@ -195,17 +195,6 @@ export enum MilitaryStatus {
 }
 
 export enum EducationLevel {
-  ELEMENTARY = 'ELEMENTARY', // 초등학교
-  MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
-  HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
-  COLLEGE_2_3_YEAR = 'COLLEGE_2_3_YEAR', // 대학교(2,3년)
-  COLLEGE_4_YEAR = 'COLLEGE_4_YEAR', // 대학교(4년)
-  MASTER = 'MASTER', // 대학원(석사)
-  DOCTORATE = 'DOCTORATE', // 대학원(박사)
-}
-
-export enum EducationConditionLevel {
-  NOT_REQUIRED = 'NOT_REQUIRED', // 학력무관
   ELEMENTARY = 'ELEMENTARY', // 초등학교
   MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
   HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
