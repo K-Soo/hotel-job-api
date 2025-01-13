@@ -57,7 +57,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       });
 
       return {
-        sub: payload.sub,
+        sub: verifyToken.sub,
         provider: verifyToken.provider,
         role: verifyToken.role,
       };
