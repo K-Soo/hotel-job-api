@@ -57,7 +57,6 @@ export const customHttpException = {
     customCode: 3000,
     message: 'Creation limit exceeded for the resource',
   },
-
   CERTIFICATION_BAD_REQUEST: {
     customCode: 3010,
     message: 'Required field missing in the request body',
@@ -66,6 +65,15 @@ export const customHttpException = {
     customCode: 3011,
     message: message,
   }),
+  NOT_MODIFIED: {
+    customCode: 4000,
+    message: 'Not modified',
+  },
+  BAD_REQUEST_REMOVE: (message: string) => ({
+    customCode: 4001,
+    message: message,
+  }),
+
   //데이터베이스
   DATABASE_OPERATION_FAILED: {
     customCode: 6000,
