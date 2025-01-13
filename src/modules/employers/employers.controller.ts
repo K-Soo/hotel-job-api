@@ -23,6 +23,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagg
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('사업자 유저')
 @ApiBearerAuth()
@@ -38,7 +39,7 @@ export class EmployersController {
     description: '계정정보 응답값',
     type: EmployerResponseDto,
   })
-  // @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
+  @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
   @Get()
   accountInfo(@Req() req: Request) {
     return this.employersService.accountInfo(req.user['uuid']);
