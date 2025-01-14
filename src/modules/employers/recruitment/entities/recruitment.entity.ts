@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import {
   EducationCondition,
@@ -19,12 +20,16 @@ import { Employer } from '../../entities/employer.entity';
 import { Nationality } from './nationality.entity';
 import { Benefits } from '../../../../common/constants/benefits';
 import { Preferences } from '../../../../common/constants/preferences';
+import { PaymentRecruitment } from '../../../payment/payment-recruitment/entities/payment-recruitment.entity';
 
 @Entity()
 export class Recruitment {
   @ManyToOne(() => Employer, (employer) => employer.recruitment, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
+
+  @OneToMany(() => PaymentRecruitment, (payment) => payment.recruitment)
+  payments: PaymentRecruitment[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -90,6 +95,9 @@ export class Recruitment {
   benefits: Benefits[];
 
   // group
+  @Column({ default: '' })
+  hotelName: string;
+
   @Column({ default: 0 })
   roomCount: number;
 
