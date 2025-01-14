@@ -37,7 +37,7 @@ export class Employer {
   certification: Certification;
 
   @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
-  recruitment: Recruitment;
+  recruitment: Recruitment[];
 
   //본인인증
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
