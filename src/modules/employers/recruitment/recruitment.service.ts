@@ -253,6 +253,7 @@ export class RecruitmentService {
         benefits: existingRecruitment.benefits,
       },
       locationInfo: {
+        hotelName: existingRecruitment.hotelName,
         roomCount: existingRecruitment.roomCount,
         address: existingRecruitment.address,
         addressDetail: existingRecruitment.addressDetail,
