@@ -33,6 +33,8 @@ import { ConditionsModule } from './modules/conditions/conditions.module';
 import { TalentsModule } from './modules/talents/talents.module';
 import { VerificationsModule } from './modules/verifications/verifications.module';
 import { CertificationModule } from './authentication/certification/certification.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { RecruitModule } from './modules/recruit/recruit.module';
 
 @Module({
   imports: [
@@ -62,6 +64,10 @@ import { CertificationModule } from './authentication/certification/certificatio
     VerificationsModule,
 
     CertificationModule,
+
+    PaymentModule,
+
+    RecruitModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
