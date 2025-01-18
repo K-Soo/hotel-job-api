@@ -10,4 +10,7 @@ export class ApplicationResponseDto {
 
   @Expose()
   createdAt: Date;
+
+  @Expose()
+  applyAt: Date;
 }
