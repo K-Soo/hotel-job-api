@@ -38,6 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, payload: JwtPayload) {
     const accessToken = req.headers.authorization.split(' ')[1];
+    console.log('accessToken: ', accessToken);
 
     const refreshToken = req.cookies['refresh_token'];
 
