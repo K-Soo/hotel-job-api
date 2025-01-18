@@ -8,6 +8,7 @@ import { Application } from './entities/application.entity';
 import { Applicant } from '../applicants/entities/applicant.entity';
 import { ApplicationStatus } from '../../common/constants/application';
 import { Role } from '../../common/constants/app.enum';
+import { Employer } from '../employers/entities/employer.entity';
 
 @Injectable()
 export class ApplicationsService {
@@ -20,7 +21,6 @@ export class ApplicationsService {
   async checkIfAlreadyApplied(applicant: Applicant, recruitId: string): Promise<boolean> {
     const existingApplication = await this.applicationRepo.findOne({
       where: {
-        role: Role.JOB_SEEKER,
         resume: { applicant: { id: applicant.id } },
         recruitment: { id: recruitId },
       },
@@ -51,9 +51,8 @@ export class ApplicationsService {
     const application = this.applicationRepo.create({
       resume,
       recruitment,
-      role: Role.JOB_SEEKER,
-      applyAt: new Date(),
       applicationStatus: ApplicationStatus.APPLIED,
+      applyAt: new Date(),
       resumeSnapshot: {
         title: resume.title,
         name: resume.name,
@@ -63,5 +62,12 @@ export class ApplicationsService {
       },
     });
     return await this.applicationRepo.save(application);
+  }
+
+  getApplicationsForRecruitment(recruitmentId: string, employer: Employer) {
+    return this.applicationRepo.find({
+      where: { recruitment: { id: recruitmentId, employer } },
+      relations: ['resume', 'recruitment'],
+    });
   }
 }
