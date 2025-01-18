@@ -1,22 +1,35 @@
-import { Expose } from 'class-transformer';
-import { CreateResumeDto } from './create-resume.dto';
-import { SanctionReason } from '../../../common/constants/app.enum';
-
-export class ResumeResponseDto extends CreateResumeDto {
+import { Expose, Type } from 'class-transformer';
+import { PublishResumeDto } from './publish-resume.dto';
+import { SanctionReason, ResumeStatus } from '../../../common/constants/app.enum';
+import { ApplicationResponseDto } from '../../applications/dto/application-response.dto';
+import { IsArray, ValidateNested } from 'class-validator';
+export class ResumeResponseDto extends PublishResumeDto {
   @Expose()
-  uuid: string;
-
-  @Expose()
-  isVisible: string;
+  id: string;
 
   @Expose()
-  isDefault: string;
+  title: string;
 
   @Expose()
-  status: string;
+  isVisible: boolean;
+
+  @Expose()
+  isDefault: boolean;
+
+  @Expose()
+  status: ResumeStatus;
 
   @Expose()
   sanctionReason: SanctionReason;
+
+  @Expose()
+  @IsArray()
+  @Type(() => ApplicationResponseDto)
+  @ValidateNested({ each: true })
+  applications: ApplicationResponseDto[];
+
+  @Expose()
+  applicationsCount: number;
 
   @Expose()
   createdAt: string;
