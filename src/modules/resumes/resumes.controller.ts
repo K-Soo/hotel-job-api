@@ -1,17 +1,3 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-  UseInterceptors,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
 import { ResumesService } from './resumes.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
@@ -22,7 +8,18 @@ import { ApplicantsService } from '../applicants/applicants.service';
 import { ResumeResponseDto } from './dto/resume-response.dto';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { PublishResumeDto } from './dto/publish-resume.dto';
-
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  NotFoundException,
+} from '@nestjs/common';
 @ApiTags('resumes 이력서')
 @ApiBearerAuth()
 @Controller('resumes')
@@ -37,8 +34,7 @@ export class ResumesController {
   @ApiOperation({ summary: '이력서 생성' })
   @Post()
   async initialCreateResume(@Req() req: Request) {
-    const userUuid = req.user['uuid'];
-    const applicant = await this.applicantsService.findByUuid(userUuid);
+    const applicant = await this.applicantsService.findByUuid(req.user['uuid']);
     return this.resumesService.initialCreateResume(applicant);
   }
 
@@ -54,8 +50,7 @@ export class ResumesController {
   @Get()
   @UseInterceptors(new SerializeInterceptor(ResumeResponseDto))
   getResumes(@Req() req: Request) {
-    const userUuid = req.user['uuid'];
-    return this.resumesService.getAllResumesWithApplication(userUuid);
+    return this.resumesService.getAllResumesWithApplication(req.user['uuid']);
   }
 
   @ApiOperation({ summary: '채용공고 지원가능한 이력서 리스트' })
@@ -87,7 +82,7 @@ export class ResumesController {
 
   @ApiOperation({ summary: '이력서 삭제' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resumesService.remove(+id);
+  remove(@Req() req: Request, @Param('id') id: string) {
+    return this.resumesService.removeResume(id, req.user['uuid']);
   }
 }
