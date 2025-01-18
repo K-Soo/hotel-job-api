@@ -21,7 +21,7 @@ export class TalentsService {
 
   findOne(uuid: string) {
     try {
-      return safeQuery(() => this.resumeRepo.findOne({ where: { uuid: uuid } }));
+      return safeQuery(() => this.resumeRepo.findOne({ where: { id: uuid } }));
     } catch {
       throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
     }
