@@ -9,11 +9,6 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 export class ApplicantsController {
   constructor(private readonly applicantsService: ApplicantsService) {}
 
-  @Post()
-  create(@Body() userId: string) {
-    return this.applicantsService.create(userId);
-  }
-
   @Get()
   findAll() {
     return this.applicantsService.findAll();
