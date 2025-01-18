@@ -34,14 +34,14 @@ export class ResumesController {
   @ApiOperation({ summary: '이력서 생성' })
   @Post()
   async initialCreateResume(@Req() req: Request) {
-    const applicant = await this.applicantsService.findByUuid(req.user['uuid']);
+    const applicant = await this.applicantsService.findByUuid(req.user['sub']);
     return this.resumesService.initialCreateResume(applicant);
   }
 
   @ApiOperation({ summary: '이력서 제출' })
   @Post('publish')
   async publishResume(@Req() req: Request, @Body() publishResumeDto: PublishResumeDto) {
-    const userUuid = req.user['uuid'];
+    const userUuid = req.user['sub'];
     const applicant = await this.applicantsService.findByUuid(userUuid);
     return this.resumesService.publishResume(publishResumeDto, applicant);
   }
@@ -50,14 +50,14 @@ export class ResumesController {
   @Get()
   @UseInterceptors(new SerializeInterceptor(ResumeResponseDto))
   getResumes(@Req() req: Request) {
-    return this.resumesService.getAllResumesWithApplication(req.user['uuid']);
+    console.log('req.user: ', req.user);
+    return this.resumesService.getAllResumesWithApplication(req.user['sub']);
   }
 
   @ApiOperation({ summary: '채용공고 지원가능한 이력서 리스트' })
   @Get('available')
   getAvailableResumes(@Req() req: Request) {
-    const userUuid = req.user['uuid'];
-    return this.resumesService.getAllResumesWithApplication(userUuid);
+    return this.resumesService.getAllResumesWithApplication(req.user['sub']);
   }
 
   @ApiOperation({ summary: '이력서 상세조회' })
@@ -83,6 +83,6 @@ export class ResumesController {
   @ApiOperation({ summary: '이력서 삭제' })
   @Delete(':id')
   remove(@Req() req: Request, @Param('id') id: string) {
-    return this.resumesService.removeResume(id, req.user['uuid']);
+    return this.resumesService.removeResume(id, req.user['sub']);
   }
 }
