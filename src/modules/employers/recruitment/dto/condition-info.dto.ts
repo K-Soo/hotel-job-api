@@ -7,7 +7,7 @@ import { Benefits } from '../../../../common/constants/benefits';
 
 export class ConditionInfoDto {
   @ApiProperty({
-    description: '근무형태',
+    description: '고용형태',
     example: { FULL_TIME: true, CONTRACT: false, DAILY_WORKER: false, PART_TIME: false, INTERN: false },
   })
   @Expose()
