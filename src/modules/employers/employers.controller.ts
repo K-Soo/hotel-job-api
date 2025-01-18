@@ -42,7 +42,7 @@ export class EmployersController {
   @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
   @Get()
   accountInfo(@Req() req: Request) {
-    return this.employersService.accountInfo(req.user['uuid']);
+    return this.employersService.accountInfo(req.user['sub']);
   }
 
   @Delete(':id')
