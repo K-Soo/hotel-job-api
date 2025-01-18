@@ -24,7 +24,7 @@ export class ApplicationsController {
   @ApiOperation({ summary: '채용공고 지원하기' })
   @Post('/apply')
   async createApplyResume(@Req() req: Request, @Body() applyResumeDto: ApplyResumeDto) {
-    const userUuid = req.user['uuid'];
+    const userUuid = req.user['sub'];
     const applicant = await this.applicantsService.findByUuid(userUuid);
     return this.applicationsService.applyResume(applyResumeDto, applicant);
   }
@@ -32,7 +32,7 @@ export class ApplicationsController {
   @ApiOperation({ summary: '채용공고 이력서 지원여부 체크' })
   @Get(':id/apply/check')
   async checkIfAlreadyApplied(@Req() req: Request, @Param('id') recruitId: string) {
-    const userUuid = req.user['uuid'];
+    const userUuid = req.user['sub'];
     const applicant = await this.applicantsService.findByUuid(userUuid);
     const isApplied = await this.applicationsService.checkIfAlreadyApplied(applicant, recruitId);
 
@@ -53,7 +53,7 @@ export class ApplicationsController {
   })
   @Get('/recruitment/:id')
   async getApplicationsForRecruitment(@Req() req: Request, @Param('id') recruitmentId: string) {
-    const userUuid = req.user['uuid'];
+    const userUuid = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userUuid);
 
     return this.applicationsService.getApplicationsForRecruitment(recruitmentId, employer);
