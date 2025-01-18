@@ -8,10 +8,8 @@ import { Provider, Role } from '../../common/constants/app.enum';
 export class ApplicantsService {
   constructor(@InjectRepository(Applicant) private repo: Repository<Applicant>) {}
 
-  async create(userId: string) {
-    const user = await safeQuery(async () =>
-      this.repo.create({ userId, provider: Provider.KAKAO, role: Role.JOB_SEEKER }),
-    );
+  async create(userId: string, email: string, provider: Provider) {
+    const user = await safeQuery(async () => this.repo.create({ userId, provider, email, role: Role.JOB_SEEKER }));
     return this.repo.save(user);
   }
 
@@ -20,7 +18,9 @@ export class ApplicantsService {
   }
 
   async findOne(id: string) {
-    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: id }, relations: ['consent'] }));
+    const applicant = await safeQuery(() =>
+      this.repo.findOne({ where: { id: id }, relations: ['consent', 'certification'] }),
+    );
     return applicant;
   }
 
