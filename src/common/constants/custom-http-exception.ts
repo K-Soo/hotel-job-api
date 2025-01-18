@@ -53,6 +53,10 @@ export const customHttpException = {
     customCode: 2003,
     message: 'Required field missing in the request body',
   },
+  OAUTH_GET_USER_INFO_ERROR: {
+    customCode: 2004,
+    message: 'oauth get user-info failed',
+  },
   CREATION_LIMIT_EXCEEDED: {
     customCode: 3000,
     message: 'Creation limit exceeded for the resource',
