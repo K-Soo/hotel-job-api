@@ -9,7 +9,7 @@ import { ResponseStatus } from '../../common/constants/responseStatus';
 import { ExperiencesService } from '../experiences/experiences.service';
 import { MilitaryService } from '../military/military.service';
 import { DataSource } from 'typeorm';
-import { ResumeStatus, SanctionReason, ResumeType, LicenseStage } from '../../common/constants/app.enum';
+import { ResumeStatus, SanctionReason, ResumeType } from '../../common/constants/app.enum';
 import { PublishResumeDto } from './dto/publish-resume.dto';
 
 @Injectable()
@@ -163,7 +163,17 @@ export class ResumesService {
     return safeQuery(() => this.resumeRepo.findOne({ where: { id: uuid } }));
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} resume`;
+  async removeResume(id: string, userUuid: string) {
+    const resume = await this.resumeRepo.findOne({
+      where: { id, applicant: { id: userUuid } },
+    });
+
+    if (!resume) {
+      throw new NotFoundException('Resume not found or you do not have access.');
+    }
+
+    await safeQuery(() => this.resumeRepo.delete(resume.id));
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }
