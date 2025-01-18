@@ -20,7 +20,6 @@ import { TestsModule } from './modules/tests/tests.module';
 import { ApplicantsModule } from './modules/applicants/applicants.module';
 import { AuthModule } from './authentication/auth/auth.module';
 import { OauthModule } from './authentication/oauth/oauth.module';
-import { UsersModule } from './modules/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ResumesModule } from './modules/resumes/resumes.module';
@@ -48,7 +47,6 @@ import { ApplicationsModule } from './modules/applications/applications.module';
     ApplicantsModule,
     AuthModule,
     OauthModule,
-    UsersModule,
     ConsentsModule,
     ResumesModule,
     ExperiencesModule,
