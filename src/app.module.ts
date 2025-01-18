@@ -25,7 +25,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ResumesModule } from './modules/resumes/resumes.module';
 import { ExperiencesModule } from './modules/experiences/experiences.module';
-import { LicensesModule } from './modules/licenses/licenses.module';
 import { MilitaryModule } from './modules/military/military.module';
 import { PartnersModule } from './modules/partners/partners.module';
 import { UploadModule } from './modules/upload/upload.module';
@@ -35,6 +34,7 @@ import { VerificationsModule } from './modules/verifications/verifications.modul
 import { CertificationModule } from './authentication/certification/certification.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { RecruitModule } from './modules/recruit/recruit.module';
+import { ApplicationsModule } from './modules/applications/applications.module';
 
 @Module({
   imports: [
@@ -52,7 +52,6 @@ import { RecruitModule } from './modules/recruit/recruit.module';
     ConsentsModule,
     ResumesModule,
     ExperiencesModule,
-    LicensesModule,
     MilitaryModule,
     PartnersModule,
     UploadModule,
@@ -68,6 +67,8 @@ import { RecruitModule } from './modules/recruit/recruit.module';
     PaymentModule,
 
     RecruitModule,
+
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
