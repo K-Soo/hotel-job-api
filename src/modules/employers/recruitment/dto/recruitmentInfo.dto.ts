@@ -16,12 +16,12 @@ import { Jobs, Position } from '../../../../common/constants/app.enum';
 import { Preferences } from '../../../../common/constants/preferences';
 
 export class NationalityDto {
-  @ApiProperty({ description: '내국인 여부', example: true })
+  @ApiProperty({ description: '내국인', example: true })
   @Expose()
   @IsBoolean()
   korean: boolean;
 
-  @ApiProperty({ description: '외국인 여부', example: true })
+  @ApiProperty({ description: '외국인', example: true })
   @Expose()
   @IsBoolean()
   foreigner: boolean;
@@ -53,7 +53,7 @@ export class RecruitmentInfoDto {
   @IsEnum(ExperienceCondition)
   experienceCondition: ExperienceCondition;
 
-  @ApiProperty({ description: '국적 정보', type: NationalityDto })
+  @ApiProperty({ description: '국적', type: NationalityDto })
   @Expose()
   @Type(() => NationalityDto)
   @IsNotEmpty()
