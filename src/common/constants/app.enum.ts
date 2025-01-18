@@ -63,6 +63,16 @@ export enum CommType {
   KTM = 'KTM', //KT 알뜰폰
 }
 
+export enum LocalCode {
+  DOMESTIC = '01', //내국인
+  FOREIGN = '02', //외국인
+}
+
+export enum SexCode {
+  MALE = '01', //남
+  FEMALE = '02', //여
+}
+
 export enum Gender {
   NONE = 'NONE',
   MAIL = 'MAIL',
@@ -71,9 +81,9 @@ export enum Gender {
 
 export enum ResumeStatus {
   DRAFT = 'DRAFT', // 작성 중(임시 저장 상태).
-  SUBMITTED = 'SUBMITTED', // 제출 완료(정상 노출 가능 상태).
-  HIDDEN = 'HIDDEN', // 관리자가 비노출 처리.
-  DELETED = 'DELETED', // 삭제 처리.
+  PUBLISH = 'PUBLISH', // 제출 완료(정상 노출 가능 상태).
+  HIDDEN = 'HIDDEN', // 사용자가 비공개 상태로 설정.
+  ERROR = 'ERROR', // 처리 중 오류 발생.
 }
 
 export enum SanctionReason {
