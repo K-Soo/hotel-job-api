@@ -8,7 +8,6 @@ import {
   Patch,
   Param,
   Req,
-  UseGuards,
   Query,
   UseInterceptors,
   BadRequestException,
@@ -28,6 +27,7 @@ export class RecruitController {
   @ApiOperation({ summary: '채용 급구 공고' })
   @Get('urgent')
   recruitUrgent(@Query() query: RecruitQueryDto) {
+    console.log('query: ', query);
     return this.recruitService.getRecruitment('urgent', query);
   }
 
@@ -41,12 +41,12 @@ export class RecruitController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: '채용 공고 ID',
+    description: '채용 공고 id',
     example: 123,
     required: true,
   })
   @Get(':id')
   recruitDetail(@Param('id') id: string) {
-    this.recruitService.getRecruitDetail(id);
+    return this.recruitService.getRecruitDetail(id);
   }
 }
