@@ -30,9 +30,6 @@ export class Application {
   @JoinColumn({ name: 'recruitment_id' })
   recruitment: Recruitment;
 
-  @Column({ type: 'enum', enum: Role })
-  role: Role;
-
   // 이력서의 스냅샷 데이터 (JSON 저장)
   @Column({ type: 'jsonb', nullable: true })
   resumeSnapshot: Record<string, any>;
@@ -49,24 +46,20 @@ export class Application {
   @Column({ type: 'boolean', default: false })
   isView: boolean;
 
-  // 열람 시간
-  @Column({ type: 'timestamptz', nullable: true, precision: 0 })
-  viewAt: Date;
-
   //지원일
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true })
+  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   applyAt: Date;
 
   //지원취소일
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true })
+  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   cancelAt: Date;
 
   //합격
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true })
+  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   acceptAt: Date;
 
   //불합격
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true })
+  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   rejectAt: Date;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
