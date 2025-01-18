@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Req, Res, Body } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { Request, Response } from 'express';
@@ -17,7 +17,7 @@ export class OauthController {
   @UseGuards(AuthGuard('kakao-custom'))
   async kakaoSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as Applicant;
-    console.log('@@@@@@@', user.constructor.name === 'Applicant');
+    // console.log('@@@@@@@', user.constructor.name === 'Applicant');
 
     const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
@@ -32,6 +32,31 @@ export class OauthController {
       domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
 
+    return {
+      provider: user.provider,
+      role: user.role,
+      accessToken: accessToken,
+      certificationStatus: user.certificationStatus,
+      accountStatus: user.accountStatus,
+      nickname: user.nickname,
+    };
+  }
+
+  @Post('google')
+  @UseGuards(AuthGuard('google-custom'))
+  async googleSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const user = req.user as Applicant;
+    console.log('@@@@@@@', user.constructor.name === 'Applicant');
+    const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
+    const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
+    const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('APP_ENV') !== 'local',
+      sameSite: this.configService.get('APP_ENV') === 'local' ? 'lax' : 'none',
+      maxAge: parseTimeToMs(jwtRefreshExpiration),
+      domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
+    });
     return {
       provider: user.provider,
       role: user.role,
