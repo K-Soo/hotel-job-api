@@ -21,15 +21,22 @@ import { Nationality } from './nationality.entity';
 import { Benefits } from '../../../../common/constants/benefits';
 import { Preferences } from '../../../../common/constants/preferences';
 import { PaymentRecruitment } from '../../../payment/payment-recruitment/entities/payment-recruitment.entity';
-
+import { Application } from '../../../applications/entities/application.entity';
 @Entity()
 export class Recruitment {
+  // 채용 테이블
+  @OneToMany(() => Application, (application) => application.recruitment)
+  applications: Application[];
+
   @ManyToOne(() => Employer, (employer) => employer.recruitment, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
   @OneToMany(() => PaymentRecruitment, (payment) => payment.recruitment)
   payments: PaymentRecruitment[];
+
+  @OneToOne(() => Nationality, (nationality) => nationality.recruitment, { cascade: true })
+  nationality: Nationality;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -58,9 +65,6 @@ export class Recruitment {
 
   @Column({ type: 'enum', enum: Position, nullable: true })
   position: Position;
-
-  @OneToOne(() => Nationality, (nationality) => nationality.recruitment, { cascade: true })
-  nationality: Nationality;
 
   @Column({ type: 'enum', enum: Preferences, default: [], array: true })
   preferences: Preferences[];
