@@ -65,7 +65,6 @@ export class ResumesService {
       }
 
       const baseResume = existingResumes[0];
-      console.log('baseResume: ', baseResume);
 
       const copiedResume = this.resumeRepo.create({
         ...baseResume,
