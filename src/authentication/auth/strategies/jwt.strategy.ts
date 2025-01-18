@@ -7,10 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
-// import chalk from 'chalk';
 
 //리턴값을 주지않으면 401에러 생김 주의
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -38,14 +36,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, payload: JwtPayload) {
     const accessToken = req.headers.authorization.split(' ')[1];
-    console.log('accessToken: ', accessToken);
 
     const refreshToken = req.cookies['refresh_token'];
 
     try {
-      const { exp } = payload;
-      const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-      const secondsRemaining = exp - currentTimeInSeconds;
+      // DEBUG: 토큰 만료시간 확인
+      // const { exp } = payload;
+      // const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+      // const secondsRemaining = exp - currentTimeInSeconds;
 
       const decodedRefreshToken: JwtPayload = this.jwtService.decode(refreshToken);
 
