@@ -43,11 +43,9 @@ export class GoogleCustomStrategy extends PassportStrategy(Strategy, 'google-cus
 
     // 구글 액세스 토큰 가져오기
     const accessTokenResponse = await this.getAccessToken(googleOAuthData.code);
-    console.log('accessTokenResponse: ', accessTokenResponse);
 
     // 사용자 정보 가져오기
     const googleUser = await this.getGoogleUserInfo(accessTokenResponse.access_token);
-    console.log('googleUser: ', googleUser);
     const GoogleUserId = googleUser.id;
     const googleUserEmail = googleUser.email;
 
