@@ -13,7 +13,6 @@ export class TalentsService {
   async findAll(options: IPaginationOptions) {
     const data = await paginate<Resume>(this.resumeRepo, options, {
       where: { isVisible: false, isDefault: false },
-      relations: ['applicant.user'],
     });
 
     return data;
