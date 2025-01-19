@@ -20,6 +20,7 @@ import { Company } from '../company/entities/company.entity';
 import { Exclude } from 'class-transformer';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
 import { Recruitment } from '../recruitment/entities/recruitment.entity';
+import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -39,9 +40,11 @@ export class Employer {
   @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
   recruitment: Recruitment[];
 
-  //본인인증
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
   certificationStatus: CertificationStatus;
+
+  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
+  accountHistory: AccountHistory[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
