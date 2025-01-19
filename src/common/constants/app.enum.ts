@@ -21,7 +21,7 @@ export enum AccountStatus {
 
   LOCKED = 'LOCKED', // 보안상의 이유로 계정이 잠긴 상태. 비밀번호 시도 실패 등.
 
-  DELETED = 'DELETED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
+  DEACTIVATED = 'DEACTIVATED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
 
   PENDING = 'PENDING', // 인증 절차(이메일, 전화번호 인증 등)가 완료되지 않은 상태.
 
