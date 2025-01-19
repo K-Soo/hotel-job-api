@@ -70,4 +70,40 @@ export class ApplicationsService {
       relations: ['resume', 'recruitment'],
     });
   }
+
+  // calculateRecruitmentStatusCounts
+
+  async calculateApplicationHistory(uuid: string) {
+    const applications = await this.applicationRepo.find({
+      where: {
+        resume: { applicant: { id: uuid } },
+      },
+      relations: ['recruitment', 'resume'],
+      order: { applyAt: 'DESC' },
+    });
+
+    return applications.map((application) => ({
+      applicationId: application.id,
+      recruitment: {
+        id: application.recruitment.id,
+        title: application.recruitment.recruitmentTitle,
+        hotelName: application.recruitment.hotelName,
+        recruitmentStatus: application.recruitment.recruitmentStatus,
+      },
+      resume: {
+        title: application.resume.title,
+        isDefault: application.resume.isDefault,
+      },
+      applicationStatus: application.applicationStatus,
+      reviewStageStatus: application.reviewStageStatus,
+
+      isView: application.isView,
+      applyAt: application.applyAt,
+      viewAt: application.viewAt,
+      cancelAt: application.cancelAt,
+      acceptAt: application.acceptAt,
+      rejectAt: application.rejectAt,
+      createdAt: application.createdAt,
+    }));
+  }
 }
