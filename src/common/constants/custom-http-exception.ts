@@ -44,7 +44,6 @@ export const customHttpException = {
     customCode: 2001,
     message: 'Authentication failed.',
   },
-
   OAUTH_SIGN_IN_NOT_FOUND_USER: {
     customCode: 2002,
     message: 'User not found',
@@ -77,7 +76,6 @@ export const customHttpException = {
     customCode: 4001,
     message: message,
   }),
-
   //데이터베이스
   DATABASE_OPERATION_FAILED: {
     customCode: 6000,
@@ -99,5 +97,41 @@ export const customHttpException = {
   IMAGE_SIZE_EXCEEDED: {
     customCode: 7003,
     message: 'Failed to process the file. Please try again.',
+  },
+  ACCOUNT_STATUS_INACTIVE: {
+    customCode: 8000,
+    message: 'Your account is inactive.',
+  },
+  ACCOUNT_STATUS_BLOCKED: {
+    customCode: 8001,
+    message: 'Your account is blocked.',
+  },
+  ACCOUNT_STATUS_SUSPENDED: {
+    customCode: 8002,
+    message: 'Your account is suspended.',
+  },
+  ACCOUNT_STATUS_LOCKED: {
+    customCode: 8003,
+    message: 'Your account is locked.',
+  },
+  ACCOUNT_STATUS_DEACTIVATED: {
+    customCode: 8004,
+    message: 'Your account is deactivated.',
+  },
+  ACCOUNT_STATUS_PENDING: {
+    customCode: 8005,
+    message: 'Your account is pending verification.',
+  },
+  ACCOUNT_STATUS_RECOVERY: {
+    customCode: 8006,
+    message: 'Your account is under recovery.',
+  },
+  ACCOUNT_STATUS_ANONYMIZED: {
+    customCode: 8007,
+    message: 'Your account is anonymized.',
+  },
+  ACCOUNT_STATUS_WAITING_APPROVAL: {
+    customCode: 8008,
+    message: 'Your account is awaiting approval.',
   },
 } as const;
