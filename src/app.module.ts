@@ -76,6 +76,7 @@ export class AppModule implements NestModule {
     consumer.apply(RefreshTokenMiddleware).forRoutes('*');
     consumer.apply(AccessTokenMiddleware).forRoutes('*');
     consumer.apply(LoggingMiddleware).forRoutes('*');
+    //DEBUG
     consumer.apply(DelayMiddleware).forRoutes('*');
   }
 }
