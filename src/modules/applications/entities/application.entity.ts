@@ -46,20 +46,24 @@ export class Application {
   @Column({ type: 'boolean', default: false })
   isView: boolean;
 
+  //열람일
+  @Column({ type: 'timestamptz', precision: 0, nullable: true, default: null })
+  viewAt: Date;
+
   //지원일
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
+  @Column({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   applyAt: Date;
 
   //지원취소일
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
+  @Column({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   cancelAt: Date;
 
   //합격
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
+  @Column({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   acceptAt: Date;
 
   //불합격
-  @CreateDateColumn({ type: 'timestamptz', precision: 0, nullable: true, default: null })
+  @Column({ type: 'timestamptz', precision: 0, nullable: true, default: null })
   rejectAt: Date;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
