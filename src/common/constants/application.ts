@@ -1,5 +1,5 @@
 export enum ApplicationStatus {
-  APPLIED = 'APPLIED', // 지원 완료
+  APPLIED = 'APPLIED', // 지원완료
   CANCELED = 'CANCELED', // 지원 취소
 }
 
