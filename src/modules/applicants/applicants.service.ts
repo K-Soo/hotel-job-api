@@ -31,7 +31,9 @@ export class ApplicantsService {
   async findByUserId(userId: string) {
     const user = await safeQuery(() => this.repo.findOne({ where: { userId: userId } }));
 
-    handleAccountStatus(user.accountStatus);
+    if (user) {
+      handleAccountStatus(user.accountStatus);
+    }
 
     return user;
   }
