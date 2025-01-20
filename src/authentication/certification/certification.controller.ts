@@ -29,7 +29,7 @@ export class CertificationController {
   @UseGuards(PassportJwtGuard, RolesGuard)
   @Post('verify')
   @Roles('JOB_SEEKER', 'EMPLOYER')
-  async verifyEmployer(@Req() req: Request, @Body() verify: VerifyDto) {
+  async verifyEmployer(@Req() req: Request, @Body() verify: any) {
     console.log('verify: ', verify);
     const user = req.user as RequestUser;
 

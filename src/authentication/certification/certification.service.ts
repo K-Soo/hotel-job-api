@@ -151,7 +151,7 @@ export class CertificationService {
   }
 
   // 본인인증 검증
-  async verifyDnHash(verifyDto: VerifyDto) {
+  async verifyDnHash(verifyDto: any) {
     const dn_hash = verifyDto.dn_hash;
     const ordr_idxx = verifyDto.ordr_idxx;
     const cert_no = verifyDto.cert_no;
