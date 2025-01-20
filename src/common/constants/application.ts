@@ -6,6 +6,6 @@ export enum ApplicationStatus {
 export enum ReviewStageStatus {
   DOCUMENT = 'DOCUMENT', // 서류전형
   INTERVIEW = 'INTERVIEW', // 면접전형
-  FINAL_ACCEPTED = 'FINAL_ACCEPTED', // 최종 합격
-  REJECTED = 'REJECTED', // 불합격
+  ACCEPT = 'ACCEPT', // 최종합격
+  REJECT = 'REJECT', // 불합격
 }
