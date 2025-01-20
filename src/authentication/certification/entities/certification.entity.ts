@@ -12,6 +12,7 @@ import {
 import { CertificationType, CommType } from '../../../common/constants/app.enum';
 import { Employer } from '../../../modules/employers/entities/employer.entity';
 import { Applicant } from '../../../modules/applicants/entities/applicant.entity';
+import { Exclude } from 'class-transformer';
 @Entity('certification')
 export class Certification {
   @OneToOne(() => Applicant, (applicant) => applicant.certification, {
@@ -30,6 +31,7 @@ export class Certification {
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
+  @Exclude()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,18 +41,23 @@ export class Certification {
   @Column()
   birth_day: string; //생년월일 (YYYYMMDD)
 
+  @Exclude()
   @Column()
   ci: string; //특정 웹사이트가 타 웹사이트와의 제휴 사업을 수행할 경우, 동일 고객을 확인하기 위한 값
 
+  @Exclude()
   @Column()
   ci_url: string;
 
+  @Exclude()
   @Column({ type: 'enum', enum: CommType })
   comm_id: CommType;
 
+  @Exclude()
   @Column()
   di: string; //DI 중복가입 확인값 - 특정 웹 사이트 내에서 중복가입 및 내부회원 관리 시, 동일 고객을 확인하기 위한 값
 
+  @Exclude()
   @Column()
   di_url: string;
 
@@ -60,9 +67,11 @@ export class Certification {
   @Column()
   phone_no: string;
 
+  @Exclude()
   @Column()
   res_cd: string;
 
+  @Exclude()
   @Column()
   res_msg: string;
 
@@ -72,6 +81,7 @@ export class Certification {
   @Column()
   user_name: string;
 
+  @Exclude()
   @Column()
   web_siteid: string;
 
