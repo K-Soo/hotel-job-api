@@ -23,10 +23,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
+      whitelist: true, // DTO에 정의되지 않은 값 제거
       stopAtFirstError: true,
-      forbidNonWhitelisted: true,
-      transform: true,
+      forbidNonWhitelisted: true, // 정의되지 않은 값 전달 시 에러 반환
+      transform: true, // 값 변환 활성화
     }),
   );
 

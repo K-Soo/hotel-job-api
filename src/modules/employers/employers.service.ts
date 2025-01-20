@@ -1,5 +1,4 @@
 import { CreateEmployerDto } from './dto/create-employer.dto';
-import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { HttpException, Injectable, HttpStatus, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';

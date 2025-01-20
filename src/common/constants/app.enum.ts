@@ -21,7 +21,7 @@ export enum AccountStatus {
 
   LOCKED = 'LOCKED', // 보안상의 이유로 계정이 잠긴 상태. 비밀번호 시도 실패 등.
 
-  DELETED = 'DELETED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
+  DEACTIVATED = 'DEACTIVATED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
 
   PENDING = 'PENDING', // 인증 절차(이메일, 전화번호 인증 등)가 완료되지 않은 상태.
 
@@ -63,6 +63,16 @@ export enum CommType {
   KTM = 'KTM', //KT 알뜰폰
 }
 
+export enum LocalCode {
+  DOMESTIC = '01', //내국인
+  FOREIGN = '02', //외국인
+}
+
+export enum SexCode {
+  MALE = '01', //남
+  FEMALE = '02', //여
+}
+
 export enum Gender {
   NONE = 'NONE',
   MAIL = 'MAIL',
@@ -71,9 +81,9 @@ export enum Gender {
 
 export enum ResumeStatus {
   DRAFT = 'DRAFT', // 작성 중(임시 저장 상태).
-  SUBMITTED = 'SUBMITTED', // 제출 완료(정상 노출 가능 상태).
-  HIDDEN = 'HIDDEN', // 관리자가 비노출 처리.
-  DELETED = 'DELETED', // 삭제 처리.
+  PUBLISH = 'PUBLISH', // 제출 완료(정상 노출 가능 상태).
+  HIDDEN = 'HIDDEN', // 사용자가 비공개 상태로 설정.
+  ERROR = 'ERROR', // 처리 중 오류 발생.
 }
 
 export enum SanctionReason {
@@ -99,7 +109,7 @@ export enum Position {
 }
 
 //직무
-export enum Job {
+export enum Jobs {
   //공통
   MAINTENANCE = 'MAINTENANCE', // 시설 관리
   SECURITY = 'SECURITY', // 보안
@@ -195,17 +205,6 @@ export enum MilitaryStatus {
 }
 
 export enum EducationLevel {
-  ELEMENTARY = 'ELEMENTARY', // 초등학교
-  MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
-  HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교
-  COLLEGE_2_3_YEAR = 'COLLEGE_2_3_YEAR', // 대학교(2,3년)
-  COLLEGE_4_YEAR = 'COLLEGE_4_YEAR', // 대학교(4년)
-  MASTER = 'MASTER', // 대학원(석사)
-  DOCTORATE = 'DOCTORATE', // 대학원(박사)
-}
-
-export enum EducationConditionLevel {
-  NOT_REQUIRED = 'NOT_REQUIRED', // 학력무관
   ELEMENTARY = 'ELEMENTARY', // 초등학교
   MIDDLE_SCHOOL = 'MIDDLE_SCHOOL', // 중학교
   HIGH_SCHOOL = 'HIGH_SCHOOL', // 고등학교

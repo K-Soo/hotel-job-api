@@ -265,6 +265,7 @@ export class CertificationService {
         const existingCertification = await this.certificationRepository.findOne({
           where: { employer, certificationType: CertificationType.EMPLOYER },
         });
+
         if (existingCertification) {
           throw new ConflictException('already exists');
         }
@@ -291,7 +292,6 @@ export class CertificationService {
           throw new Error('Applicant not found');
         }
 
-        // 기존 인증 데이터 확인
         const existingCertification = await this.certificationRepository.findOne({
           where: { applicant, certificationType: CertificationType.APPLICANT },
         });
@@ -307,6 +307,7 @@ export class CertificationService {
             applicant,
           }),
         );
+
         await safeQuery(() => this.certificationRepository.save(createdCertification));
 
         await safeQuery(() =>

@@ -23,6 +23,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagg
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('사업자 유저')
 @ApiBearerAuth()
@@ -30,11 +31,7 @@ import { Roles } from '../../common/decorators/metadata/roles.decorator';
 @Roles('EMPLOYER')
 @Controller('employers')
 export class EmployersController {
-  constructor(
-    private readonly employersService: EmployersService,
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly employersService: EmployersService) {}
 
   @ApiOperation({ summary: '계정정보' })
   @ApiResponse({
@@ -42,10 +39,10 @@ export class EmployersController {
     description: '계정정보 응답값',
     type: EmployerResponseDto,
   })
-  // @UseInterceptors(new SerializeInterceptor(EmployerResponseDto))
+  @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
   @Get()
   accountInfo(@Req() req: Request) {
-    return this.employersService.accountInfo(req.user['uuid']);
+    return this.employersService.accountInfo(req.user['sub']);
   }
 
   @Delete(':id')

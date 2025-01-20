@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Job, SalaryType, EmploymentType, Benefits } from '../../../common/constants/app.enum';
+import { Jobs, SalaryType, EmploymentType, Benefits } from '../../../common/constants/app.enum';
 import { City, District } from '../../../common/constants/location.enum';
 import { Resume } from '../../resumes/entities/resume.entity';
 
@@ -13,8 +13,8 @@ export class Condition {
   id: number;
 
   //직무
-  @Column({ type: 'enum', enum: Job })
-  job: Job;
+  @Column({ type: 'enum', enum: Jobs })
+  job: Jobs;
 
   //고용형태
   @Column({ type: 'enum', enum: EmploymentType })

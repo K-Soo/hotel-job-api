@@ -10,5 +10,6 @@ import { Employer } from '../entities/employer.entity';
   imports: [TypeOrmModule.forFeature([Company, Employer]), forwardRef(() => EmployersModule)],
   controllers: [CompanyController],
   providers: [CompanyService],
+  exports: [CompanyService],
 })
 export class CompanyModule {}

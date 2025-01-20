@@ -20,6 +20,10 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: isLocal,
       connectTimeoutMS: 1000,
+      // useUTC: true,
+      // extra: {
+      //   options: `-c timezone=Asia/Seoul`,
+      // },
       ...(!isLocal && { ssl: { rejectUnauthorized: false } }),
     });
 
