@@ -107,18 +107,6 @@ export class VerifyDto {
 
   @IsString()
   @IsOptional()
-  param_opt_1: string;
-
-  @IsString()
-  @IsOptional()
-  param_opt_2: string;
-
-  @IsString()
-  @IsOptional()
-  param_opt_3: string;
-
-  @IsString()
-  @IsOptional()
   per_cert_no: string;
 
   @IsString()
@@ -202,4 +190,16 @@ export class VerifyDto {
   @IsString()
   @IsOptional()
   re_otp: string;
+
+  @IsString()
+  @IsOptional()
+  param_opt_1: string;
+
+  @IsString()
+  @IsOptional()
+  param_opt_2: string;
+
+  @IsString()
+  @IsOptional()
+  param_opt_3: string;
 }
