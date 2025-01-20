@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class ApplicationTable1737366482863 implements MigrationInterface {
-    name = 'ApplicationTable1737366482863'
+export class ApplicationTable1737370895009 implements MigrationInterface {
+    name = 'ApplicationTable1737370895009'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP INDEX "public"."idx_resume_uuid"`);
@@ -57,7 +57,7 @@ export class ApplicationTable1737366482863 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "account_status" TYPE "public"."applicant_account_status_enum" USING "account_status"::"text"::"public"."applicant_account_status_enum"`);
         await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "account_status" SET DEFAULT 'ACTIVE'`);
         await queryRunner.query(`DROP TYPE "public"."applicant_account_status_enum_old"`);
-        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '4887731980'`);
+        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '5968088496'`);
         await queryRunner.query(`ALTER TABLE "military" DROP CONSTRAINT "FK_2100c9bfbfb9ba5abd37afa6829"`);
         await queryRunner.query(`ALTER TABLE "military" DROP CONSTRAINT "REL_2100c9bfbfb9ba5abd37afa682"`);
         await queryRunner.query(`ALTER TABLE "military" DROP COLUMN "resume_id"`);
@@ -107,7 +107,7 @@ export class ApplicationTable1737366482863 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "experience" DROP CONSTRAINT "FK_6b65e2a85c9838ca97137e4ef5b"`);
         await queryRunner.query(`ALTER TABLE "resume" ALTER COLUMN "education" SET NOT NULL`);
         await queryRunner.query(`ALTER TABLE "resume" ALTER COLUMN "career_level" SET NOT NULL`);
-        await queryRunner.query(`CREATE TYPE "public"."resume_status_enum_old" AS ENUM('DELETED', 'DRAFT', 'HIDDEN', 'SUBMITTED')`);
+        await queryRunner.query(`CREATE TYPE "public"."resume_status_enum_old" AS ENUM('DRAFT', 'SUBMITTED', 'HIDDEN', 'DELETED')`);
         await queryRunner.query(`ALTER TABLE "resume" ALTER COLUMN "status" DROP DEFAULT`);
         await queryRunner.query(`ALTER TABLE "resume" ALTER COLUMN "status" TYPE "public"."resume_status_enum_old" USING "status"::"text"::"public"."resume_status_enum_old"`);
         await queryRunner.query(`ALTER TABLE "resume" ALTER COLUMN "status" SET DEFAULT 'SUBMITTED'`);
@@ -127,14 +127,14 @@ export class ApplicationTable1737366482863 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "military" ADD "resume_id" integer`);
         await queryRunner.query(`ALTER TABLE "military" ADD CONSTRAINT "REL_2100c9bfbfb9ba5abd37afa682" UNIQUE ("resume_id")`);
         await queryRunner.query(`ALTER TABLE "military" ADD CONSTRAINT "FK_2100c9bfbfb9ba5abd37afa6829" FOREIGN KEY ("resume_id") REFERENCES "resume"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '3877566128'`);
-        await queryRunner.query(`CREATE TYPE "public"."applicant_account_status_enum_old" AS ENUM('ACTIVE', 'ANONYMIZED', 'BLOCKED', 'DELETED', 'INACTIVE', 'LOCKED', 'PENDING', 'RECOVERY', 'SUSPENDED', 'WAITING_APPROVAL')`);
+        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '3463077247'`);
+        await queryRunner.query(`CREATE TYPE "public"."applicant_account_status_enum_old" AS ENUM('ACTIVE', 'INACTIVE', 'BLOCKED', 'SUSPENDED', 'LOCKED', 'DELETED', 'PENDING', 'RECOVERY', 'ANONYMIZED', 'WAITING_APPROVAL')`);
         await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "account_status" DROP DEFAULT`);
         await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "account_status" TYPE "public"."applicant_account_status_enum_old" USING "account_status"::"text"::"public"."applicant_account_status_enum_old"`);
         await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "account_status" SET DEFAULT 'ACTIVE'`);
         await queryRunner.query(`DROP TYPE "public"."applicant_account_status_enum"`);
         await queryRunner.query(`ALTER TYPE "public"."applicant_account_status_enum_old" RENAME TO "applicant_account_status_enum"`);
-        await queryRunner.query(`CREATE TYPE "public"."employer_account_status_enum_old" AS ENUM('ACTIVE', 'ANONYMIZED', 'BLOCKED', 'DELETED', 'INACTIVE', 'LOCKED', 'PENDING', 'RECOVERY', 'SUSPENDED', 'WAITING_APPROVAL')`);
+        await queryRunner.query(`CREATE TYPE "public"."employer_account_status_enum_old" AS ENUM('ACTIVE', 'INACTIVE', 'BLOCKED', 'SUSPENDED', 'LOCKED', 'DELETED', 'PENDING', 'RECOVERY', 'ANONYMIZED', 'WAITING_APPROVAL')`);
         await queryRunner.query(`ALTER TABLE "employer" ALTER COLUMN "account_status" DROP DEFAULT`);
         await queryRunner.query(`ALTER TABLE "employer" ALTER COLUMN "account_status" TYPE "public"."employer_account_status_enum_old" USING "account_status"::"text"::"public"."employer_account_status_enum_old"`);
         await queryRunner.query(`ALTER TABLE "employer" ALTER COLUMN "account_status" SET DEFAULT 'ACTIVE'`);
