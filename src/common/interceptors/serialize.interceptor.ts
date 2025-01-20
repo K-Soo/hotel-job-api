@@ -4,7 +4,10 @@ import { map, Observable } from 'rxjs';
 
 @Injectable()
 export class SerializeInterceptor<T> implements NestInterceptor {
-  constructor(private dto: ClassConstructor<T>) {}
+  constructor(
+    private dto: ClassConstructor<T>,
+    private readonly options?: { groups?: string[] },
+  ) {}
 
   intercept(_: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
@@ -14,13 +17,15 @@ export class SerializeInterceptor<T> implements NestInterceptor {
             ...data,
             items: data.items.map((item) =>
               plainToInstance(this.dto, item, {
-                excludeExtraneousValues: true,
+                groups: this.options?.groups || [],
+                excludeExtraneousValues: true, // @Expose 데코레이터가 없는 필드 제외
               }),
             ),
           };
         }
 
         return plainToInstance(this.dto, data, {
+          groups: this.options?.groups || [],
           excludeExtraneousValues: true,
         });
       }),

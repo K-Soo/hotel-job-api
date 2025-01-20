@@ -1,7 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { ResumesService } from './resumes.service';
-import { CreateResumeDto } from './dto/create-resume.dto';
-import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
@@ -10,7 +7,19 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { ApplicantsService } from '../applicants/applicants.service';
 import { ResumeResponseDto } from './dto/resume-response.dto';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
-
+import { PublishResumeDto } from './dto/publish-resume.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  NotFoundException,
+} from '@nestjs/common';
 @ApiTags('resumes 이력서')
 @ApiBearerAuth()
 @Controller('resumes')
@@ -22,37 +31,58 @@ export class ResumesController {
     private readonly applicantsService: ApplicantsService,
   ) {}
 
-  @ApiOperation({ summary: '이력서 등록' })
+  @ApiOperation({ summary: '이력서 생성' })
   @Post()
-  async create(@Req() req: Request, @Body() createResumeDto: CreateResumeDto) {
-    const userUuid = req.user['uuid'];
-    const applicant = await this.applicantsService.findByUuid(userUuid);
-    return this.resumesService.create(createResumeDto, applicant);
+  async initialCreateResume(@Req() req: Request) {
+    const applicant = await this.applicantsService.findByUuid(req.user['sub']);
+    return this.resumesService.initialCreateResume(applicant);
   }
 
-  @ApiOperation({ summary: '모든 이력서 조회' })
+  @ApiOperation({ summary: '이력서 제출' })
+  @Post('publish')
+  async publishResume(@Req() req: Request, @Body() publishResumeDto: PublishResumeDto) {
+    const userUuid = req.user['sub'];
+    const applicant = await this.applicantsService.findByUuid(userUuid);
+    return this.resumesService.publishResume(publishResumeDto, applicant);
+  }
+
+  @ApiOperation({ summary: '이력서 리스트' })
   @Get()
   @UseInterceptors(new SerializeInterceptor(ResumeResponseDto))
-  findAll(@Req() req: Request) {
-    const userUuid = req.user['uuid'];
-    return this.resumesService.findAll(userUuid);
+  getResumes(@Req() req: Request) {
+    console.log('req.user: ', req.user);
+    return this.resumesService.getAllResumesWithApplication(req.user['sub']);
   }
 
-  @ApiOperation({ summary: '단일 이력서 조회' })
+  @ApiOperation({ summary: '채용공고 지원가능한 이력서 리스트' })
+  @Get('available')
+  getAvailableResumes(@Req() req: Request) {
+    return this.resumesService.getAllResumesWithApplication(req.user['sub']);
+  }
+
+  @ApiOperation({ summary: '이력서 상세조회' })
   @Get(':id')
-  findOne(@Param('id') uuid: string) {
-    return this.resumesService.findOne(uuid);
+  async findOne(@Param('id') id: string) {
+    const resume = await this.resumesService.findOne(id);
+    if (!resume) {
+      throw new NotFoundException();
+    }
+    return resume;
   }
 
-  @ApiOperation({ summary: '이력서 수정' })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResumeDto: UpdateResumeDto) {
-    return this.resumesService.update(+id, updateResumeDto);
+  @ApiOperation({ summary: '생성된 이력서 상세조회' })
+  @Get(':id/edit')
+  async getEditResume(@Param('id') id: string) {
+    const resume = await this.resumesService.findOne(id);
+    if (!resume) {
+      throw new NotFoundException();
+    }
+    return resume;
   }
 
   @ApiOperation({ summary: '이력서 삭제' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resumesService.remove(+id);
+  remove(@Req() req: Request, @Param('id') id: string) {
+    return this.resumesService.removeResume(id, req.user['sub']);
   }
 }

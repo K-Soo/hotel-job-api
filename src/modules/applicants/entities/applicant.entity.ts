@@ -12,8 +12,8 @@ import { Role, Provider, CertificationStatus, AccountStatus } from '../../../com
 import { Consent } from '../../consents/entities/consent.entity';
 import { Exclude } from 'class-transformer';
 import { Resume } from '../../resumes/entities/resume.entity';
-import { User } from '../../users/entities/user.entity';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
+import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -27,9 +27,6 @@ export class Applicant {
   @OneToMany(() => Resume, (resumes) => resumes.applicant)
   resumes: Resume[];
 
-  @OneToOne(() => User, (user) => user.applicant)
-  user: User;
-
   @OneToOne(() => Certification, (certification) => certification.applicant)
   certification: Certification;
 
@@ -37,16 +34,22 @@ export class Applicant {
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
   certificationStatus: CertificationStatus;
 
+  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.applicant)
+  accountHistory: AccountHistory[];
+
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Exclude()
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   userId: string;
 
   @Column({ type: 'enum', enum: Provider })
   provider: Provider;
+
+  @Column({ default: null })
+  email: string;
 
   @Exclude()
   @Column({ type: 'enum', enum: Role, default: Role.JOB_SEEKER })

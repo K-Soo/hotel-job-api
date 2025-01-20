@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Resume } from '../../resumes/entities/resume.entity';
-import { Job, Position, SalaryType } from '../../../common/constants/app.enum';
+import { Jobs, Position, SalaryType } from '../../../common/constants/app.enum';
 import { City } from '../../../common/constants/location.enum';
 
 @Entity('experience')
@@ -36,8 +36,8 @@ export class Experience {
   responsibility: string;
 
   // 직무
-  @Column({ type: 'enum', enum: Job })
-  job: Job;
+  @Column({ type: 'enum', enum: Jobs })
+  job: Jobs;
 
   // 직급
   @Column({ type: 'enum', enum: Position, default: Position.NONE })

@@ -10,6 +10,7 @@ import { SwaggerConfigModule } from './config/swagger/swagger.config.module';
 import { RefreshTokenMiddleware } from './common/middlewares/refresh-token.middleware';
 import { AccessTokenMiddleware } from './common/middlewares/access-token.middleware';
 import { LoggingMiddleware } from './common/middlewares/logging.middleware';
+import { DelayMiddleware } from './common/middlewares/delay.middleware';
 
 import { EmployersModule } from './modules/employers/employers.module';
 import { CompanyModule } from './modules/employers/company/company.module';
@@ -19,12 +20,10 @@ import { TestsModule } from './modules/tests/tests.module';
 import { ApplicantsModule } from './modules/applicants/applicants.module';
 import { AuthModule } from './authentication/auth/auth.module';
 import { OauthModule } from './authentication/oauth/oauth.module';
-import { UsersModule } from './modules/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ResumesModule } from './modules/resumes/resumes.module';
 import { ExperiencesModule } from './modules/experiences/experiences.module';
-import { LicensesModule } from './modules/licenses/licenses.module';
 import { MilitaryModule } from './modules/military/military.module';
 import { PartnersModule } from './modules/partners/partners.module';
 import { UploadModule } from './modules/upload/upload.module';
@@ -32,6 +31,9 @@ import { ConditionsModule } from './modules/conditions/conditions.module';
 import { TalentsModule } from './modules/talents/talents.module';
 import { VerificationsModule } from './modules/verifications/verifications.module';
 import { CertificationModule } from './authentication/certification/certification.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { RecruitModule } from './modules/recruit/recruit.module';
+import { ApplicationsModule } from './modules/applications/applications.module';
 
 @Module({
   imports: [
@@ -45,11 +47,9 @@ import { CertificationModule } from './authentication/certification/certificatio
     ApplicantsModule,
     AuthModule,
     OauthModule,
-    UsersModule,
     ConsentsModule,
     ResumesModule,
     ExperiencesModule,
-    LicensesModule,
     MilitaryModule,
     PartnersModule,
     UploadModule,
@@ -61,6 +61,12 @@ import { CertificationModule } from './authentication/certification/certificatio
     VerificationsModule,
 
     CertificationModule,
+
+    PaymentModule,
+
+    RecruitModule,
+
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
@@ -70,5 +76,7 @@ export class AppModule implements NestModule {
     consumer.apply(RefreshTokenMiddleware).forRoutes('*');
     consumer.apply(AccessTokenMiddleware).forRoutes('*');
     consumer.apply(LoggingMiddleware).forRoutes('*');
+    //DEBUG
+    // consumer.apply(DelayMiddleware).forRoutes('*');
   }
 }

@@ -13,7 +13,6 @@ export class TalentsService {
   async findAll(options: IPaginationOptions) {
     const data = await paginate<Resume>(this.resumeRepo, options, {
       where: { isVisible: false, isDefault: false },
-      relations: ['applicant.user'],
     });
 
     return data;
@@ -21,7 +20,7 @@ export class TalentsService {
 
   findOne(uuid: string) {
     try {
-      return safeQuery(() => this.resumeRepo.findOne({ where: { uuid: uuid } }));
+      return safeQuery(() => this.resumeRepo.findOne({ where: { id: uuid } }));
     } catch {
       throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
     }
