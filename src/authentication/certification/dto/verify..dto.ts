@@ -26,6 +26,7 @@ export class VerifyDto {
   Logo_URL: string;
 
   @IsIn(['Y', 'N'])
+  @IsOptional()
   PRE_USE_YN: 'Y' | 'N';
 
   @IsString()
@@ -45,15 +46,19 @@ export class VerifyDto {
   birth_day: string;
 
   @IsIn(['Y', 'N'])
+  @IsOptional()
   cert_01_yn: 'Y' | 'N';
 
   @IsIn(['Y', 'N'])
+  @IsOptional()
   cert_02_yn: 'Y' | 'N';
 
   @IsIn(['Y', 'N'])
+  @IsOptional()
   cert_enc_use: 'Y' | 'N';
 
   @IsIn(['Y', 'N'])
+  @IsOptional()
   cert_enc_use_ext: 'Y' | 'N';
 
   @IsString()
@@ -93,12 +98,15 @@ export class VerifyDto {
   kcp_merchant_time: string;
 
   @IsString()
+  @IsOptional()
   local_code: string;
 
   @IsString()
+  @IsOptional()
   log_trace_no: string;
 
   @IsString()
+  @IsOptional()
   month: string;
 
   @IsString()

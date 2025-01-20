@@ -30,6 +30,7 @@ export class CertificationController {
   @Post('verify')
   @Roles('JOB_SEEKER', 'EMPLOYER')
   async verifyEmployer(@Req() req: Request, @Body() verify: VerifyDto) {
+    console.log('verify: ', verify);
     const user = req.user as RequestUser;
 
     const existingUser = await this.authService.getUserByProvider(user.provider, user.sub);
