@@ -213,9 +213,32 @@ export class RecruitmentService {
     const paginatedResult = await paginate<Recruitment>(this.recruitmentRepo, options, {
       where: { ...statusCondition, employer: { id: uuid } },
       order: { createdAt: 'DESC' },
+      relations: ['applications'],
     });
 
-    return formatPagination(paginatedResult);
+    // 각 채용공고의 applications을 카운트
+    const formattedItems = paginatedResult.items.map((recruitment) => {
+      const totalApplications = recruitment.applications.length;
+      const viewedApplications = recruitment.applications.filter((app) => app.isView).length;
+      const notViewedApplications = totalApplications - viewedApplications;
+
+      return {
+        ...recruitment,
+        applicationCount: {
+          totalCount: totalApplications,
+          viewCount: viewedApplications,
+          notViewCount: notViewedApplications,
+        },
+        // applications 배열을 제거
+        applications: undefined,
+      };
+    });
+
+    // 새 객체로 반환
+    return formatPagination({
+      ...paginatedResult,
+      items: formattedItems,
+    });
   }
 
   // findOneRecruitment - 채용공고 상세
