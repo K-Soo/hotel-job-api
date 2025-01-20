@@ -81,7 +81,6 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       const { data } = await lastValueFrom(response);
       return data;
     } catch (error) {
-      console.error('kakao error detail: ', error);
       console.error('Error fetching Kakao access token:', error.response?.data || error.message);
 
       //동일한 인가 코드를 두 번 이상 사용하거나, 이미 만료된 인가 코드를 사용한 경우
