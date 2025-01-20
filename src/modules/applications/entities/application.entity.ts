@@ -38,9 +38,13 @@ export class Application {
   @Column({ type: 'enum', enum: ApplicationStatus })
   applicationStatus: ApplicationStatus;
 
-  // 전형 단계
+  // 전형 단계 (실제 지원자에게 보여지는 단계)
   @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
   reviewStageStatus: ReviewStageStatus;
+
+  //사업자 전용 전형 이동 단계
+  @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
+  employerReviewStageStatus: ReviewStageStatus;
 
   // 열람 여부
   @Column({ type: 'boolean', default: false })
