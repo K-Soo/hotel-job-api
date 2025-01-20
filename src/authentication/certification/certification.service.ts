@@ -38,6 +38,7 @@ export class CertificationService {
     @InjectRepository(Applicant) private applicantRepo: Repository<Applicant>,
   ) {}
 
+  // 본인인증 시작 params 생성
   async startCertification() {
     try {
       const appEnv = this.configService.get('APP_ENV');
@@ -110,7 +111,7 @@ export class CertificationService {
         );
 
         const data = response.data;
-        console.log('응답 결과: ', data);
+        console.log('start Certification 응답 결과: ', data);
 
         // 성공
         if (data.res_cd !== '0000') {
@@ -149,6 +150,7 @@ export class CertificationService {
     }
   }
 
+  // 본인인증 검증
   async verifyDnHash(verifyDto: VerifyDto) {
     const dn_hash = verifyDto.dn_hash;
     const ordr_idxx = verifyDto.ordr_idxx;
@@ -207,6 +209,7 @@ export class CertificationService {
     }
   }
 
+  // 본인인증 복호화
   async decryptCert(decryptCertDto: DecryptCertDto) {
     try {
       const site_cd = this.configService.get('SITE_CODE');
@@ -242,7 +245,7 @@ export class CertificationService {
       );
 
       const data = response.data;
-      console.log('복호화 응답데이터 PAI : ', data);
+      console.log('복호화 응답데이터 API : ', data);
 
       if (data.res_cd !== '0000') {
         throw new Error(data.res_msg);
