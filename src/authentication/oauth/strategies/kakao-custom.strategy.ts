@@ -33,9 +33,7 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
 
     const errors = await validate(CreateOAuthDto);
 
-    // 회원가입 폼과 함께 가입 요청
     if (kakaoOAuthData.requestType === 'signUp') {
-      // 동의 체크 여부 벨리데이션
       if (errors.length > 0) {
         throw new BadRequestException(customHttpException.OAUTH_SIGN_IN_BAD_REQUEST);
       }
@@ -78,11 +76,12 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
           client_id: this.configService.get('KAKAO_CLIENT_ID'),
           code,
         },
-        timeout: 3000,
+        timeout: 7000,
       });
       const { data } = await lastValueFrom(response);
       return data;
     } catch (error) {
+      console.error('kakao error detail: ', error);
       console.error('Error fetching Kakao access token:', error.response?.data || error.message);
 
       //동일한 인가 코드를 두 번 이상 사용하거나, 이미 만료된 인가 코드를 사용한 경우
