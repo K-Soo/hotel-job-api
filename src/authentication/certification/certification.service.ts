@@ -256,6 +256,7 @@ export class CertificationService {
 
   async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer, role: RoleType) {
     try {
+      // 사업자 유저
       if (role === 'EMPLOYER') {
         const employer = await this.employersService.findOneUuid(user.id);
         if (!employer) {
@@ -286,6 +287,7 @@ export class CertificationService {
         return { status: ResponseStatus.SUCCESS };
       }
 
+      // 일반유저
       if (role === 'JOB_SEEKER') {
         const applicant = await this.applicantsService.findOne(user.id);
         if (!applicant) {
@@ -311,7 +313,7 @@ export class CertificationService {
         await safeQuery(() => this.certificationRepository.save(createdCertification));
 
         await safeQuery(() =>
-          this.employerRepo.update(applicant.id, { certificationStatus: CertificationStatus.VERIFIED }),
+          this.applicantRepo.update(applicant.id, { certificationStatus: CertificationStatus.VERIFIED }),
         );
 
         return { status: ResponseStatus.SUCCESS };
