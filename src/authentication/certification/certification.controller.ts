@@ -6,7 +6,7 @@ import { VerifyDto } from './dto/verify..dto';
 import { PassportJwtGuard } from '../auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Response, Request } from 'express';
+import { Request } from 'express';
 import { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 import { AuthService } from '../auth/auth.service';
 
