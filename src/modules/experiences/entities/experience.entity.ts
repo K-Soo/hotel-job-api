@@ -13,13 +13,15 @@ import {
 import { Resume } from '../../resumes/entities/resume.entity';
 import { Jobs, Position, SalaryType } from '../../../common/constants/app.enum';
 import { City } from '../../../common/constants/location.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity('experience')
 export class Experience {
-  @ManyToOne(() => Resume, (resume) => resume.experience, { cascade: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Resume, (resume) => resume.experience, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'resume_id', referencedColumnName: 'id' })
   resume: Resume;
 
+  @Exclude()
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -40,7 +42,7 @@ export class Experience {
   job: Jobs;
 
   // 직급
-  @Column({ type: 'enum', enum: Position, default: Position.NONE })
+  @Column({ type: 'enum', enum: Position, nullable: true })
   position: Position;
 
   // 입사일
@@ -51,39 +53,15 @@ export class Experience {
   @Column({ type: 'timestamptz', precision: 0, nullable: true })
   endDate: Date | null;
 
-  // 근무지
-  @Column({ type: 'enum', enum: City, default: City.NONE })
-  location: City;
-
   // 퇴사 사유
   @Column({ type: 'varchar', length: 255, nullable: true, default: '' })
   reasonForLeaving: string;
 
-  // 급여 유형
-  @Column({ type: 'enum', enum: SalaryType, default: SalaryType.NONE })
-  salaryType: SalaryType;
-
-  //급여 금액
-  @Column({ type: 'int', default: 0 })
-  baseSalary: number;
-
-  // 수당 금액
-  @Column({ type: 'int', default: 0 })
-  allowance: number;
-
-  // 총 급여
-  @Column({ type: 'int', default: 0 })
-  totalSalary: number;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  calculateTotalSalary() {
-    this.totalSalary = this.baseSalary + this.allowance;
-  }
-
+  @Exclude()
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 
