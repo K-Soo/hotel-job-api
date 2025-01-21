@@ -20,6 +20,7 @@ export class ApplicantsService {
     return this.repo.save(user);
   }
 
+  // 유저 정보, 인증정보, 동의항목 찾기
   async findOne(id: string) {
     const applicant = await safeQuery(() =>
       this.repo.findOne({ where: { id: id }, relations: ['consent', 'certification'] }),
@@ -38,6 +39,7 @@ export class ApplicantsService {
     return user;
   }
 
+  // uuid로 유저 찾기
   findByUuid(uuid: string) {
     return safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
   }
