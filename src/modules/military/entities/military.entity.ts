@@ -15,7 +15,7 @@ import { BadRequestException } from '@nestjs/common';
 
 @Entity('military')
 export class Military {
-  @OneToOne(() => Resume, (resume) => resume.experience, { cascade: true, onDelete: 'CASCADE' })
+  @OneToOne(() => Resume, (resume) => resume.military, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'resume_id', referencedColumnName: 'id' })
   resume: Resume;
 
