@@ -99,4 +99,12 @@ export class ApplicationsController {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
     return this.applicationsService.updateEmployerReviewStageStatus(updateReviewStageDto, employer);
   }
+
+  @ApiOperation({ summary: '이력서 열람처리', description: '지원자의 이력서를 열람 처리합니다.' })
+  @Roles('EMPLOYER')
+  @Patch('/view')
+  async updateMarkResumeAsView(@Req() req: Request, @Body() body: { applicationId: number }) {
+    const employer = await this.employersService.findOneUuid(req.user['sub']);
+    return this.applicationsService.markResumeAsViewed(body.applicationId, employer);
+  }
 }
