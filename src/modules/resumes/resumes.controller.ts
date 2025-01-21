@@ -20,6 +20,7 @@ import {
   UseInterceptors,
   NotFoundException,
 } from '@nestjs/common';
+
 @ApiTags('resumes 이력서')
 @ApiBearerAuth()
 @Controller('resumes')
