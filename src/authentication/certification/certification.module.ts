@@ -21,5 +21,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [CertificationController],
   providers: [CertificationService],
+  exports: [CertificationService],
 })
 export class CertificationModule {}

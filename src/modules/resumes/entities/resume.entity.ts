@@ -64,11 +64,11 @@ export class Resume {
   condition: Condition;
 
   //경력 (필수)
-  @OneToMany(() => Experience, (experience) => experience.resume)
+  @OneToMany(() => Experience, (experience) => experience.resume, { cascade: true })
   experience: Experience[];
 
   //병역사항 (선택)
-  @OneToOne(() => Military, (military) => military.resume)
+  @OneToOne(() => Military, (military) => military.resume, { cascade: true })
   military: Military;
 
   @PrimaryGeneratedColumn('uuid')

@@ -165,4 +165,31 @@ export class ApplicationsService {
       ...formattedResult,
     };
   }
+
+  // 열람처리
+  async markResumeAsViewed(applicationId: number, employer: Employer) {
+    const application = await this.applicationRepo.findOne({
+      where: { id: applicationId },
+      relations: ['recruitment', 'recruitment.employer'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    if (application.recruitment.employer.id !== employer.id) {
+      throw new ForbiddenException();
+    }
+
+    if (application.isView) {
+      return { status: ResponseStatus.DUPLICATE };
+    }
+
+    application.isView = true;
+    application.viewAt = new Date();
+
+    await this.applicationRepo.save(application);
+
+    return { status: ResponseStatus.SUCCESS };
+  }
 }

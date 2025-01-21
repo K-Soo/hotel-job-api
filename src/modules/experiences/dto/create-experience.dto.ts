@@ -1,5 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsBoolean, IsDate, IsNumber, IsEnum, ValidateIf, Min, Length } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsDate,
+  IsNumber,
+  IsEnum,
+  ValidateIf,
+  Min,
+  Length,
+  Max,
+} from 'class-validator';
 import { Jobs, Position, SalaryType } from '../../../common/constants/app.enum';
 import { City } from '../../../common/constants/location.enum';
 import { Type } from 'class-transformer';
@@ -35,33 +46,7 @@ export class CreateExperienceDto {
   @IsDate({ message: 'startDate must be a valid ISO 8601 date in UTC format' })
   endDate: Date | null;
 
-  @ApiProperty({ description: '근무지 (NONE: 미선택)', example: City.강원도, enum: City })
-  @IsOptional()
-  @IsEnum(City)
-  city: City;
-
-  @ApiProperty({
-    description: '급여 유형 (NONE: 미선택, ANNUAL: 연봉, MONTHLY: 월급, HOURLY: 시급)',
-    example: SalaryType.ANNUAL,
-    enum: SalaryType,
-  })
-  @IsEnum(SalaryType, { message: 'job must be a valid SalaryType' })
-  salaryType: SalaryType;
-
-  @ApiProperty({ description: '급여 금액', example: 1000 })
-  @ValidateIf((obj) => obj.salaryType !== SalaryType.NONE)
-  @IsNumber()
-  @Min(1, { message: 'baseSalary must be greater than 0' })
-  baseSalary: number;
-
-  @ApiProperty({ description: '수당', example: 1000 })
-  @ValidateIf((obj) => obj.salaryType === SalaryType.MONTHLY)
-  @IsNumber()
-  @Min(1, { message: 'allowance must be greater than 0' })
-  allowance: number;
-
   @ApiProperty({ description: '퇴사 사유', example: '개인적인이유' })
-  @Length(1, 255, { message: 'reasonForLeaving must be between 1 and 255 characters long' })
   @IsString()
   reasonForLeaving: string;
 }

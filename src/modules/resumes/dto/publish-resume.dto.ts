@@ -108,7 +108,7 @@ export class PublishResumeDto {
   @IsArray()
   @Type(() => CreateExperienceDto)
   @ValidateNested({ each: true }) // 배열의 각 요소를 검증
-  experiences: CreateExperienceDto[];
+  experience: CreateExperienceDto[];
 
   @ApiProperty({
     description: '사용 가능한 언어',
