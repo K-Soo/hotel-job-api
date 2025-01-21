@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/K-Soo/hotel-job-api/compare/v0.0.10...v0.0.11) (2025-01-21)
+
+
+### Features
+
+* 사용자 UUID 및 역할에 따라 인증 정보를 조회하는 findCertificationByUserUUid 메서드 추가 ([9475d80](https://github.com/K-Soo/hotel-job-api/commit/9475d80a2f9cbed2bbe903570589251445a3ff7e))
+* 이력서 생성 및 게시 기능 개선, 인증 정보 기반으로 기본 프로필 데이터 설정 ([3512f17](https://github.com/K-Soo/hotel-job-api/commit/3512f17e3f7520f410263d82cc2f90d338adc617))
+* 이력서 열람처리 기능 추가 ([8b331bf](https://github.com/K-Soo/hotel-job-api/commit/8b331bff52394498e2a665a110b19d9c6f530eac))
+* 이력서 열람처리 기능 추가 및 관련 API 엔드포인트 구현 ([4bdfa0f](https://github.com/K-Soo/hotel-job-api/commit/4bdfa0f2632acdb6deea0d0d4e17bc11cb17998c))
+* 인증 관련 로직에서 로그 메시지 개선 및 VerifyDto 필드에 선택적 데코레이터 추가 ([6d697ba](https://github.com/K-Soo/hotel-job-api/commit/6d697ba02bafe31ff432c8f205b2c0f34d7fa0ef))
+* 인증 관련 로직에서 VerifyDto를 any로 변경하여 유연성 증가 ([2d29b28](https://github.com/K-Soo/hotel-job-api/commit/2d29b284569f49c5f1f1da3be26cea0d03d7f372))
+* 인증 서비스에서 사업자 및 일반 유저 처리 로직 개선 및 DTO 필드 정리 ([61a3fb7](https://github.com/K-Soo/hotel-job-api/commit/61a3fb78a2a7cc26f16141b0f6a9c6439dbd71ba))
+* 인증 엔티티에서 민감한 필드에 Exclude 데코레이터 추가 ([6199bfe](https://github.com/K-Soo/hotel-job-api/commit/6199bfe363b9e0da759bd6c48a9a239a127dbbee))
+* 카카오 OAuth 전략에서 오류 로그 개선 ([1d89896](https://github.com/K-Soo/hotel-job-api/commit/1d8989636b693dc80d29ee98e30ba398b1eee4c0))
+* applicants.service.ts에 유저 정보 및 uuid로 유저 찾기 주석 추가 ([f353512](https://github.com/K-Soo/hotel-job-api/commit/f353512cce3be2b73299dd3e783a551036125f1d))
+* CertificationModule에서 CertificationService를 export하여 모듈 간 재사용성 증가 ([783acc4](https://github.com/K-Soo/hotel-job-api/commit/783acc47d07b343dcd7454f2e44879d0f1f741d3))
+* CertificationModule을 이력서 모듈에 추가 ([7d88287](https://github.com/K-Soo/hotel-job-api/commit/7d8828702c8b39ac8d927cf7fee50ff37f3938f8))
+* CreateExperienceDto에서 불필요한 필드 제거 및 코드 정리 ([a315f71](https://github.com/K-Soo/hotel-job-api/commit/a315f71e47ea6a3250d44e376399f197ed49faf2))
+* Experience 엔티티에서 불필요한 필드 제거 및 Exclude 데코레이터 추가 ([8b44da8](https://github.com/K-Soo/hotel-job-api/commit/8b44da8e1a1945ac8a787432d56d903ab907d92a))
+* Resume 엔티티에서 경험 및 병역사항 관계에 cascade 옵션 추가 ([ae5f3cd](https://github.com/K-Soo/hotel-job-api/commit/ae5f3cdb98445ec3bf6c0ea0a11ec7ac2bc97951))
+
+
+### Bug Fixes
+
+* Military 엔티티에서 Resume 관계의 필드 이름을 수정 ([99f86b2](https://github.com/K-Soo/hotel-job-api/commit/99f86b276044e1f80d497e1f3e59fdcce9842d95))
+* PublishResumeDto에서 experiences 필드를 experience로 수정 ([072c391](https://github.com/K-Soo/hotel-job-api/commit/072c39174eb2ea48c9d0a5fd373f90c71f04b475))
+* resumes.controller.ts 파일에 공백 추가 ([f9dbe5e](https://github.com/K-Soo/hotel-job-api/commit/f9dbe5ec1378bcffd5a5020f800e2c86df5d0039))
+
 ### [0.0.10](https://github.com/K-Soo/hotel-job-api/compare/v0.0.9...v0.0.10) (2025-01-20)
 
 
