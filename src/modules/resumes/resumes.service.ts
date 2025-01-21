@@ -9,21 +9,29 @@ import { ResponseStatus } from '../../common/constants/responseStatus';
 import { ExperiencesService } from '../experiences/experiences.service';
 import { MilitaryService } from '../military/military.service';
 import { DataSource } from 'typeorm';
-import { ResumeStatus, SanctionReason, ResumeType } from '../../common/constants/app.enum';
+import { ResumeStatus, SanctionReason, ResumeType, Role } from '../../common/constants/app.enum';
 import { PublishResumeDto } from './dto/publish-resume.dto';
-
+import { CertificationService } from '../../authentication/certification/certification.service';
+import { Experience } from '../experiences/entities/experience.entity';
 @Injectable()
 export class ResumesService {
   constructor(
     @InjectRepository(Resume) private resumeRepo: Repository<Resume>,
     private readonly dataSource: DataSource,
     private readonly experienceService: ExperiencesService,
-    private readonly militaryService: MilitaryService,
+    private readonly certificationService: CertificationService,
   ) {}
 
   async initialCreateResume(applicant: Applicant) {
     try {
-      const existingResumes = await this.resumeRepo.find({ where: { applicant }, relations: ['applicant'] });
+      const existingResumes = await this.resumeRepo.find({
+        where: { applicant },
+      });
+
+      const userCertInfo = await this.certificationService.findCertificationByUserUUid(applicant.id, Role.JOB_SEEKER);
+      console.log('userCertInfo: ', userCertInfo);
+
+      console.log('existingResumes: ', existingResumes);
 
       // if (existingResumes >= 5) {
       //   throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
@@ -37,18 +45,20 @@ export class ResumesService {
         resume.status = ResumeStatus.DRAFT;
         resume.sanctionReason = SanctionReason.NONE;
         resume.resumeType = ResumeType.GENERAL;
-        resume.title = '기본 이력서(이력서 제목을 입력해주세요)';
+        resume.title = '이력서 제목을 입력해주세요';
 
         // 관계에서 가져옴 임시데이터
         // 기본 프로필 데이터 설정
         resume.profileImage = '';
-        resume.name = '고원호';
-        resume.localCode = '01';
-        resume.sexCode = '01';
-        resume.phone = '01012345678';
-        resume.birthday = '19900101';
-        resume.address = '경기도 남양주시 두물로';
-        resume.addressDetail = '202호';
+        resume.name = userCertInfo.user_name;
+        resume.localCode = userCertInfo.local_code;
+        resume.sexCode = userCertInfo.sex_code;
+        resume.phone = userCertInfo.phone_no;
+        resume.birthday = userCertInfo.birth_day;
+
+        resume.address = '';
+        resume.addressDetail = '';
+        resume.email = applicant.email || '';
 
         resume.careerLevel = null;
         resume.education = null;
@@ -56,6 +66,7 @@ export class ResumesService {
         resume.careerDetail = '';
         resume.isRequiredAgreement = false;
         resume.isOptionalAgreement = false;
+
         resume.createdAt = new Date();
         resume.updatedAt = new Date();
 
@@ -115,20 +126,32 @@ export class ResumesService {
   }
 
   async publishResume(publishResumeDto: PublishResumeDto, applicant: Applicant) {
-    const { id, ...updateData } = publishResumeDto;
+    const { id, experience: newExperiences, ...updateData } = publishResumeDto;
 
     const resume = await this.resumeRepo.findOne({
       where: { id, applicant },
+      relations: ['experience'],
     });
 
     if (!resume) {
       throw new NotFoundException('Not found resume');
     }
 
+    if (newExperiences) {
+      const experienceRepo = this.dataSource.getRepository(Experience);
+      // 1. 기존 경력 데이터 제거
+      await experienceRepo.delete({ resume: { id: resume.id } });
+
+      // 2. 새로운 경력 데이터 추가
+      const newExperienceEntities = newExperiences.map((exp) => experienceRepo.create(exp));
+      resume.experience = newExperienceEntities; // 새로운 경험 데이터를 할당 (덮어쓰기)
+    }
+
     const mergedResume = this.resumeRepo.merge(resume, updateData, {
       status: ResumeStatus.PUBLISH,
       updatedAt: new Date(),
     });
+
     await this.resumeRepo.save(mergedResume);
     return { status: ResponseStatus.SUCCESS, id: resume.id };
   }
@@ -159,7 +182,7 @@ export class ResumesService {
   }
 
   async findOne(uuid: string) {
-    return safeQuery(() => this.resumeRepo.findOne({ where: { id: uuid } }));
+    return safeQuery(() => this.resumeRepo.findOne({ where: { id: uuid }, relations: ['experience'] }));
   }
 
   async removeResume(id: string, userUuid: string) {

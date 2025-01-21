@@ -6,9 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicantsModule } from '../applicants/applicants.module';
 import { ExperiencesModule } from '../experiences/experiences.module';
 import { MilitaryModule } from '../military/military.module';
+import { CertificationModule } from '../../authentication/certification/certification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Resume]), ApplicantsModule, ExperiencesModule, MilitaryModule],
+  imports: [
+    TypeOrmModule.forFeature([Resume]),
+    ApplicantsModule,
+    ExperiencesModule,
+    MilitaryModule,
+    CertificationModule,
+  ],
   controllers: [ResumesController],
   providers: [ResumesService],
   exports: [ResumesService],

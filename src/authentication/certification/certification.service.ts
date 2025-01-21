@@ -151,7 +151,7 @@ export class CertificationService {
   }
 
   // 본인인증 검증
-  async verifyDnHash(verifyDto: VerifyDto) {
+  async verifyDnHash(verifyDto: any) {
     const dn_hash = verifyDto.dn_hash;
     const ordr_idxx = verifyDto.ordr_idxx;
     const cert_no = verifyDto.cert_no;
@@ -333,5 +333,49 @@ export class CertificationService {
     //   certificationType: CertificationType.APPLICANT,
     // });
     // 2. GeneralCertification 엔티티 생성
+  }
+
+  async findCertificationByUserUUid(userUUid: string, role: RoleType) {
+    try {
+      // EMPLOYER (사업자 유저) 조회
+      if (role === 'EMPLOYER') {
+        const employer = await this.employersService.findOneUuid(userUUid);
+        if (!employer) {
+          throw new UnauthorizedException('Employer not found');
+        }
+
+        const certification = await this.certificationRepository.findOne({
+          where: { employer, certificationType: CertificationType.EMPLOYER },
+        });
+
+        if (!certification) {
+          throw new UnauthorizedException('Certification not found for this employer');
+        }
+
+        return certification;
+      }
+
+      // JOB_SEEKER (구직자 유저) 조회
+      if (role === 'JOB_SEEKER') {
+        const applicant = await this.applicantsService.findByUuid(userUUid);
+        if (!applicant) {
+          throw new UnauthorizedException('Applicant not found');
+        }
+
+        const certification = await this.certificationRepository.findOne({
+          where: { applicant, certificationType: CertificationType.APPLICANT },
+        });
+
+        if (!certification) {
+          throw new UnauthorizedException('Certification not found for this applicant');
+        }
+
+        return certification;
+      }
+
+      throw new UnauthorizedException('Invalid role type');
+    } catch (error) {
+      throw new UnauthorizedException(error.message);
+    }
   }
 }
