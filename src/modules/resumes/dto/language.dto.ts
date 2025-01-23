@@ -9,7 +9,7 @@ export class LanguageDto {
     enum: Language,
   })
   @IsEnum(Language, { message: 'language must be a valid Language enum value' })
-  language: Language;
+  name: Language;
 
   @ApiProperty({
     description: '숙련도 (BEGINNER, INTERMEDIATE, ADVANCED, NATIVE)',
@@ -17,5 +17,5 @@ export class LanguageDto {
     enum: Proficiency,
   })
   @IsEnum(Proficiency, { message: 'Proficiency must be a valid Proficiency enum value' })
-  proficiency: Proficiency;
+  level: Proficiency;
 }

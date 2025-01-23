@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 
 export class LicenseDto {
   @ApiProperty({ description: '자격증 이름', example: '운전면허 1종 보통' })
-  @Length(5, 100)
+  @Length(2, 30)
   licenseName: string;
 
   @ApiProperty({
