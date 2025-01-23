@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class UpdateResumeField1737655693017 implements MigrationInterface {
-    name = 'UpdateResumeField1737655693017'
+export class UpdateResume1737656259711 implements MigrationInterface {
+    name = 'UpdateResume1737656259711'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '3628169644'`);
+        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '5759670237'`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
