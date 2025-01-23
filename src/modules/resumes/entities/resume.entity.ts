@@ -141,7 +141,7 @@ export class Resume {
 
   //사용가능한 언어 (선택) 다중선택 가능
   @Column({ type: 'json', default: [] })
-  languages: { language: Language; proficiency: Proficiency }[];
+  languages: { name: Language; level: Proficiency }[];
 
   //자기소개 (선택)
   @Column({ type: 'text', default: '' })

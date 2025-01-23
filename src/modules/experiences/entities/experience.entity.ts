@@ -65,8 +65,8 @@ export class Experience {
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 
-  @AfterInsert()
-  logInsert() {
-    console.info('logInsert', this);
-  }
+  // @AfterInsert()
+  // logInsert() {
+  //   console.info('logInsert', this);
+  // }
 }
