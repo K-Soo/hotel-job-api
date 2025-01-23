@@ -170,14 +170,15 @@ export enum SalaryType {
 
 export enum Language {
   NONE = 'NONE', // 선택되지 않음
-  ENGLISH = 'ENGLISH', // 영어
   KOREAN = 'KOREAN', // 한국어
+  ENGLISH = 'ENGLISH', // 영어
   SPANISH = 'SPANISH', // 스페인어
-  FRENCH = 'FRENCH', // 프랑스어
-  CHINESE = 'CHINESE', // 중국어
-  RUSSIAN = 'RUSSIAN', // 러시아어
   MONGOLIAN = 'MONGOLIAN', // 몽골어
   JAPANESE = 'JAPANESE', // 일본어
+  CHINESE = 'CHINESE', // 중국어
+  GERMAN = 'GERMAN', // 독일어
+  FRENCH = 'FRENCH', // 프랑스어
+  RUSSIAN = 'RUSSIAN', // 러시아어
 }
 
 export enum Proficiency {
