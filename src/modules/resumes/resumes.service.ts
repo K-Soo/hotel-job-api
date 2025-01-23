@@ -26,12 +26,11 @@ export class ResumesService {
     try {
       const existingResumes = await this.resumeRepo.find({
         where: { applicant },
+        relations: ['experience'],
       });
 
-      const userCertInfo = await this.certificationService.findCertificationByUserUUid(applicant.id, Role.JOB_SEEKER);
-      console.log('userCertInfo: ', userCertInfo);
-
       console.log('existingResumes: ', existingResumes);
+      const userCertInfo = await this.certificationService.findCertificationByUserUUid(applicant.id, Role.JOB_SEEKER);
 
       // if (existingResumes >= 5) {
       //   throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
@@ -75,22 +74,37 @@ export class ResumesService {
         return { status: ResponseStatus.SUCCESS, id: savedResume.id };
       }
 
-      const baseResume = existingResumes[0];
+      // 이력서 복사
+      if (existingResumes.length !== 0) {
+        const baseResume = existingResumes.find((resume) => resume.isDefault);
+        console.log('baseResume: ', baseResume);
 
-      const copiedResume = this.resumeRepo.create({
-        ...baseResume,
-        id: undefined, // 새 ID를 생성
-        isDefault: false, // 기본 이력서 비활성화
-      });
+        const copiedResume = this.resumeRepo.create({
+          ...baseResume,
+          applicant,
+          id: undefined, // 새 ID를 생성
+          isDefault: false, // 기본 이력서 비활성화
+        });
 
-      copiedResume.title = `[복사] ${baseResume.title}`;
-      copiedResume.status = ResumeStatus.DRAFT;
-      copiedResume.createdAt = new Date();
-      copiedResume.updatedAt = new Date();
+        const experiencesCopy = baseResume.experience.map((exp) => ({
+          ...exp,
+          id: undefined, // 새로운 ID 생성
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          resume: copiedResume, // 새로 생성된 copiedResume와 연결
+        }));
 
-      await this.resumeRepo.save(copiedResume);
+        copiedResume.experience = experiencesCopy; // 관계 설정
 
-      return { status: ResponseStatus.SUCCESS, id: copiedResume.id };
+        copiedResume.title = `[복사]${baseResume.title}`;
+        copiedResume.status = ResumeStatus.DRAFT;
+        copiedResume.createdAt = new Date();
+        copiedResume.updatedAt = new Date();
+
+        const savedCopiedResume = await this.resumeRepo.save(copiedResume);
+
+        return { status: ResponseStatus.SUCCESS, id: savedCopiedResume.id };
+      }
 
       // return this.dataSource.transaction(async (manager) => {
       //   try {
@@ -159,7 +173,7 @@ export class ResumesService {
   async getAllResumesWithApplication(uuid: string) {
     const resumes = await this.resumeRepo.find({
       where: { applicant: { id: uuid } },
-      relations: ['applications'],
+      relations: ['applications', 'applications.recruitment'],
     });
 
     // 이력서 정렬: isDefault true가 맨 위로
