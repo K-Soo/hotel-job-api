@@ -114,8 +114,8 @@ export class PublishResumeDto {
     description: '사용 가능한 언어',
     type: [LanguageDto],
     example: [
-      { language: 'ENGLISH', proficiency: 'BEGINNER' },
-      { language: 'KOREAN', proficiency: 'BEGINNER' },
+      { name: 'ENGLISH', level: 'BEGINNER' },
+      { name: 'KOREAN', level: 'BEGINNER' },
     ],
   })
   @IsArray()
