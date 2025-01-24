@@ -4,12 +4,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { hashPassword, comparePassword } from '../../common/helpers/password.helper';
 import { safeQuery } from '../../common/helpers/database.helper';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Membership } from '../membership/entities/membership.entity';
 
 @Injectable()
 export class EmployersService {
-  constructor(@InjectRepository(Employer) private repo: Repository<Employer>) {}
+  constructor(
+    @InjectRepository(Employer) private readonly employerRepo: Repository<Employer>,
+    @InjectRepository(Membership)
+    private readonly membershipRepo: Repository<Membership>,
+  ) {}
 
+  //회원가입 시 Employer 생성 및 Membership 설정
   async create(createEmployerDto: CreateEmployerDto, manager: EntityManager) {
     const isExistUser = await this.findOneUserId(createEmployerDto.userId);
     if (isExistUser) {
@@ -18,9 +24,17 @@ export class EmployersService {
 
     const hashedPassword = await hashPassword(createEmployerDto.password);
 
-    const user = this.repo.create({
+    const defaultScore = 0;
+    const membership = await this.findMembershipByScore(defaultScore);
+
+    if (!membership) {
+      throw new HttpException('Unable to assign a Membership for the default score.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    const user = this.employerRepo.create({
       ...createEmployerDto,
       password: hashedPassword,
+      membership,
     });
 
     return manager.save(Employer, user);
@@ -28,18 +42,18 @@ export class EmployersService {
 
   // 유저 아이디로 유저 찾기
   findOneUserId(userId: string) {
-    return safeQuery(() => this.repo.findOne({ where: { userId } }));
+    return safeQuery(() => this.employerRepo.findOne({ where: { userId } }));
   }
 
   // 유저 uuid로 유저 찾기
   findOneUuid(id: string) {
-    return safeQuery(() => this.repo.findOne({ where: { id } }));
+    return safeQuery(() => this.employerRepo.findOne({ where: { id } }));
   }
 
   // 계정정보
   accountInfo(id: string) {
     return safeQuery(async () => {
-      const account = await this.repo.findOne({ where: { id }, relations: ['certification'] });
+      const account = await this.employerRepo.findOne({ where: { id }, relations: ['certification', 'membership'] });
       return {
         ...account,
         certification: account.certification ?? null,
@@ -70,4 +84,16 @@ export class EmployersService {
   remove(id: number) {
     return `This action removes a #${id} employer`;
   }
+
+  // 점수 기반으로 Membership 찾기
+  async findMembershipByScore(score: number): Promise<Membership | null> {
+    return this.membershipRepo.findOne({
+      where: {
+        minScore: LessThanOrEqual(score),
+        maxScore: MoreThanOrEqual(score),
+      },
+    });
+  }
+
+  async updateEmployerMemberships(): Promise<void> {}
 }
