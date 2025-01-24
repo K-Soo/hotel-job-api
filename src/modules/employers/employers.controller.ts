@@ -39,7 +39,7 @@ export class EmployersController {
     description: '계정정보 응답값',
     type: EmployerResponseDto,
   })
-  @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
+  // @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
   @Get()
   accountInfo(@Req() req: Request) {
     return this.employersService.accountInfo(req.user['sub']);
