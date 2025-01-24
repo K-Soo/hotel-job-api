@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Consent } from '../../consents/entities/consent.entity';
 import {
@@ -21,6 +22,7 @@ import { Exclude } from 'class-transformer';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
 import { Recruitment } from '../recruitment/entities/recruitment.entity';
 import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
+import { Membership } from '../../membership/entities/membership.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -28,6 +30,9 @@ function generateRandom10Digit(): string {
 
 @Entity()
 export class Employer {
+  @ManyToOne(() => Membership, (membership) => membership.employers)
+  membership: Membership;
+
   @OneToOne(() => Consent, (consent) => consent.employer)
   consent: Consent;
 
@@ -70,6 +75,9 @@ export class Employer {
 
   @Column({ unique: true })
   nickname: string;
+
+  @Column({ type: 'int', default: 0 })
+  score: number;
 
   @BeforeInsert()
   async generateUniqueNickname() {
