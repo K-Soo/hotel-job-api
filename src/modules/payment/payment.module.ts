@@ -8,8 +8,8 @@ import { PaymentRecruitmentModule } from './payment-recruitment/payment-recruitm
 import { PaymentResumeViewModule } from './payment-resume-view/payment-resume-view.module';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Payment]), PaymentJumpModule, PaymentRecruitmentModule, PaymentResumeViewModule],
   controllers: [PaymentController],
   providers: [PaymentService],
-  imports: [TypeOrmModule.forFeature([Payment]), PaymentJumpModule, PaymentRecruitmentModule, PaymentResumeViewModule],
 })
 export class PaymentModule {}
