@@ -2,9 +2,16 @@ import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { ConfigModule } from '@nestjs/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { SeederOptions } from 'typeorm-extension';
 
 ConfigModule.forRoot();
+
 const configService = new ConfigService();
+
+const seederOptions: SeederOptions = {
+  seeds: ['dist/database/seeds/**/*{.js,.ts}'],
+  factories: ['dist/database/factories/**/*{.js,.ts}'],
+};
 
 export const postgresDataSource = new DataSource({
   type: 'postgres',
@@ -24,7 +31,6 @@ export const postgresDataSource = new DataSource({
   // migrations: [`${__dirname}/../../src/database/migrations/*.ts`], //dev ok,
   synchronize: false,
   logging: true,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
+  ...seederOptions,
 });

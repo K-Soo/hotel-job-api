@@ -34,6 +34,8 @@ import { CertificationModule } from './authentication/certification/certificatio
 import { PaymentModule } from './modules/payment/payment.module';
 import { RecruitModule } from './modules/recruit/recruit.module';
 import { ApplicationsModule } from './modules/applications/applications.module';
+import { ProductsModule } from './modules/products/products.module';
+import { MembershipModule } from './modules/membership/membership.module';
 
 @Module({
   imports: [
@@ -67,6 +69,10 @@ import { ApplicationsModule } from './modules/applications/applications.module';
     RecruitModule,
 
     ApplicationsModule,
+
+    ProductsModule,
+
+    MembershipModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],

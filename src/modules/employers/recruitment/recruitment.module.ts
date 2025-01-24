@@ -6,7 +6,6 @@ import { Recruitment } from './entities/recruitment.entity';
 import { Nationality } from './entities/nationality.entity';
 import { CryptoModule } from '../../../providers/crypto/crypto.module';
 import { EmployersModule } from '../employers.module';
-import { Application } from '../../applications/entities/application.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Recruitment, Nationality]), CryptoModule, forwardRef(() => EmployersModule)],
   controllers: [RecruitmentController],
