@@ -1,14 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToOne,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  JoinColumn,
-  OneToMany,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { PaymentRecruitment } from '../payment-recruitment/entities/payment-recruitment.entity';
 
 @Entity()

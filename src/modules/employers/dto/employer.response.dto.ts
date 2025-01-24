@@ -35,8 +35,8 @@ export class EmployerResponseDto {
   // @Expose()
   // passwordChangedAt: Date;
 
-  // @ApiProperty({ description: '본인인증 정보', example: 'null' })
-  // @Expose()
-  // @Type(() => CertificationResponseDto)
-  // certification: CertificationResponseDto | null;
+  @ApiProperty({ description: '본인인증 정보', example: 'null' })
+  @Expose()
+  @Type(() => CertificationResponseDto)
+  certification: CertificationResponseDto | null;
 }
