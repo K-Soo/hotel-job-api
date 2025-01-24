@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Createmembership1737726177184 implements MigrationInterface {
-    name = 'Createmembership1737726177184'
+export class CreateMembership1737726836221 implements MigrationInterface {
+    name = 'CreateMembership1737726836221'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."product_type_enum" AS ENUM('RESUME_JUMP_UP', 'RECRUITMENT', 'RESUME_VIEW')`);
@@ -10,13 +10,13 @@ export class Createmembership1737726177184 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "membership" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "membership_level" "public"."membership_membership_level_enum" NOT NULL DEFAULT 'FAMILY', "discount_rate" numeric(4,3) NOT NULL, "min_score" bigint NOT NULL DEFAULT '0', "max_score" bigint NOT NULL, "created_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_23a1b3297db2682c67a5180f09f" UNIQUE ("membership_level"), CONSTRAINT "PK_83c1afebef3059472e7c37e8de8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "employer" ADD "score" integer NOT NULL DEFAULT '0'`);
         await queryRunner.query(`ALTER TABLE "employer" ADD "membership_id" uuid`);
-        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '1503879724'`);
+        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '1836472015'`);
         await queryRunner.query(`ALTER TABLE "employer" ADD CONSTRAINT "FK_3b487783f1eba58a52ffb9a5b9d" FOREIGN KEY ("membership_id") REFERENCES "membership"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "employer" DROP CONSTRAINT "FK_3b487783f1eba58a52ffb9a5b9d"`);
-        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '3628169644'`);
+        await queryRunner.query(`ALTER TABLE "applicant" ALTER COLUMN "nickname" SET DEFAULT '5759670237'`);
         await queryRunner.query(`ALTER TABLE "employer" DROP COLUMN "membership_id"`);
         await queryRunner.query(`ALTER TABLE "employer" DROP COLUMN "score"`);
         await queryRunner.query(`DROP TABLE "membership"`);
