@@ -1,0 +1,5 @@
+export enum ProductType {
+  RESUME_JUMP_UP = 'RESUME_JUMP_UP',
+  RECRUITMENT = 'RECRUITMENT',
+  RESUME_VIEW = 'RESUME_VIEW',
+}
