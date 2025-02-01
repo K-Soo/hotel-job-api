@@ -9,7 +9,7 @@ import { PassportJwtGuard } from '../../../authentication/auth/guards/passport-j
 import { Request } from 'express';
 import { SerializeInterceptor } from '../../../common/interceptors/serialize.interceptor';
 import { ResponseCompanyDto } from './dto/response-company.dto';
-
+import { customHttpException } from '../../../common/constants/custom-http-exception';
 @ApiTags('Company')
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
@@ -24,9 +24,10 @@ export class CompanyController {
   @ApiOperation({ summary: '회사정보 등록' })
   @Post()
   async create(@Req() req: Request, @Body() createCompanyDto: CreateCompanyDto) {
-    const userUuid = req.user['uuid'];
-    const employer = await this.employersService.findOneUuid(userUuid);
-
+    const employer = await this.employersService.findOneUuid(req.user['sub']);
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.companyService.create(createCompanyDto, employer);
   }
 
@@ -47,8 +48,6 @@ export class CompanyController {
   })
   @Get()
   async findOne(@Req() req: Request) {
-    const userUuid = req.user['uuid'];
-
-    return await this.companyService.findOne(userUuid);
+    return await this.companyService.findOne(req.user['sub']);
   }
 }
