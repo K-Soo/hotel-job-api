@@ -2,6 +2,90 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/K-Soo/hotel-job-api/compare/v0.0.11...v0.0.12) (2025-02-01)
+
+
+### Features
+
+* 고용주 멤버십 업데이트를 위한 시더 추가 ([d049e2d](https://github.com/K-Soo/hotel-job-api/commit/d049e2d8bcce3b5a65b3ab6ab9b87a994cfe92c5))
+* 날짜 포맷 유틸리티에 다양한 포맷 추가 및 null 값 처리 개선 ([3eb33e4](https://github.com/K-Soo/hotel-job-api/commit/3eb33e4a09eac5728e2b335018705d9ad88edaec))
+* 데이터 소스 구성 수정 및 로컬 환경에 따른 SSL 설정 추가 ([25cc4e9](https://github.com/K-Soo/hotel-job-api/commit/25cc4e982a4b87191dbbbb6999962b57eea3cb7f))
+* 데이터 소스에 시더 옵션 추가 및 SSL 설정 수정 ([6cdfbaf](https://github.com/K-Soo/hotel-job-api/commit/6cdfbafc57aaf54617ef065ca166f72a04f39eb8))
+* 로그아웃 시 refresh_token 쿠키 도메인 설정 추가 ([e0620e8](https://github.com/K-Soo/hotel-job-api/commit/e0620e8eb4bd98230956cbf2d4abacdd5202005c))
+* 언어 열거형에 영어, 중국어, 독일어, 프랑스어, 러시아어 추가 ([40c2ac1](https://github.com/K-Soo/hotel-job-api/commit/40c2ac16f36cbb904d46e9e20e8ab9e0caad9195))
+* 옵션 기간 가격 목록에 대한 즉시 로딩 설정 추가 ([659fb42](https://github.com/K-Soo/hotel-job-api/commit/659fb4215945d405604566c11c11cd74dbb05596))
+* 유저 UUID 검색 시 유효성 검사 추가 ([2b3488b](https://github.com/K-Soo/hotel-job-api/commit/2b3488b4aaa421801413d959db0157abf1afd927))
+* 이력서 프로필 이미지 업로드 및 조회 기능 추가 ([2741ea1](https://github.com/K-Soo/hotel-job-api/commit/2741ea18af226b393471a7ac51820ba7f1228d12))
+* 이력서 필드의 기본값을 변경하는 마이그레이션 파일 이름 수정 ([fbcac72](https://github.com/K-Soo/hotel-job-api/commit/fbcac72f24cb447afc0b741933a5de1c0c3d4b8c))
+* 이력서 필드의 기본값을 업데이트하는 마이그레이션 추가 ([ff20efe](https://github.com/K-Soo/hotel-job-api/commit/ff20efe255b1fb3eaab9dbb147195415284d281d))
+* 제품 관련 데이터베이스 마이그레이션 추가 ([9642d4f](https://github.com/K-Soo/hotel-job-api/commit/9642d4ff6f96cd5101e38fb2e6f423817f9a5023))
+* 제품 관련 데이터베이스 마이그레이션 파일 삭제 및 새로운 마이그레이션 파일 추가 ([ede4d0b](https://github.com/K-Soo/hotel-job-api/commit/ede4d0b78f2331ea14db22c9c1d80e4fef0ecc40))
+* 제품 유형을 정의하는 ProductType 열거형 추가 ([3b31822](https://github.com/K-Soo/hotel-job-api/commit/3b3182296ebe83ba648163d15c0023046007adff))
+* 지원서 상태 조회 및 업데이트 시 사용자 존재 여부 검사 추가 ([5ffaa35](https://github.com/K-Soo/hotel-job-api/commit/5ffaa359983ac3a6e6d8b862e4cf23191bcbc9bb))
+* 채용 관련 제품 유형 및 옵션 정의를 위한 열거형 추가 ([2e16e52](https://github.com/K-Soo/hotel-job-api/commit/2e16e528d5c9ba5482844c5dd5984f1763951a81))
+* 채용 상품 기간 엔티티 추가 ([8f5729d](https://github.com/K-Soo/hotel-job-api/commit/8f5729d44895b5feb80b5ac7237a7346a5cf63d4))
+* 채용 상품 모듈에서 RecruitmentProduct 및 RecruitmentProductOption 엔티티 추가 ([9af562f](https://github.com/K-Soo/hotel-job-api/commit/9af562fdb7d80c76b6f9efabaddb021b3b5aa412))
+* 채용 상품 목록 조회 기능 추가 ([899ec12](https://github.com/K-Soo/hotel-job-api/commit/899ec12d02d4b9b9c8a627b950041eb793ba02b4))
+* 채용 상품 목록 API에 인증 및 권한 가드 추가 ([641801f](https://github.com/K-Soo/hotel-job-api/commit/641801facbc194eb833c84f466abf670368e06cf))
+* 채용 상품 시더 추가하여 상품, 옵션 및 기간 데이터 생성 ([b5d0def](https://github.com/K-Soo/hotel-job-api/commit/b5d0deffd54bcfdb0fa7f947d01223bb62aa9628))
+* 채용 상품 엔티티 추가 ([25dc4dc](https://github.com/K-Soo/hotel-job-api/commit/25dc4dc7883c895fba4befa81ac985d9731c6181))
+* 채용 상품 옵션 기간 엔티티 추가 ([685cebd](https://github.com/K-Soo/hotel-job-api/commit/685cebdc3dfb2870a8fc60e54246bde92bd0e30c))
+* 채용 상품 옵션 엔티티 추가 ([0e1179c](https://github.com/K-Soo/hotel-job-api/commit/0e1179c967ba53e7e1fa705ae4787a48e930e212))
+* 채용 상품 옵션에 굵은 글씨 추가 ([cb78c22](https://github.com/K-Soo/hotel-job-api/commit/cb78c2246fb36497da1720ebd69855cc51600046))
+* 채용 상품 쿼리 DTO 추가 및 상품 타입 검증 로직 구현 ([f1464d9](https://github.com/K-Soo/hotel-job-api/commit/f1464d9177979d93e7ee01c4575e54fe5becb825))
+* 채용 생성 및 초안 작성 시 사용자 미존재 처리 추가 ([9b893ca](https://github.com/K-Soo/hotel-job-api/commit/9b893cac14ab5d3e11e46223960c71e8e2a59250))
+* 채용 옵션 기간 엔티티에 보너스 일수 필드 추가 ([53d0b71](https://github.com/K-Soo/hotel-job-api/commit/53d0b712c44387cc4c9cd4972c354592e66029c5))
+* 채용 제품 엔티티에서 할인율 필드 제거 ([844c78e](https://github.com/K-Soo/hotel-job-api/commit/844c78e9b85f4db89a79343eda2d1717572e5a0c))
+* 프로필 이미지 업로드 시 파일 이름 포맷 변경 및 실패 처리 추가 ([59b481e](https://github.com/K-Soo/hotel-job-api/commit/59b481e3e9ce88bd3545ab6e81299d9d2df1b59c))
+* 회사 등록 DTO의 상세주소 길이 제한 수정 ([d1dfdae](https://github.com/K-Soo/hotel-job-api/commit/d1dfdaeb09f3a87fd722973beb7e08e319dd4483))
+* 회사 정보 등록 및 조회 시 사용자 UUID 처리 개선 ([d73f8cf](https://github.com/K-Soo/hotel-job-api/commit/d73f8cf04c3d3f674935169e211f7b3b7d39dc8d))
+* 회원 마이그레이션 파일 이름 변경 및 기본값 수정 ([0f99fec](https://github.com/K-Soo/hotel-job-api/commit/0f99fec2b03d94fa4c6c840f4ec078953882e982))
+* 회원 및 제품 관련 데이터베이스 마이그레이션 추가 ([adab79d](https://github.com/K-Soo/hotel-job-api/commit/adab79d21ad5c3164b7bd441eabdbce60e100807))
+* ApplicationRecruitmentResponseDto 클래스 추가 ([1effceb](https://github.com/K-Soo/hotel-job-api/commit/1effceb3747126f75bdd922ba13ed30193add49a))
+* DelayMiddleware를 모든 라우트에 적용 ([1dd80ec](https://github.com/K-Soo/hotel-job-api/commit/1dd80ec878296be179d1489f2b736284475dd0bd))
+* Employer 엔티티에 Membership 관계 추가 및 score 필드 추가 ([881d768](https://github.com/K-Soo/hotel-job-api/commit/881d768885bb22af21e88a2ebbf6c3bb92894b84))
+* EmployerResponseDto에 본인인증 정보 추가 ([e9aaae7](https://github.com/K-Soo/hotel-job-api/commit/e9aaae7f3c21875dbe0f9bc7aebff96c84b755a5))
+* EmployersModule에 Membership 엔티티 추가 ([0884b67](https://github.com/K-Soo/hotel-job-api/commit/0884b6755c510105f35599567de535470157c8f8))
+* EmployersService에 Membership 관련 기능 추가 및 리팩토링 ([eebf0c0](https://github.com/K-Soo/hotel-job-api/commit/eebf0c033c5bf52b744ff8a0090ac4cb57f1d576))
+* Membership 시더 추가하여 다양한 멤버십 레벨 및 할인율 설정 ([960a8af](https://github.com/K-Soo/hotel-job-api/commit/960a8af7b068f3a7628b24ec1790f3cc4feb777b))
+* Membership 엔티티 추가 ([6aa5550](https://github.com/K-Soo/hotel-job-api/commit/6aa5550f6bc5313d0f7fd822c99e1c437abe8cee))
+* Membership 엔티티에 discountRate 필드 추가 ([e62b75b](https://github.com/K-Soo/hotel-job-api/commit/e62b75b92e340137a040c95e01c516b653d8ca52))
+* membership seeder에서 불필요한 공백 제거 ([47bbbba](https://github.com/K-Soo/hotel-job-api/commit/47bbbba32a12eeed34ccf6be7d0578ecc31723da))
+* MembershipController 추가 및 MembershipService 주입 ([6ed044d](https://github.com/K-Soo/hotel-job-api/commit/6ed044dc4c732d989e64c78b3b89c0f956f782f0))
+* MembershipLevel 열거형 추가하여 다양한 멤버십 레벨 정의 ([3297e94](https://github.com/K-Soo/hotel-job-api/commit/3297e94c35b0475b9cc14337d2c63ab7fe348d64))
+* MembershipModule 추가 및 MembershipService와 MembershipController 주입 ([aebef83](https://github.com/K-Soo/hotel-job-api/commit/aebef83c202c4a545d141c3decd1264852e9bacf))
+* MembershipService 추가 ([c362d21](https://github.com/K-Soo/hotel-job-api/commit/c362d21aee0faa733c18e03602ba73ce839209b8))
+* package.json에 seed 관련 스크립트 추가 및 typeorm-extension 의존성 추가 ([66fac45](https://github.com/K-Soo/hotel-job-api/commit/66fac45ac07b37a8c63aad4578e9655a444b03be))
+* Product 엔티티 삭제 ([85d1b1f](https://github.com/K-Soo/hotel-job-api/commit/85d1b1fb190d9bd172733e311035c9c5f3ee565b))
+* Product 엔티티 추가 ([b820480](https://github.com/K-Soo/hotel-job-api/commit/b820480229aefe85d381a592f70ab38fd0746c3f))
+* ProductsController 추가 ([90316b8](https://github.com/K-Soo/hotel-job-api/commit/90316b864e5ab48f72f3b1d37344f29ffbfb83dd))
+* ProductsModule 및 MembershipModule을 app.module.ts에 추가 ([dcc2f0d](https://github.com/K-Soo/hotel-job-api/commit/dcc2f0d6f6e3205ac5bdee57885db9dd4cc7ae5f))
+* ProductsModule 추가 및 ProductsService와 ProductsController 주입 ([4c0a58d](https://github.com/K-Soo/hotel-job-api/commit/4c0a58d9258451c9f6e36f8960caacff1288897c))
+* ProductsService 추가 ([ba534da](https://github.com/K-Soo/hotel-job-api/commit/ba534dab75598a5eeb5c3d4987a830a23ac006be))
+* S3 서비스에 파일 스트리밍 기능 추가 및 오류 로깅 개선 ([629d776](https://github.com/K-Soo/hotel-job-api/commit/629d776f1e30aa0f06aeb60c58395cb0c4534afd))
+* seed 명령어 간소화 및 DelayMiddleware 주석 처리 ([8137d25](https://github.com/K-Soo/hotel-job-api/commit/8137d2504c5c138c3437675ebc5e1c2b6f69ef05))
+
+
+### Bug Fixes
+
+* 데이터베이스 구성 파일에 공백 추가 ([ca19a4f](https://github.com/K-Soo/hotel-job-api/commit/ca19a4f62b0b8a08686514f671018e207e7899f8))
+* 이력서 복사 시 경험 필드 복사 및 기본 이력서 처리 로직 개선 ([9c9416c](https://github.com/K-Soo/hotel-job-api/commit/9c9416cab45bfa94d8ea9d579586f87cd20d1eed))
+* 이력서 테이블에서 불필요한 필드 제거 및 기본값 수정 ([50a38b6](https://github.com/K-Soo/hotel-job-api/commit/50a38b6dbd926af6934b878c0bf2e90b18e7e3fe))
+* ApplicationResponseDto에 reviewStageStatus 및 recruitment 필드 추가 ([e0513be](https://github.com/K-Soo/hotel-job-api/commit/e0513be056904597738a6120daf3c964a432184d))
+* EmployersController에서 직렬화 인터셉터 주석 처리 ([9492d3b](https://github.com/K-Soo/hotel-job-api/commit/9492d3bc289659aac03f1bfc86185a1224e2e534))
+* Experience 엔티티에서 로그 삽입 메서드 주석 처리 ([60d9d19](https://github.com/K-Soo/hotel-job-api/commit/60d9d198c8b63240c2db3dac4544ac0ae76941b6))
+* LanguageDto의 필드 이름을 수정하여 일관성 및 가독성 향상 ([a553e54](https://github.com/K-Soo/hotel-job-api/commit/a553e546efc4ed7dc9c6cc18701b5ced21b7e681))
+* LicenseDto의 자격증 이름 길이 제한을 수정하여 유효성 향상 ([a8304fc](https://github.com/K-Soo/hotel-job-api/commit/a8304fcc5345f5b4c8c6861abe54508bdbf322a1))
+* PaymentModule에서 imports 순서 수정 ([f733d43](https://github.com/K-Soo/hotel-job-api/commit/f733d4318a98f817d7aadcac5eee0c3f5ca49e4c))
+* PublishResumeDto의 언어 필드 이름을 수정하여 일관성 향상 ([2a49fc0](https://github.com/K-Soo/hotel-job-api/commit/2a49fc0fa12ed437852961bc1eb0a41d652e1d85))
+* RecruitmentModule에서 불필요한 Application 엔티티 임포트 제거 ([8f4873a](https://github.com/K-Soo/hotel-job-api/commit/8f4873ac313a3761931725655b7974336cbdd6e0))
+* Resume 엔티티의 언어 필드 이름을 수정하여 가독성 향상 ([e216433](https://github.com/K-Soo/hotel-job-api/commit/e216433efb01db150eae78a8eb2cfff11473a4c3))
+
+
+### Refactors
+
+* Payment 엔티티에서 불필요한 import 제거 ([550a1f8](https://github.com/K-Soo/hotel-job-api/commit/550a1f80ec6053cc1e4cd46355550c6617f3a28f))
+
 ### [0.0.11](https://github.com/K-Soo/hotel-job-api/compare/v0.0.10...v0.0.11) (2025-01-21)
 
 
