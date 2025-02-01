@@ -17,7 +17,10 @@ export class RecruitmentProductOption {
   @ManyToOne(() => RecruitmentProduct, (product) => product.options, { onDelete: 'CASCADE' })
   recruitmentProduct: RecruitmentProduct;
 
-  @OneToMany(() => RecruitmentProductOptionDuration, (optionDuration) => optionDuration.option, { cascade: true })
+  @OneToMany(() => RecruitmentProductOptionDuration, (optionDuration) => optionDuration.option, {
+    cascade: true,
+    eager: true,
+  })
   optionDurations: RecruitmentProductOptionDuration[]; // 옵션별 기간 가격 목록
 
   @PrimaryGeneratedColumn('uuid')
