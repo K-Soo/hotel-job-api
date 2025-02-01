@@ -11,6 +11,7 @@ import { RecruitmentDetailResponseDto } from './dto/recruitment-response.dto';
 import { Request } from 'express';
 import { EmployersService } from '../employers.service';
 import { RecruitmentStatusResponseDto } from './dto/recruitment-status-response.dto';
+import { customHttpException } from '../../../common/constants/custom-http-exception';
 import {
   Controller,
   Get,
@@ -23,6 +24,7 @@ import {
   Query,
   UseInterceptors,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 
 @ApiBearerAuth()
@@ -41,7 +43,9 @@ export class RecruitmentController {
     console.log('createRecruitmentDto: ', createRecruitmentDto);
     const userUuid = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userUuid);
-
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.recruitmentService.create(createRecruitmentDto, employer);
   }
 
@@ -56,6 +60,9 @@ export class RecruitmentController {
   async draft(@Req() req: Request, @Body() draftRecruitmentDto: DraftRecruitmentDto) {
     const userUuid = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userUuid);
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
 
     const draftRecruitment = await this.recruitmentService.draft(draftRecruitmentDto, employer);
 

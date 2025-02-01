@@ -35,14 +35,13 @@ export class CreateCompanyDto {
 
   @Expose()
   @ApiProperty({ description: '주소', example: '경기도 남양주' })
-  @Length(2, 30, validationMessage('address'))
   @IsString()
   @IsNotEmpty()
   address: string;
 
   @Expose()
   @ApiProperty({ description: '상세주소', example: '201호' })
-  @Length(2, 30, validationMessage('addressDetail'))
+  @Length(2, 50)
   @IsString()
   @IsNotEmpty()
   addressDetail: string;
