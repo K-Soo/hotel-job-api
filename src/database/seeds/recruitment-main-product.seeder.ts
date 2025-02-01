@@ -1,5 +1,4 @@
 /* eslint-disable prefer-const */
-// src/database/seeds/main-page-product.seeder.ts
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import {
@@ -21,18 +20,23 @@ export default class RecruitmentMainProductSeeder implements Seeder {
     const durationRepository = dataSource.getRepository(RecruitmentProductDuration);
     const optionDurationRepository = dataSource.getRepository(RecruitmentProductOptionDuration);
 
-    const products = [
+    // 기존 데이터 삭제
+    await productRepository.delete({ type: RecruitmentProductType.MAIN });
+
+    console.log('✅ 기존 데이터 삭제 완료! 새로운 데이터 추가 시작...');
+
+    // 상품 데이터 정의
+    const PRODUCT = [
       {
         type: RecruitmentProductType.MAIN,
         name: RecruitmentProductName.PREMIUM,
-        discountRate: 0.2,
         durations: [
-          { duration: RecruitmentDuration.THREE_DAYS, price: 50000, discountRate: 0 },
-          { duration: RecruitmentDuration.FIVE_DAYS, price: 80000, discountRate: 0 },
-          { duration: RecruitmentDuration.SEVEN_DAYS, bonusDays: 1, price: 120000, discountRate: 0 },
-          { duration: RecruitmentDuration.TEN_DAYS, bonusDays: 2, price: 150000, discountRate: 0 },
-          { duration: RecruitmentDuration.FOURTEEN_DAYS, bonusDays: 3, price: 200000, discountRate: 0 },
-          { duration: RecruitmentDuration.TWENTY_ONE_DAYS, bonusDays: 4, price: 300000, discountRate: 0 },
+          { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 168000, bonusDays: 4, discountRate: 0.2 },
+          { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 112000, bonusDays: 3, discountRate: 0.15 },
+          { duration: RecruitmentDuration.TEN_DAYS, price: 80000, bonusDays: 2, discountRate: 0.12 },
+          { duration: RecruitmentDuration.SEVEN_DAYS, price: 56000, bonusDays: 1, discountRate: 0.1 },
+          { duration: RecruitmentDuration.FIVE_DAYS, price: 40000, discountRate: 0 },
+          { duration: RecruitmentDuration.THREE_DAYS, price: 24000, discountRate: 0 },
         ],
         options: [
           {
@@ -41,134 +45,179 @@ export default class RecruitmentMainProductSeeder implements Seeder {
             listUpIntervalHours: 6,
             tags: [],
             optionDurations: [
-              { duration: RecruitmentDuration.THREE_DAYS, price: 2000, discountRate: 0 },
-              { duration: RecruitmentDuration.FIVE_DAYS, price: 3500, discountRate: 0 },
-              { duration: RecruitmentDuration.SEVEN_DAYS, price: 5000, discountRate: 0 },
-              { duration: RecruitmentDuration.TEN_DAYS, price: 7000, discountRate: 0 },
-              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 9000, discountRate: 0 },
-              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 15000, discountRate: 0 },
+              { duration: RecruitmentDuration.THREE_DAYS, price: 14700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 24500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 34300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 49000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 68600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 102900, discountRate: 0.1, bonusDays: 4 },
             ],
           },
           {
             name: RecruitmentProductOptionName.TAG,
+            maxListUpPerDay: 0,
+            listUpIntervalHours: 0,
             tags: [RecruitmentOptionTag.NEW, RecruitmentOptionTag.POPULAR, RecruitmentOptionTag.RECOMMENDED],
             optionDurations: [
-              { duration: RecruitmentDuration.THREE_DAYS, price: 2000, discountRate: 0 },
-              { duration: RecruitmentDuration.FIVE_DAYS, price: 3500, discountRate: 0 },
-              { duration: RecruitmentDuration.SEVEN_DAYS, price: 5000, discountRate: 0 },
-              { duration: RecruitmentDuration.TEN_DAYS, price: 7000, discountRate: 0 },
-              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 9000, discountRate: 0 },
-              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 15000, discountRate: 0 },
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
             ],
           },
           {
             name: RecruitmentProductOptionName.HIGHLIGHT,
             tags: [],
             optionDurations: [
-              { duration: RecruitmentDuration.THREE_DAYS, price: 2000, discountRate: 0 },
-              { duration: RecruitmentDuration.FIVE_DAYS, price: 3500, discountRate: 0 },
-              { duration: RecruitmentDuration.SEVEN_DAYS, price: 5000, discountRate: 0 },
-              { duration: RecruitmentDuration.TEN_DAYS, price: 7000, discountRate: 0 },
-              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 9000, discountRate: 0 },
-              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 15000, discountRate: 0 },
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
+            ],
+          },
+          {
+            name: RecruitmentProductOptionName.BOLD,
+            tags: [],
+            optionDurations: [
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
+            ],
+          },
+        ],
+      },
+      {
+        type: RecruitmentProductType.MAIN,
+        name: RecruitmentProductName.SPECIAL,
+        durations: [
+          { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 126000, bonusDays: 4, discountRate: 0.2 },
+          { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 84000, bonusDays: 3, discountRate: 0.15 },
+          { duration: RecruitmentDuration.TEN_DAYS, price: 60000, bonusDays: 2, discountRate: 0.12 },
+          { duration: RecruitmentDuration.SEVEN_DAYS, price: 42000, bonusDays: 1, discountRate: 0.1 },
+          { duration: RecruitmentDuration.FIVE_DAYS, price: 30000, discountRate: 0 },
+          { duration: RecruitmentDuration.THREE_DAYS, price: 18000, discountRate: 0 },
+        ],
+        options: [
+          {
+            name: RecruitmentProductOptionName.LIST_UP,
+            maxListUpPerDay: 4,
+            listUpIntervalHours: 6,
+            tags: [],
+            optionDurations: [
+              { duration: RecruitmentDuration.THREE_DAYS, price: 14700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 24500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 34300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 49000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 68600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 102900, discountRate: 0.1, bonusDays: 4 },
+            ],
+          },
+          {
+            name: RecruitmentProductOptionName.TAG,
+            tags: [RecruitmentOptionTag.NEW, RecruitmentOptionTag.POPULAR, RecruitmentOptionTag.RECOMMENDED],
+            optionDurations: [
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
+            ],
+          },
+          {
+            name: RecruitmentProductOptionName.HIGHLIGHT,
+            tags: [],
+            optionDurations: [
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
+            ],
+          },
+          {
+            name: RecruitmentProductOptionName.BOLD,
+            tags: [],
+            optionDurations: [
+              { duration: RecruitmentDuration.THREE_DAYS, price: 5700, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.FIVE_DAYS, price: 9500, discountRate: 0.1, bonusDays: 0 },
+              { duration: RecruitmentDuration.SEVEN_DAYS, price: 13300, discountRate: 0.1, bonusDays: 1 },
+              { duration: RecruitmentDuration.TEN_DAYS, price: 19000, discountRate: 0.1, bonusDays: 2 },
+              { duration: RecruitmentDuration.FOURTEEN_DAYS, price: 26600, discountRate: 0.1, bonusDays: 3 },
+              { duration: RecruitmentDuration.TWENTY_ONE_DAYS, price: 39900, discountRate: 0.1, bonusDays: 4 },
             ],
           },
         ],
       },
     ];
 
-    for (const productData of products) {
-      // Step 1: 상품 업데이트 또는 생성
-      let product = await productRepository.findOneBy({ name: productData.name, type: productData.type });
-      if (product) {
-        // Update existing product
-        product.discountRate = productData.discountRate;
-        product = await productRepository.save(product);
-      } else {
-        // Create new product
-        const productEntity = productRepository.create({
-          type: productData.type,
-          name: productData.name,
-          discountRate: productData.discountRate,
-        });
-        product = await productRepository.save(productEntity);
+    for (const PRODUCT_ITEM of PRODUCT) {
+      const existingProduct = await productRepository.findOne({
+        where: { type: PRODUCT_ITEM.type, name: PRODUCT_ITEM.name },
+      });
+
+      if (existingProduct) {
+        // 옵션 기간 삭제
+        for (const option of existingProduct.options) {
+          await optionDurationRepository.delete({ option: { id: option.id } });
+        }
+        // 기존 옵션 삭제
+        await optionRepository.delete({ recruitmentProduct: existingProduct });
+
+        // 기존 기간 삭제
+        await durationRepository.delete({ recruitmentProduct: existingProduct });
       }
 
-      // Step 2: 상품 기간 업데이트 또는 생성
-      for (const durationData of productData.durations) {
-        let duration = await durationRepository.findOneBy({
-          recruitmentProduct: product,
-          duration: durationData.duration,
-        });
+      // Step 1: 새 상품 생성
+      const savedProduct = await productRepository.save(
+        productRepository.create({
+          type: PRODUCT_ITEM.type,
+          name: PRODUCT_ITEM.name,
+        }),
+      );
 
-        if (duration) {
-          // Update existing duration
-          duration.price = durationData.price;
-          duration.bonusDays = durationData.bonusDays || 0;
-          await durationRepository.save(duration);
-        } else {
-          // Create new duration
-          const durationEntity = durationRepository.create({
-            recruitmentProduct: product,
+      // Step 2: 상품 기간 추가
+      for (const durationData of PRODUCT_ITEM.durations) {
+        await durationRepository.save(
+          durationRepository.create({
+            recruitmentProduct: savedProduct,
             ...durationData,
-          });
-          await durationRepository.save(durationEntity);
-        }
+          }),
+        );
       }
 
-      // Step 3: 옵션 업데이트 또는 생성
-      for (const optionData of productData.options) {
-        let option = await optionRepository.findOneBy({
-          recruitmentProduct: product,
+      // Step 3: 옵션 추가
+      for (const optionData of PRODUCT_ITEM.options) {
+        const createdOptions = optionRepository.create({
+          recruitmentProduct: savedProduct,
           name: optionData.name,
+          maxListUpPerDay: optionData.maxListUpPerDay,
+          listUpIntervalHours: optionData.listUpIntervalHours,
+          tags: optionData.tags,
         });
 
-        if (option) {
-          // Update existing option
-          option.maxListUpPerDay = optionData.maxListUpPerDay || 0;
-          option.listUpIntervalHours = optionData.listUpIntervalHours || 0;
-          option.tags = optionData.tags || null;
-          await optionRepository.save(option);
-        }
+        const savedOptions = await optionRepository.save(createdOptions);
 
-        if (!option) {
-          // Create new option
-          const optionEntity = optionRepository.create({
-            recruitmentProduct: product,
-            name: optionData.name,
-            maxListUpPerDay: optionData.maxListUpPerDay || 0,
-            listUpIntervalHours: optionData.listUpIntervalHours || 0,
-            tags: optionData.tags || null,
+        // Step 4: 옵션 기간 추가
+        for (const optionDurationData of optionData.optionDurations) {
+          const createdOptionsDuration = optionDurationRepository.create({
+            option: savedOptions,
+            ...optionDurationData,
           });
-          option = await optionRepository.save(optionEntity);
-        }
 
-        // Step 4: 옵션 기간 업데이트 또는 생성
-        if (optionData.optionDurations) {
-          for (const optionDurationData of optionData.optionDurations) {
-            // eslint-disable-next-line prefer-const
-            let optionDuration = await optionDurationRepository.findOneBy({
-              option: option,
-              duration: optionDurationData.duration,
-            });
-
-            if (optionDuration) {
-              // Update existing option duration
-              optionDuration.price = optionDurationData.price;
-              await optionDurationRepository.save(optionDuration);
-            } else {
-              // Create new option duration
-              const optionDurationEntity = optionDurationRepository.create({
-                option: option,
-                ...optionDurationData,
-              });
-              await optionDurationRepository.save(optionDurationEntity);
-            }
-          }
+          await optionDurationRepository.save(createdOptionsDuration);
         }
       }
     }
 
-    console.log('Main page products with options and durations updated or seeded successfully!');
+    console.log('✅ Main page products with options and durations updated or seeded successfully!');
   }
 }
