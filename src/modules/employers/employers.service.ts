@@ -47,6 +47,9 @@ export class EmployersService {
 
   // 유저 uuid로 유저 찾기
   findOneUuid(id: string) {
+    if (!id) {
+      return null;
+    }
     return safeQuery(() => this.employerRepo.findOne({ where: { id } }));
   }
 
