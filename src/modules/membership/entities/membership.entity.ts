@@ -12,6 +12,7 @@ export class Membership {
 
   @Column({ type: 'enum', enum: MembershipLevel, unique: true, default: MembershipLevel.FAMILY })
   membershipLevel: MembershipLevel;
+
   @Column({ type: 'numeric', precision: 4, scale: 3 })
   discountRate: number;
 

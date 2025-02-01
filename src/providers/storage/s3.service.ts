@@ -5,9 +5,12 @@ import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
   ListObjectsV2Command,
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { S3_PROVIDER } from './s3.provider';
 import { customHttpException } from '../../common/constants/custom-http-exception';
+import { PassThrough } from 'stream';
+import { Response } from 'express';
 
 @Injectable()
 export class S3Service {
@@ -20,6 +23,7 @@ export class S3Service {
     });
 
     const response = await this.s3Client.send(command);
+
     return response.Contents?.map((item) => item.Key) || [];
   }
 
@@ -36,9 +40,9 @@ export class S3Service {
       });
 
       await this.s3Client.send(command);
-      return `https://${bucketName}.s3.amazonaws.com/${key}`;
+      return key;
     } catch (error) {
-      console.log(`s3 error:  ${error.name}-${error.message}`);
+      this.logS3Error('uploadFile', error);
       throw new BadRequestException(customHttpException.IMAGE_UPLOAD_FAILED);
     }
   }
@@ -54,10 +58,11 @@ export class S3Service {
 
       return { status: 'success' };
     } catch (error) {
-      console.log(`s3 error:  ${error.name}-${error.message}`);
+      this.logS3Error('deleteFile', error);
       throw new BadRequestException(customHttpException.IMAGE_DELETE_FAILED);
     }
   }
+
   async deleteFiles(bucket: string, keys: string[]): Promise<void> {
     try {
       const command = new DeleteObjectsCommand({
@@ -69,8 +74,41 @@ export class S3Service {
 
       await this.s3Client.send(command);
     } catch (error) {
-      console.log(`s3 error:  ${error.name}-${error.message}`);
+      this.logS3Error('deleteFiles', error);
       throw new BadRequestException(customHttpException.IMAGE_DELETE_FAILED);
     }
+  }
+
+  /** S3 Blob 데이터를 스트림 처리하여 반환 */
+  async streamFile(res: Response, bucketName: string, key: string): Promise<void> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+      });
+
+      const { Body, ContentType } = await this.s3Client.send(command);
+
+      if (!Body) {
+        throw new Error();
+      }
+
+      res.setHeader('Content-Type', ContentType || 'application/octet-stream');
+      res.setHeader('Content-Disposition', 'inline');
+
+      const passThrough = new PassThrough();
+      (Body as NodeJS.ReadableStream).pipe(passThrough).pipe(res);
+    } catch (error) {
+      this.logS3Error('deleteFiles', error);
+      throw new BadRequestException(customHttpException.IMAGE_DELETE_FAILED);
+    }
+  }
+
+  private logS3Error(method: string, error: any) {
+    console.error(`S3 Error in ${method}:`, {
+      name: error.name,
+      message: error.message,
+      // stack: error.stack,
+    });
   }
 }

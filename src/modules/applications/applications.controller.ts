@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { ApplyResumeDto } from './dto/apply-resume.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -11,6 +11,7 @@ import { ResponseStatus } from '../../common/constants/responseStatus';
 import { EmployersService } from '../employers/employers.service';
 import { ReviewStageStatus } from '../../common/constants/application';
 import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
+import { customHttpException } from '../../common/constants/custom-http-exception';
 @ApiBearerAuth()
 @Controller('applications')
 @UseGuards(PassportJwtGuard, RolesGuard)
@@ -55,7 +56,9 @@ export class ApplicationsController {
   @Get('/recruitment/:id/status')
   async getRecruitmentApplicationStatusCount(@Req() req: Request, @Param('id') recruitmentId: string) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
-
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.applicationsService.calculateEmployerReviewStageStatusCount(recruitmentId, employer);
   }
 
@@ -81,7 +84,9 @@ export class ApplicationsController {
     @Query('step') step?: ReviewStageStatus,
   ) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
-
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.applicationsService.getApplicationsForRecruitment(recruitmentId, employer, step);
   }
 
@@ -97,6 +102,9 @@ export class ApplicationsController {
   @Patch('/recruitment/status/review-stage')
   async updateEmployerReviewStageStatus(@Req() req: Request, @Body() updateReviewStageDto: UpdateReviewStageDto) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.applicationsService.updateEmployerReviewStageStatus(updateReviewStageDto, employer);
   }
 
@@ -105,6 +113,9 @@ export class ApplicationsController {
   @Patch('/view')
   async updateMarkResumeAsView(@Req() req: Request, @Body() body: { applicationId: number }) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
     return this.applicationsService.markResumeAsViewed(body.applicationId, employer);
   }
 }
