@@ -11,6 +11,9 @@ export class RecruitmentProductOptionDuration {
   @ManyToOne(() => RecruitmentProductOption, (option) => option.optionDurations, { onDelete: 'CASCADE' })
   option: RecruitmentProductOption;
 
+  @Column({ type: 'int', default: 0 })
+  bonusDays: number;
+
   @Column({ type: 'enum', enum: RecruitmentDuration })
   duration: RecruitmentDuration;
 
