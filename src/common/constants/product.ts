@@ -21,6 +21,7 @@ export enum RecruitmentProductOptionName {
   LIST_UP = 'LIST_UP', // 끌어올리기
   HIGHLIGHT = 'HIGHLIGHT', // 형광펜 강조
   TAG = 'TAG', // 태그 강조
+  BOLD = 'BOLD', // 굵은 글씨
 }
 
 export enum RecruitmentDuration {
