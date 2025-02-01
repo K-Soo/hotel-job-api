@@ -114,7 +114,10 @@ export class AuthController {
   @ApiOperation({ summary: '일반 & 사업자 공통 로그아웃' })
   @Post('sign-out')
   signOut(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token');
+    res.clearCookie('refresh_token', {
+      domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
+    });
+
     return {
       status: 'success',
     };
