@@ -20,18 +20,6 @@ export class RecruitmentProduct {
   @Column({ type: 'enum', enum: RecruitmentProductType })
   type: RecruitmentProductType;
 
-  @Column({
-    type: 'numeric',
-    precision: 4,
-    scale: 3,
-    default: 0,
-    transformer: {
-      to: (value: number) => value,
-      from: (value: string) => parseFloat(value),
-    },
-  })
-  discountRate: number;
-
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
