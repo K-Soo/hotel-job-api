@@ -17,6 +17,7 @@ import { DataSource, In } from 'typeorm';
 import { Nationality } from './entities/nationality.entity';
 import { ResponseStatus } from '../../../common/constants/responseStatus';
 import { isEqual } from 'lodash';
+import { PaymentStatus } from '../../../common/constants/payment';
 
 @Injectable()
 export class RecruitmentService {
@@ -85,14 +86,13 @@ export class RecruitmentService {
   }
 
   // update - 등록된 채용공고 수정
-  update(createRecruitmentDto: CreateRecruitmentDto) {
+  update(createRecruitmentDto: CreateRecruitmentDto, userUuid: string) {
+    const { recruitmentInfo } = createRecruitmentDto;
     return this.dataSource.transaction(async (manager) => {
-      const { recruitmentInfo } = createRecruitmentDto;
-
       const recruitmentRepo = manager.getRepository(Recruitment);
 
       const existingRecruitment = await recruitmentRepo.findOne({
-        where: { id: createRecruitmentDto.id },
+        where: { id: createRecruitmentDto.id, employer: { id: userUuid } },
         relations: ['nationality'],
       });
 
@@ -102,7 +102,7 @@ export class RecruitmentService {
 
       const updatedData = {
         recruitmentTitle: createRecruitmentDto.recruitmentTitle,
-        recruitmentStatus: RecruitmentStatus.PUBLISHED,
+        recruitmentStatus: createRecruitmentDto.recruitmentStatus,
         ...recruitmentInfo,
         content: createRecruitmentDto.content,
         ...createRecruitmentDto.conditionInfo,
@@ -210,20 +210,43 @@ export class RecruitmentService {
     const statusCondition =
       status === RecruitmentQueryStatus.ALL ? {} : { recruitmentStatus: RecruitmentStatus[status] };
 
-    const paginatedResult = await paginate<Recruitment>(this.recruitmentRepo, options, {
-      where: { ...statusCondition, employer: { id: uuid } },
-      order: { createdAt: 'DESC' },
-      relations: ['applications'],
-    });
+    const queryBuilder = this.recruitmentRepo
+      .createQueryBuilder('recruitment')
+      .leftJoinAndSelect('recruitment.applications', 'applications')
+      .leftJoinAndSelect('recruitment.paymentRecruitment', 'paymentRecruitment')
+      .leftJoinAndSelect('paymentRecruitment.payment', 'payment')
+      .leftJoinAndSelect('paymentRecruitment.options', 'options')
+      .innerJoin('recruitment.employer', 'employer')
+      .where('employer.id = :uuid', { uuid })
+      .andWhere(statusCondition, { status })
+      .orderBy('recruitment.createdAt', 'DESC');
+
+    queryBuilder.select([
+      'recruitment.id',
+      'applications',
+      'recruitment.createdAt',
+      'recruitment.updatedAt',
+      'recruitment.jobs',
+      'recruitment.postingEndDate',
+      'recruitment.postingStartDate',
+      'recruitment.recruitmentStatus',
+      'recruitment.recruitmentTitle',
+      'paymentRecruitment',
+      'options',
+    ]);
+
+    const paginatedResult = await paginate<Recruitment>(queryBuilder, options);
 
     // 각 채용공고의 applications을 카운트
     const formattedItems = paginatedResult.items.map((recruitment) => {
       const totalApplications = recruitment.applications.length;
       const viewedApplications = recruitment.applications.filter((app) => app.isView).length;
       const notViewedApplications = totalApplications - viewedApplications;
+      const paymentRecruitment = recruitment.paymentRecruitment.length > 0 ? recruitment.paymentRecruitment[0] : null;
 
       return {
         ...recruitment,
+        paymentRecruitment,
         applicationCount: {
           totalCount: totalApplications,
           viewCount: viewedApplications,
@@ -238,6 +261,12 @@ export class RecruitmentService {
     return formatPagination({
       ...paginatedResult,
       items: formattedItems,
+    });
+  }
+
+  publishedRecruitmentList(uuid: string) {
+    return this.recruitmentRepo.find({
+      where: { recruitmentStatus: RecruitmentStatus.PUBLISHED, employer: { id: uuid } },
     });
   }
 
