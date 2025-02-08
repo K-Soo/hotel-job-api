@@ -1,31 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseInterceptors,
-  Res,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { EmployersService } from './employers.service';
-import { CreateEmployerDto } from './dto/create-employer.dto';
 import { EmployerResponseDto } from './dto/employer.response.dto';
-import { UpdateEmployerDto } from './dto/update-employer.dto';
-import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
-import { AuthService } from '../../authentication/auth/auth.service';
-import { Response, Request } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
+import { ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
-import { plainToInstance } from 'class-transformer';
 
-@ApiTags('사업자 유저')
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
 @Roles('EMPLOYER')
