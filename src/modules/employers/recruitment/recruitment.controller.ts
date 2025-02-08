@@ -11,6 +11,7 @@ import { RecruitmentDetailResponseDto } from './dto/recruitment-response.dto';
 import { Request } from 'express';
 import { EmployersService } from '../employers.service';
 import { RecruitmentStatusResponseDto } from './dto/recruitment-status-response.dto';
+import { PublishedRecruitmentResponseDto } from './dto/published-recruitment-response.dto';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import {
   Controller,
@@ -40,7 +41,6 @@ export class RecruitmentController {
   @ApiOperation({ summary: '채용공고 생성' })
   @Post()
   async create(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
-    console.log('createRecruitmentDto: ', createRecruitmentDto);
     const userUuid = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userUuid);
     if (!employer) {
@@ -52,7 +52,9 @@ export class RecruitmentController {
   @ApiOperation({ summary: '채용공고 수정' })
   @Patch()
   async update(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
-    return this.recruitmentService.update(createRecruitmentDto);
+    const userUuid = req.user['sub'];
+
+    return this.recruitmentService.update(createRecruitmentDto, userUuid);
   }
 
   @ApiOperation({ summary: '채용공고 임시저장' })
@@ -88,6 +90,16 @@ export class RecruitmentController {
     const userUuid = req.user['sub'];
 
     return this.recruitmentService.findAll(recruitmentQueryDto, userUuid);
+  }
+
+  @ApiOperation({ summary: '결제 가능한 채용공고 목록' })
+  @ApiResponse({ status: 200, description: '상태값 published 해당하는 공고 목록' })
+  @UseInterceptors(new SerializeInterceptor(PublishedRecruitmentResponseDto))
+  @Get('published')
+  async publishedRecruitmentList(@Req() req: Request) {
+    const userUuid = req.user['sub'];
+
+    return this.recruitmentService.publishedRecruitmentList(userUuid);
   }
 
   @UseInterceptors(new SerializeInterceptor(RecruitmentDetailResponseDto))
