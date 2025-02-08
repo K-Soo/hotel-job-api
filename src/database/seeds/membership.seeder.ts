@@ -9,6 +9,7 @@ const MAX_SCORE = 10000000000;
 export default class MembershipSeeder implements Seeder {
   async run(dataSource: DataSource, _: SeederFactoryManager): Promise<void> {
     const membershipRepository = dataSource.getRepository(Membership);
+
     const memberships = [
       { membershipLevel: MembershipLevel.FAMILY, discountRate: 0.01, minScore: 0, maxScore: 100_000 }, // ~10만 원
       { membershipLevel: MembershipLevel.BRONZE, discountRate: 0.02, minScore: 100_001, maxScore: 300_000 }, // 10만 ~ 30만 원
