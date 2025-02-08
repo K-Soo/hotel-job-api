@@ -8,6 +8,9 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  AfterUpdate,
+  BeforeUpdate,
+  AfterInsert,
 } from 'typeorm';
 import {
   EducationCondition,
@@ -33,7 +36,7 @@ export class Recruitment {
   employer: Employer;
 
   @OneToMany(() => PaymentRecruitment, (payment) => payment.recruitment)
-  payments: PaymentRecruitment[];
+  paymentRecruitment: PaymentRecruitment[];
 
   @OneToOne(() => Nationality, (nationality) => nationality.recruitment, { cascade: true })
   nationality: Nationality;
@@ -130,9 +133,42 @@ export class Recruitment {
   @Column({ default: false })
   isEmailPrivate: boolean;
 
+  @Column({ type: 'timestamptz', precision: 0, nullable: true })
+  postingStartDate: Date | null;
+
+  @Column({ type: 'timestamptz', precision: 3, nullable: true })
+  postingEndDate: Date | null;
+
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
+
+  // 업데이트 전
+  @BeforeUpdate()
+  logBeforeUpdate() {
+    console.log('✏️ [BeforeUpdate] 채용공고 업데이트 전:');
+    console.log(`ID: ${this.id}`);
+    console.log(`시작일: ${this.postingStartDate}`);
+    console.log(`마감일: ${this.postingEndDate}`);
+  }
+
+  // 저장 후
+  @AfterInsert()
+  logAfterInsert() {
+    console.log('✅ [AfterInsert] 채용공고 저장 완료:');
+    console.log(`ID: ${this.id}`);
+    console.log(`저장된 시작일: ${this.postingStartDate}`);
+    console.log(`저장된 마감일: ${this.postingEndDate}`);
+  }
+
+  // 업데이트 후
+  @AfterUpdate()
+  logAfterUpdate() {
+    console.log('🔄 [AfterUpdate] 채용공고 업데이트 완료:');
+    console.log(`ID: ${this.id}`);
+    console.log(`업데이트된 시작일: ${this.postingStartDate}`);
+    console.log(`업데이트된 마감일: ${this.postingEndDate}`);
+  }
 }
