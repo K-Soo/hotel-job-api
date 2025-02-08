@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { Recruitment } from '../employers/recruitment/entities/recruitment.entity';
 import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { formatPagination } from '../../common/helpers/pagination.helper';
-import { customHttpException } from '../../common/constants/custom-http-exception';
 
 @Injectable()
 export class RecruitService {
@@ -20,7 +19,6 @@ export class RecruitService {
     const options: IPaginationOptions = { page, limit };
 
     const query = this.recruitRepository.createQueryBuilder('recruit');
-
     query.select([
       'recruit.id',
       'recruit.recruitmentTitle',
@@ -38,7 +36,7 @@ export class RecruitService {
       'recruit.addressDetail',
     ]);
 
-    query.where('recruit.recruitmentStatus = :status', { status: 'PUBLISHED' });
+    query.where('recruit.recruitmentStatus = :status', { status: 'PROGRESS' });
 
     console.log('filters.jobs: ', filters.jobs);
     if (filters.jobs) {
@@ -52,9 +50,19 @@ export class RecruitService {
 
   async getRecruitDetail(id: string) {
     const recruit = await this.recruitRepository.findOne({ where: { id }, relations: ['nationality'] });
+
     if (!recruit) {
       throw new BadRequestException();
     }
-    return recruit;
+
+    // 비공개 처리 로직
+    const { isEmailPrivate, isNamePrivate, isNumberPrivate } = recruit;
+
+    return {
+      ...recruit,
+      managerEmail: isEmailPrivate ? '비공개' : recruit.managerEmail,
+      managerName: isNamePrivate ? '비공개' : recruit.managerName,
+      managerNumber: isNumberPrivate ? '비공개' : recruit.managerNumber,
+    };
   }
 }
