@@ -11,8 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Resume } from '../../resumes/entities/resume.entity';
-import { Jobs, Position, SalaryType } from '../../../common/constants/app.enum';
-import { City } from '../../../common/constants/location.enum';
+import { Jobs, Position } from '../../../common/constants/app.enum';
 import { Exclude } from 'class-transformer';
 
 @Entity('experience')
