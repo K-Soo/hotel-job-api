@@ -46,10 +46,11 @@ export class OauthController {
   @UseGuards(AuthGuard('google-custom'))
   async googleSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as Applicant;
-    console.log('@@@@@@@', user.constructor.name === 'Applicant');
+    // console.log('@@@@@@@', user.constructor.name === 'Applicant');
     const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);
     const jwtRefreshExpiration = this.configService.get('JWT_REFRESH_EXPIRATION');
+
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: this.configService.get('APP_ENV') !== 'local',
@@ -57,6 +58,7 @@ export class OauthController {
       maxAge: parseTimeToMs(jwtRefreshExpiration),
       domain: this.configService.get('APP_ENV') !== 'local' ? '.hotel-job-connect.com' : undefined,
     });
+
     return {
       provider: user.provider,
       role: user.role,
