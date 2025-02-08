@@ -9,3 +9,9 @@ export enum ReviewStageStatus {
   ACCEPT = 'ACCEPT', // 최종합격
   REJECT = 'REJECT', // 불합격
 }
+
+export enum FinalDecisionStatus {
+  ACCEPT = 'ACCEPT', // 최종합격
+  REJECT = 'REJECT', // 최종불합격
+  PENDING = 'PENDING', // 대기 중
+}

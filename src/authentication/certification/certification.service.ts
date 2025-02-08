@@ -9,7 +9,6 @@ import { firstValueFrom } from 'rxjs';
 import * as path from 'path';
 import * as fs from 'fs';
 import { customHttpException } from '../../common/constants/custom-http-exception';
-import { VerifyDto } from './dto/verify..dto';
 import { DecryptCertDto } from './dto/decrypt-cert.dto';
 import { DecryptCertResponse } from './interfaces/decrypt-cert.response.interface';
 import { Certification } from './entities/certification.entity';

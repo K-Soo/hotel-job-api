@@ -8,13 +8,18 @@ export default class UpdateEmployerMembershipSeeder implements Seeder {
     const employerRepository = dataSource.getRepository(Employer);
     const membershipRepository = dataSource.getRepository(Membership);
 
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🚫 This seeder should NOT run in production.');
+      return;
+    }
+
     const employers = await employerRepository.find();
 
     for (const employer of employers) {
       const membership = await membershipRepository.findOne({
         where: {
-          minScore: LessThanOrEqual(employer.score),
-          maxScore: MoreThanOrEqual(employer.score),
+          minScore: LessThanOrEqual(employer.totalScore),
+          maxScore: MoreThanOrEqual(employer.totalScore),
         },
       });
 

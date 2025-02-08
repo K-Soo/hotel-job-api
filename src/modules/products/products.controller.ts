@@ -5,19 +5,7 @@ import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { RecruitmentProductQueryDto } from './dto/recruitment-product-query.dto';
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Req,
-  UseGuards,
-  Query,
-  UseInterceptors,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Query } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
@@ -40,7 +28,7 @@ export class ProductsController {
   })
   // @UseInterceptors(new SerializeInterceptor())
   @Get('recruitment')
-  async recruitmentStatus(@Req() req: Request, @Query() query: RecruitmentProductQueryDto) {
+  async recruitmentStatus(@Query() query: RecruitmentProductQueryDto) {
     return this.productsService.findRecruitmentProducts(query);
   }
 }

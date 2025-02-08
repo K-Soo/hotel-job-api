@@ -1,4 +1,11 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  Res,
+} from '@nestjs/common';
 import { ApplyResumeDto } from './dto/apply-resume.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recruitment } from '../employers/recruitment/entities/recruitment.entity';
@@ -6,12 +13,13 @@ import { Repository } from 'typeorm';
 import { Resume } from '../resumes/entities/resume.entity';
 import { Application } from './entities/application.entity';
 import { Applicant } from '../applicants/entities/applicant.entity';
-import { ApplicationStatus, ReviewStageStatus } from '../../common/constants/application';
+import { ApplicationStatus, FinalDecisionStatus, ReviewStageStatus } from '../../common/constants/application';
 import { Role } from '../../common/constants/app.enum';
 import { Employer } from '../employers/entities/employer.entity';
 import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
 import { cloneDeep } from 'lodash';
 import { ResponseStatus } from '../../common/constants/responseStatus';
+import { UpdateDecisionStatusDto } from './dto/update-decision-status.dto';
 
 @Injectable()
 export class ApplicationsService {
@@ -45,24 +53,26 @@ export class ApplicationsService {
       where: { id: resumeId, applicant },
       relations: ['experience', 'military', 'condition'],
     });
+
     if (!resume) {
       throw new NotFoundException('Resume Not found');
     }
 
     const recruitment = await this.recruitmentRepo.findOne({ where: { id: recruitId } });
+
     if (!recruitment) {
       throw new NotFoundException('Recruitment Not found');
     }
 
-    const snapshot = cloneDeep(resume);
-
     const application = this.applicationRepo.create({
       resume,
+      resumeSnapshot: cloneDeep(resume),
       recruitment,
+      recruitmentSnapshot: cloneDeep(recruitment),
       applicationStatus: ApplicationStatus.APPLIED,
       applyAt: new Date(),
-      resumeSnapshot: snapshot,
     });
+
     return await this.applicationRepo.save(application);
   }
 
@@ -88,15 +98,16 @@ export class ApplicationsService {
     return applications.map((application) => ({
       applicationId: application.id,
       recruitment: {
-        id: application.recruitment.id,
-        title: application.recruitment.recruitmentTitle,
-        hotelName: application.recruitment.hotelName,
-        recruitmentStatus: application.recruitment.recruitmentStatus,
+        id: application.recruitmentSnapshot.id,
+        title: application.recruitmentSnapshot.recruitmentTitle,
+        hotelName: application.recruitmentSnapshot.hotelName,
+        recruitmentStatus: application.recruitmentSnapshot.recruitmentStatus,
       },
       resume: {
         title: application.resumeSnapshot.title,
         isDefault: application.resumeSnapshot.isDefault,
       },
+
       applicationStatus: application.applicationStatus,
       reviewStageStatus: application.reviewStageStatus,
 
@@ -111,16 +122,15 @@ export class ApplicationsService {
   }
   async updateEmployerReviewStageStatus(updateReviewStageDto: UpdateReviewStageDto, employer: Employer) {
     const application = await this.applicationRepo.findOne({
-      where: { id: updateReviewStageDto.applicationId },
-      relations: ['recruitment', 'recruitment.employer'],
+      where: {
+        id: updateReviewStageDto.applicationId,
+        recruitment: { employer: { id: employer.id } },
+      },
+      relations: ['recruitment'],
     });
 
     if (!application) {
       throw new NotFoundException('Application not found');
-    }
-
-    if (application.recruitment.employer.id !== employer.id) {
-      throw new ForbiddenException();
     }
 
     application.employerReviewStageStatus = updateReviewStageDto.stage;
@@ -130,8 +140,34 @@ export class ApplicationsService {
     return { status: ResponseStatus.SUCCESS };
   }
 
+  async updateDecisionStatus(updateDecisionStatusDto: UpdateDecisionStatusDto, employer: Employer) {
+    const application = await this.applicationRepo.findOne({
+      where: {
+        id: updateDecisionStatusDto.applicationId,
+        recruitment: { employer: { id: employer.id } },
+      },
+      relations: ['recruitment'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    const { finalDecisionStatus } = updateDecisionStatusDto;
+    if (!Object.values(FinalDecisionStatus).includes(finalDecisionStatus)) {
+      throw new BadRequestException('Invalid final decision status');
+    }
+
+    application.finalDecisionStatus = finalDecisionStatus;
+    application.acceptAt = finalDecisionStatus === FinalDecisionStatus.ACCEPT ? new Date() : null;
+    application.rejectAt = finalDecisionStatus === FinalDecisionStatus.REJECT ? new Date() : null;
+
+    await this.applicationRepo.save(application);
+
+    return { status: ResponseStatus.SUCCESS };
+  }
+
   async calculateEmployerReviewStageStatusCount(recruitmentId: string, employer: Employer) {
-    console.log('recruitmentId: ', recruitmentId);
     const result = await this.applicationRepo
       .createQueryBuilder('application')
       .select('application.employerReviewStageStatus', 'status') // 선택된 전형 상태
