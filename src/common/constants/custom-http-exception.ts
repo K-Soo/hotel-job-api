@@ -145,7 +145,27 @@ export const customHttpException = {
     customCode: 4024,
     message: 'Payment confirmation failed.',
   },
-
+  //  쿠폰
+  COUPON_NOT_FOUND: {
+    customCode: 4050,
+    message: 'Not found coupon.',
+  },
+  COUPON_ALREADY_USED: {
+    customCode: 4051,
+    message: 'Coupon Already Used.',
+  },
+  COUPON_ALREADY_APPLIED: {
+    customCode: 4052,
+    message: 'Coupon Already Applied.',
+  },
+  COUPON_EXPIRES: {
+    customCode: 4052,
+    message: 'Coupon Expires.',
+  },
+  COUPON_NOT_APPLIED: {
+    customCode: 4053,
+    message: 'Coupon Not Applied.',
+  },
   //데이터베이스
   DATABASE_OPERATION_FAILED: {
     customCode: 6000,
