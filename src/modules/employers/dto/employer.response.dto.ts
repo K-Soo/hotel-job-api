@@ -50,4 +50,8 @@ export class EmployerResponseDto {
   @Expose()
   @Type(() => MembershipResponseDto)
   membership: MembershipResponseDto;
+
+  @ApiProperty({ description: '보유 쿠폰', example: 12 })
+  @Expose()
+  availableCouponCount: number;
 }
