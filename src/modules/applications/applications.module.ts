@@ -7,9 +7,15 @@ import { Resume } from '../resumes/entities/resume.entity';
 import { Recruitment } from '../employers/recruitment/entities/recruitment.entity';
 import { ApplicantsModule } from '../applicants/applicants.module';
 import { EmployersModule } from '../employers/employers.module';
+import { ApplicationAnnouncementModule } from './announcements/application-announcement.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Application, Resume, Recruitment]), ApplicantsModule, EmployersModule],
+  imports: [
+    TypeOrmModule.forFeature([Application, Resume, Recruitment]),
+    ApplicantsModule,
+    EmployersModule,
+    ApplicationAnnouncementModule,
+  ],
   controllers: [ApplicationsController],
   providers: [ApplicationsService],
 })
