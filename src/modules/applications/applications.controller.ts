@@ -14,8 +14,8 @@ import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { UpdateDecisionStatusDto } from './dto/update-decision-status.dto';
 @ApiBearerAuth()
-@Controller('applications')
 @UseGuards(PassportJwtGuard, RolesGuard)
+@Controller('applications')
 export class ApplicationsController {
   constructor(
     private readonly applicationsService: ApplicationsService,
@@ -45,7 +45,7 @@ export class ApplicationsController {
     return { status: ResponseStatus.AVAILABLE };
   }
 
-  @ApiOperation({ summary: '채용공고 상태별 지원자 통계' })
+  @ApiOperation({ summary: '공고지원자관리 -> 채용공고상세 전형 상태 통계' })
   @ApiParam({
     name: 'id',
     type: String,
@@ -109,18 +109,6 @@ export class ApplicationsController {
     }
 
     return this.applicationsService.updateEmployerReviewStageStatus(updateReviewStageDto, employer);
-  }
-
-  @ApiOperation({ summary: '지원자의 합격여부 상태 변경', description: '지원자의 합격여부 상태를 변경합니다.' })
-  @Roles('EMPLOYER')
-  @Patch('/recruitment/status/decision')
-  async updateDecisionStatus(@Req() req: Request, @Body() updateDecisionStatusDto: UpdateDecisionStatusDto) {
-    const employer = await this.employersService.findOneUuid(req.user['sub']);
-
-    if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
-    }
-    return this.applicationsService.updateDecisionStatus(updateDecisionStatusDto, employer);
   }
 
   @ApiOperation({ summary: '이력서 열람처리', description: '지원자의 이력서를 열람 처리합니다.' })
