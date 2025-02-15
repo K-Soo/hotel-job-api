@@ -18,7 +18,7 @@ import { Nationality } from './entities/nationality.entity';
 import { ResponseStatus } from '../../../common/constants/responseStatus';
 import { isEqual } from 'lodash';
 import { PaymentStatus } from '../../../common/constants/payment';
-
+import { PaymentRecruitment } from '../../payment/payment-recruitment/entities/payment-recruitment.entity';
 @Injectable()
 export class RecruitmentService {
   constructor(
@@ -209,17 +209,24 @@ export class RecruitmentService {
 
     const statusCondition =
       status === RecruitmentQueryStatus.ALL ? {} : { recruitmentStatus: RecruitmentStatus[status] };
+    console.log('statusCondition: ', statusCondition);
 
     const queryBuilder = this.recruitmentRepo
       .createQueryBuilder('recruitment')
       .leftJoinAndSelect('recruitment.applications', 'applications')
-      .leftJoinAndSelect('recruitment.paymentRecruitment', 'paymentRecruitment')
-      .leftJoinAndSelect('paymentRecruitment.payment', 'payment')
+      .leftJoinAndSelect(
+        'recruitment.paymentRecruitment',
+        'paymentRecruitment',
+        'EXISTS (SELECT 1 FROM payment p WHERE p.id = paymentRecruitment.payment AND p.payment_status = :paymentCompleted)',
+      )
       .leftJoinAndSelect('paymentRecruitment.options', 'options')
       .innerJoin('recruitment.employer', 'employer')
       .where('employer.id = :uuid', { uuid })
       .andWhere(statusCondition, { status })
-      .orderBy('recruitment.createdAt', 'DESC');
+      .orderBy('recruitment.createdAt', 'DESC')
+      .setParameters({
+        paymentCompleted: PaymentStatus.PAYMENT_COMPLETED,
+      });
 
     queryBuilder.select([
       'recruitment.id',
@@ -351,6 +358,32 @@ export class RecruitmentService {
       throw new BadRequestException(error.message);
     }
   }
+  /**
+   * 특정 채용공고의 지원자 수 카운트
+   */
+  async getApplicationCountByRecruitmentId(recruitmentId: string, userId: string) {
+    const recruitment = await this.recruitmentRepo.findOne({
+      where: { id: recruitmentId, employer: { id: userId } },
+      relations: ['applications'],
+    });
+
+    if (!recruitment) {
+      throw new NotFoundException('해당 채용공고를 찾을 수 없습니다.');
+    }
+
+    const applications = recruitment.applications;
+
+    const totalCount = applications.length;
+    const viewCount = applications.filter((app) => app.isView).length;
+    const notViewCount = totalCount - viewCount;
+
+    return {
+      recruitmentStatus: recruitment.recruitmentStatus,
+      totalCount,
+      viewCount,
+      notViewCount,
+    };
+  }
 
   removeMultiple(ids: string[], userUuid: string) {
     return this.dataSource.transaction(async (manager) => {
@@ -365,18 +398,48 @@ export class RecruitmentService {
         throw new NotFoundException('Some recruitment IDs were not found.');
       }
 
-      // PROGRESS 상태의 레코드 확인
-      const progressRecruitment = recruitmentToDelete.filter(
-        (recruitment) => recruitment.recruitmentStatus === 'PROGRESS',
+      // PROGRESS 또는 CLOSED 상태의 레코드 확인
+      const restrictedRecruitment = recruitmentToDelete.filter(
+        (recruitment) =>
+          recruitment.recruitmentStatus === RecruitmentStatus.PROGRESS ||
+          recruitment.recruitmentStatus === RecruitmentStatus.CLOSED,
       );
 
-      if (progressRecruitment.length > 0) {
+      if (restrictedRecruitment.length > 0) {
         throw new BadRequestException(
           customHttpException.BAD_REQUEST_REMOVE('Progress recruitment cannot be deleted.'),
         );
       }
 
       await recruitmentRepo.delete(ids);
+
+      return {
+        status: ResponseStatus.SUCCESS,
+      };
+    });
+  }
+
+  closedRecruitment(recruitmentId: string, userId: string) {
+    console.log('recruitmentId: ', recruitmentId);
+    return this.dataSource.transaction(async (manager) => {
+      const recruitmentRepo = manager.getRepository(Recruitment);
+
+      const recruitment = await recruitmentRepo.findOne({
+        where: { id: recruitmentId, employer: { id: userId } },
+      });
+
+      if (!recruitment) {
+        throw new NotFoundException();
+      }
+      console.log('recruitment: ', recruitment);
+
+      if (recruitment.recruitmentStatus !== 'PROGRESS') {
+        throw new BadRequestException(customHttpException.BAD_REQUEST_REMOVE('마감할 수 없는 공고입니다.'));
+      }
+
+      recruitment.recruitmentStatus = RecruitmentStatus.CLOSED;
+
+      await recruitmentRepo.save(recruitment);
 
       return {
         status: ResponseStatus.SUCCESS,
