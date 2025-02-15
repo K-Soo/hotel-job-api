@@ -9,7 +9,7 @@ export const MEMBERSHIP_SEEDER = [
   { membershipLevel: MembershipLevel.SILVER, discountRate: 0.03, minScore: 300_001, maxScore: 600_000 }, // 30만 ~ 60만 원
   { membershipLevel: MembershipLevel.GOLD, discountRate: 0.04, minScore: 600_001, maxScore: 1_000_000 }, // 60만 ~ 100만 원
   { membershipLevel: MembershipLevel.VIP, discountRate: 0.06, minScore: 1_000_001, maxScore: MAX_SCORE }, // 100만 원 초과
-] as const;
+];
 
 export const COUPON_SEEDER = [
   // WELCOME
