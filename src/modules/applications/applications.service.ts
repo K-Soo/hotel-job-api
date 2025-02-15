@@ -13,8 +13,7 @@ import { Repository } from 'typeorm';
 import { Resume } from '../resumes/entities/resume.entity';
 import { Application } from './entities/application.entity';
 import { Applicant } from '../applicants/entities/applicant.entity';
-import { ApplicationStatus, FinalDecisionStatus, ReviewStageStatus } from '../../common/constants/application';
-import { Role } from '../../common/constants/app.enum';
+import { ApplicationStatus, ReviewStageStatus } from '../../common/constants/application';
 import { Employer } from '../employers/entities/employer.entity';
 import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
 import { cloneDeep } from 'lodash';
@@ -82,6 +81,7 @@ export class ApplicationsService {
 
     return this.applicationRepo.find({
       where: { recruitment: { id: recruitmentId, employer }, ...stepCondition },
+      relations: ['announcementRecipients', 'announcementRecipients.announcement'],
     });
   }
 
@@ -140,33 +140,6 @@ export class ApplicationsService {
     return { status: ResponseStatus.SUCCESS };
   }
 
-  async updateDecisionStatus(updateDecisionStatusDto: UpdateDecisionStatusDto, employer: Employer) {
-    const application = await this.applicationRepo.findOne({
-      where: {
-        id: updateDecisionStatusDto.applicationId,
-        recruitment: { employer: { id: employer.id } },
-      },
-      relations: ['recruitment'],
-    });
-
-    if (!application) {
-      throw new NotFoundException('Application not found');
-    }
-
-    const { finalDecisionStatus } = updateDecisionStatusDto;
-    if (!Object.values(FinalDecisionStatus).includes(finalDecisionStatus)) {
-      throw new BadRequestException('Invalid final decision status');
-    }
-
-    application.finalDecisionStatus = finalDecisionStatus;
-    application.acceptAt = finalDecisionStatus === FinalDecisionStatus.ACCEPT ? new Date() : null;
-    application.rejectAt = finalDecisionStatus === FinalDecisionStatus.REJECT ? new Date() : null;
-
-    await this.applicationRepo.save(application);
-
-    return { status: ResponseStatus.SUCCESS };
-  }
-
   async calculateEmployerReviewStageStatusCount(recruitmentId: string, employer: Employer) {
     const result = await this.applicationRepo
       .createQueryBuilder('application')
@@ -203,6 +176,7 @@ export class ApplicationsService {
   }
 
   // 열람처리
+
   async markResumeAsViewed(applicationId: number, employer: Employer) {
     const application = await this.applicationRepo.findOne({
       where: { id: applicationId },
