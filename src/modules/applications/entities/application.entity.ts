@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
-import { ApplicationStatus, ReviewStageStatus, FinalDecisionStatus } from '../../../common/constants/application';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
+import { ApplicationStatus, ReviewStageStatus } from '../../../common/constants/application';
 import { Resume } from '../../resumes/entities/resume.entity';
 import { Recruitment } from '../../employers/recruitment/entities/recruitment.entity';
+import { ApplicationAnnouncementRecipient } from '../announcements/entities/application-announcement-recipient.entity';
 
 @Entity()
 export class Application {
@@ -22,21 +23,23 @@ export class Application {
   @JoinColumn({ name: 'recruitment_id' })
   recruitment: Recruitment | null;
 
+  @OneToMany(() => ApplicationAnnouncementRecipient, (recipient) => recipient.application)
+  announcementRecipients: ApplicationAnnouncementRecipient[];
+
   // 공고 스냅샷 데이터
   @Column({ type: 'jsonb', nullable: true })
   recruitmentSnapshot: Record<string, any>;
 
+  // 지원 진행 상태 (지원자 측면)
   // 지원 상태
   @Column({ type: 'enum', enum: ApplicationStatus })
   applicationStatus: ApplicationStatus;
-
-  @Column({ type: 'enum', enum: FinalDecisionStatus, default: FinalDecisionStatus.PENDING })
-  finalDecisionStatus: FinalDecisionStatus | null;
 
   // 전형 단계 (실제 지원자에게 보여지는 단계)
   @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
   reviewStageStatus: ReviewStageStatus;
 
+  // 고용주(사업자) 측면
   // 사업자 전용 전형 이동 단계
   @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
   employerReviewStageStatus: ReviewStageStatus;
