@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, Unique } from 'typeorm';
 import { DiscountType } from '../../../common/constants/coupon';
 import { EmployerCoupon } from './employer-coupon.entity';
 
@@ -16,7 +16,16 @@ export class Coupon {
   @Column({ type: 'enum', enum: DiscountType })
   discountType: DiscountType; // 할인 유형 (정액 or 퍼센트)
 
-  @Column({ type: 'numeric', precision: 4, scale: 2, default: 0 })
+  @Column({
+    type: 'numeric',
+    precision: 4,
+    scale: 2,
+    default: 0,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
   discountRate: number; // 할인율 (ex: 0.1)
 
   @Column({ type: 'int', default: 0 })
@@ -33,9 +42,6 @@ export class Coupon {
 
   @Column({ type: 'boolean', default: false })
   isPublic: boolean; // true면 모든 사용자에게 발급 가능 (ex: "WELCOME10")
-
-  @Column({ type: 'timestamptz', nullable: true, precision: 0, default: null })
-  expiresAt: Date | null; // 쿠폰 만료일 (기본값: 무제한)
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
