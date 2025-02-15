@@ -56,7 +56,7 @@ export class EmployersService {
   // 계정정보
   accountInfo(id: string) {
     return safeQuery(async () => {
-      const account = await this.employerRepo.findOne({ where: { id }, relations: ['certification', 'membership'] });
+      const account = await this.employerRepo.findOne({ where: { id }, relations: ['membership'] });
       return {
         ...account,
         certification: account.certification ?? null,
