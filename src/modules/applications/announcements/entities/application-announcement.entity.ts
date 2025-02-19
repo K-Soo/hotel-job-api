@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
-import { AnnouncementType, ReviewStageStatus } from '../../../../common/constants/application';
+import { AnnouncementType, ResultNotificationStatus } from '../../../../common/constants/application';
 import { ApplicationAnnouncementRecipient } from './application-announcement-recipient.entity';
 import { Recruitment } from '../../../employers/recruitment/entities/recruitment.entity';
 
@@ -20,9 +20,13 @@ export class ApplicationAnnouncement {
   @Column({ type: 'enum', enum: AnnouncementType })
   announcementType: AnnouncementType;
 
-  // 전형 (서류, 면접, 최종 등)
-  @Column({ type: 'enum', enum: ReviewStageStatus })
-  reviewStage: ReviewStageStatus;
+  // // 전형 (서류, 면접, 최종 등)
+  // @Column({ type: 'enum', enum: ReviewStageStatus })
+  // reviewStage: ReviewStageStatus;
+
+  // // 전형 (서류, 면접, 최종 등)
+  @Column({ type: 'enum', enum: ResultNotificationStatus })
+  resultNotificationStatus: ResultNotificationStatus;
 
   // 발표 문구
   @Column({ type: 'text' })
