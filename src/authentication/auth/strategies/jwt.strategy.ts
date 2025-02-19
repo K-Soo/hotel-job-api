@@ -61,8 +61,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         role: verifyToken.role,
       };
     } catch (error) {
-      // console.error(chalk.red('access-token middleware instanceType:', error.constructor.name));
-
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_EXPIRED);
       }
