@@ -6,7 +6,6 @@ import { safeQuery } from '../../common/helpers/database.helper';
 import { AccountStatus, Provider, Role } from '../../common/constants/app.enum';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { AccountHistoryService } from '../../authentication/account-history/account-history.service';
-import { customHttpException } from '../../common/constants/custom-http-exception';
 import { handleAccountStatus } from '../../common/helpers/account.helper';
 @Injectable()
 export class ApplicantsService {
@@ -55,5 +54,18 @@ export class ApplicantsService {
     );
 
     return { status: ResponseStatus.SUCCESS };
+  }
+
+  async existsApplicantNickname(nickname: string) {
+    const applicant = await this.repo
+      .createQueryBuilder('applicant')
+      .where('applicant.nickname = :nickname', { nickname })
+      .getOne();
+
+    return !!applicant;
+  }
+
+  updateNickname(id: string, nickname: string) {
+    return this.repo.update({ id }, { nickname });
   }
 }
