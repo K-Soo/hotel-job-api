@@ -11,7 +11,6 @@ export const customHttpException = {
     customCode: 1002,
     message: 'Access token is invalid',
   },
-
   REFRESH_TOKEN_EXPIRED: {
     customCode: 1020,
     message: 'Refresh token expired',
@@ -67,6 +66,10 @@ export const customHttpException = {
     customCode: 3011,
     message: message,
   }),
+  CERTIFICATION_UNAUTHORIZED: {
+    customCode: 3012,
+    message: 'User is not certified',
+  },
   NOT_MODIFIED: {
     customCode: 4000,
     message: 'Not modified',
