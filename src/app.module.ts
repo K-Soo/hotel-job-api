@@ -40,6 +40,7 @@ import { PushModule } from './modules/push/push.module';
 import { SchedulerModule } from './jobs/schedulers/scheduler.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { PointModule } from './modules/point/point.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { PointModule } from './modules/point/point.module';
     SchedulerModule,
     CouponModule,
     PointModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],

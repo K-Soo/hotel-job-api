@@ -11,6 +11,7 @@ import {
   AfterUpdate,
   BeforeUpdate,
   AfterInsert,
+  Index,
 } from 'typeorm';
 import {
   EducationCondition,
@@ -35,7 +36,7 @@ export class Recruitment {
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
-  @OneToMany(() => PaymentRecruitment, (payment) => payment.recruitment)
+  @OneToMany(() => PaymentRecruitment, (paymentRecruitment) => paymentRecruitment.recruitment)
   paymentRecruitment: PaymentRecruitment[];
 
   @OneToOne(() => Nationality, (nationality) => nationality.recruitment, { cascade: true })
@@ -47,6 +48,7 @@ export class Recruitment {
   @Column()
   recruitmentTitle: string;
 
+  @Index()
   @Column({ type: 'enum', enum: RecruitmentStatus })
   recruitmentStatus: RecruitmentStatus;
 
@@ -138,6 +140,17 @@ export class Recruitment {
 
   @Column({ type: 'timestamptz', precision: 3, nullable: true })
   postingEndDate: Date | null;
+
+  // new
+  @Index()
+  @Column({ type: 'timestamptz', precision: 6, nullable: true })
+  priorityDate: Date; //정렬 기준 필드 (부스팅 or 게시일 자동 할당)
+
+  @Column({ type: 'int', default: 0 })
+  listUpCount: number;
+
+  @Column({ type: 'boolean', default: false })
+  isListUp: boolean;
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;

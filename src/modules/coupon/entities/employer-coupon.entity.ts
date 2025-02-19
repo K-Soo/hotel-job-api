@@ -15,13 +15,22 @@ export class EmployerCoupon {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ default: '' })
+  description: string;
+
+  @Column({ type: 'boolean', default: false }) // 만료 상태
+  isExpired: boolean;
+
   @Column({ type: 'boolean', default: false })
   isUsed: boolean;
 
-  @Column({ type: 'timestamptz', precision: 0, nullable: true })
+  @Column({ type: 'timestamptz', precision: 6 })
+  issuedAt: Date;
+
+  @Column({ type: 'timestamptz', precision: 6, nullable: true })
   usedAt: Date | null;
 
-  @Column({ type: 'timestamptz', nullable: true, precision: 0, default: null })
+  @Column({ type: 'timestamptz', nullable: true, precision: 6, default: null })
   expiresAt: Date | null; // 특정 유저에게 발급된 쿠폰의 만료일 (개별 설정 가능)
 
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })

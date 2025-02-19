@@ -1,45 +1,53 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
-import { ApplicationStatus, ReviewStageStatus, FinalDecisionStatus } from '../../../common/constants/application';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
+import { ApplicationStatus, EmployerReviewStageStatus, ReviewStageStatus } from '../../../common/constants/application';
 import { Resume } from '../../resumes/entities/resume.entity';
 import { Recruitment } from '../../employers/recruitment/entities/recruitment.entity';
+import { ApplicationAnnouncementRecipient } from '../announcements/entities/application-announcement-recipient.entity';
 
 @Entity()
 export class Application {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   // 이력서와의 관계 (참조만 유지)
   @ManyToOne(() => Resume, (resume) => resume.applications, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'resume_id' })
   resume: Resume | null;
-
-  // 이력서의 스냅샷 데이터
-  @Column({ type: 'jsonb', nullable: true })
-  resumeSnapshot: Record<string, any>;
 
   // 채용공고와의 관계 (참조만 유지)
   @ManyToOne(() => Recruitment, (recruitment) => recruitment.applications, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'recruitment_id' })
   recruitment: Recruitment | null;
 
+  // 공고 발표
+  @OneToMany(() => ApplicationAnnouncementRecipient, (recipient) => recipient.application)
+  announcementRecipients: ApplicationAnnouncementRecipient[];
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  // 지원자 id
+  @Column()
+  applicantId: string;
+
+  // 이력서의 스냅샷 데이터
+  @Column({ type: 'jsonb', nullable: true })
+  resumeSnapshot: Record<string, any>;
+
   // 공고 스냅샷 데이터
   @Column({ type: 'jsonb', nullable: true })
   recruitmentSnapshot: Record<string, any>;
 
+  // 지원 진행 상태 (지원자 측면)
   // 지원 상태
   @Column({ type: 'enum', enum: ApplicationStatus })
   applicationStatus: ApplicationStatus;
-
-  @Column({ type: 'enum', enum: FinalDecisionStatus, default: FinalDecisionStatus.PENDING })
-  finalDecisionStatus: FinalDecisionStatus | null;
 
   // 전형 단계 (실제 지원자에게 보여지는 단계)
   @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
   reviewStageStatus: ReviewStageStatus;
 
+  // 고용주(사업자) 측면
   // 사업자 전용 전형 이동 단계
-  @Column({ type: 'enum', enum: ReviewStageStatus, default: ReviewStageStatus.DOCUMENT })
-  employerReviewStageStatus: ReviewStageStatus;
+  @Column({ type: 'enum', enum: EmployerReviewStageStatus, default: EmployerReviewStageStatus.DOCUMENT })
+  employerReviewStageStatus: EmployerReviewStageStatus;
 
   // **********************************************
   // 열람 여부

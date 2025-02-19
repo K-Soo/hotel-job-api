@@ -27,31 +27,6 @@ import { Application } from '../../applications/entities/application.entity';
 import { LicenseDto } from '../dto/license.dto';
 @Entity('resume')
 export class Resume {
-  // --------- 메모 -------------
-  // 이력서는 최대 5개까지 만들 수 있음
-  // 이력서 종류 2가지: 파일이력서, 직접 등록
-  // - 파일이력서 등록: 필수(이력서파일,학력,총 경력년수), 선택(경력기술서,추가서류 및 첨부파일)
-  // - 직접 등록: 아래와같이 입력해서 이력서 등록가능
-  // 인재리스트페이지에 렌더링되는 유저는 기본 이력서 + 노출 여부 결합해서 노출 여부 결정
-  //
-  // 관리 시나리오
-  // 1. 정상적인 이력서
-  // isActive: true
-  // status: 'submitted'
-  // 사용자 및 관리자 모두 이력서를 볼 수 있음.
-  //
-  // 2. 비노출 처리된 이력서
-  // isActive: false
-  // status: 'hidden'
-  // 사유(reasonForHiding): "욕설 포함".
-  //
-  // 3. 삭제 처리된 이력서
-  // isActive: false
-  // status: 'deleted'
-  // 삭제된 이유와 검토 정보 기록.
-
-  //---------- COMMON ------------
-
   @OneToMany(() => Application, (application) => application.resume)
   applications: Application[];
 

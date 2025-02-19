@@ -15,11 +15,11 @@ export class PaymentRecruitment {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  @JoinColumn({ name: 'recruit_id' })
+  @JoinColumn()
   recruitment: Recruitment | null;
 
   @ManyToOne(() => Payment, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'payment_id' })
+  @JoinColumn({ name: 'payment_id', referencedColumnName: 'id' })
   payment: Payment;
 
   @OneToMany(
@@ -76,6 +76,9 @@ export class PaymentRecruitmentOptions {
   duration: RecruitmentDuration;
 
   @Column({ type: 'int', default: 0 })
+  bonusDays: number;
+
+  @Column({ type: 'int', default: 0 })
   maxListUpPerDay: number; // 24시간 내 리스트업 최대 횟수 (기본값: 0)
 
   @Column({ type: 'int', default: 0 })
@@ -86,4 +89,10 @@ export class PaymentRecruitmentOptions {
 
   @Column({ type: 'int', default: 0 })
   price: number;
+
+  @Column({ type: 'timestamptz', precision: 0, nullable: true })
+  postingStartDate: Date | null;
+
+  @Column({ type: 'timestamptz', precision: 3, nullable: true })
+  postingEndDate: Date | null;
 }

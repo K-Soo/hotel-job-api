@@ -11,10 +11,11 @@ import {
   Index,
 } from 'typeorm';
 import { PaymentRecruitment } from '../payment-recruitment/entities/payment-recruitment.entity';
-import { PaymentStatus } from '../../../common/constants/payment';
+import { PaymentStatus, PaymentType } from '../../../common/constants/payment';
 import { addMinutes } from 'date-fns';
 import { EmployerCoupon } from '../../coupon/entities/employer-coupon.entity';
 import { PaymentTransaction } from './payment-transaction.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Payment {
@@ -35,6 +36,7 @@ export class Payment {
   @Index()
   orderId: string;
 
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   userId: string;
 
@@ -42,29 +44,42 @@ export class Payment {
   appliedCouponId: string | null; // 적용된 쿠폰 ID (없으면 null)
 
   @Column({ type: 'int' })
-  originalAmount: number; // 할인 전 상품금액
+  originalAmount: number; // 상품금액
 
   @Column({ type: 'int', default: 0 })
-  discountAmount: number; // 할인 금액
+  discountAmount: number; // 상품 할인 금액
+
+  @Column({ type: 'int', default: 0 })
+  couponDiscountAmount: number; // 쿠폰 할인금액
+
+  @Column({ type: 'int', default: 0 })
+  totalDiscountAmount: number; // 총 할인 금액
 
   @Column({ type: 'int' })
   totalAmount: number; // ✅ 총 결제 금액 (상품금액 - 할인금액)
 
-  @Column({ type: 'enum', enum: PaymentStatus, default: 'PAYMENT_PENDING' })
+  @Index()
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PAYMENT_PENDING })
   paymentStatus: PaymentStatus;
 
+  @Column({ type: 'enum', enum: PaymentType })
+  paymentType: PaymentType;
+
   @Column({ nullable: true })
-  paymentMethod: '카드' | '가상계좌' | '간편결제' | '휴대폰';
+  paymentMethod: '카드' | '가상계좌' | '간편결제' | '휴대폰' | '쿠폰';
 
   @Column({ type: 'jsonb', nullable: true })
   failureReason: { code: string; message: string } | null;
 
+  // @Exclude()
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 
+  @Exclude()
   @Column({ type: 'timestamptz', precision: 0 })
   expiresAt: Date; // 주문 만료 시간
 

@@ -4,4 +4,4 @@ export enum PointTransactionType {
   EXPIRE = 'EXPIRE', // 만료
 }
 
-export const POINT_RATE = 0.02; // 포인트 적립률 (2%)
+export const POINT_RATE = 0.01; // 포인트 적립률 (1%)

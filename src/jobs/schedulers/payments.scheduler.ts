@@ -5,8 +5,8 @@ import { Recruitment } from '../../modules/employers/recruitment/entities/recrui
 import { RecruitmentStatus } from '../../common/constants/recruitment';
 
 @Injectable()
-export class CleanupPaymentsScheduler {
-  private readonly logger = new Logger(CleanupPaymentsScheduler.name);
+export class PaymentsScheduler {
+  private readonly logger = new Logger(PaymentsScheduler.name);
 
   constructor(private readonly dataSource: DataSource) {}
 

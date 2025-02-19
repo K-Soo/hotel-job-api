@@ -7,6 +7,10 @@ import { PassportJwtGuard } from '../../../authentication/auth/guards/passport-j
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Request } from 'express';
 import { ConfirmRecruitmentPaymentDto } from './dto/confirm-recruitment-payment.dto';
+import { AvailableCouponResponseDto } from './dto/available-coupon-response.dto';
+import { ApplyCouponDto } from './dto/apply-coupon.dto';
+import { CancelCouponDto } from './dto/cancel-coupon.dto';
+import { ConfirmFreeRecruitmentPaymentDto } from './dto/confirm-free-recruitment-payment.dto';
 
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
@@ -35,18 +39,42 @@ export class PaymentRecruitmentController {
     return this.paymentRecruitmentService.confirmRecruitmentPaymentDto(confirmRecruitmentPaymentDto, userId);
   }
 
+  @ApiOperation({ summary: '채용상품 무료 승인요청' })
+  @Post('confirm/free')
+  async confirmFreeRecruitmentPayment(
+    @Req() req: Request,
+    @Body() confirmFreeRecruitmentPaymentDto: ConfirmFreeRecruitmentPaymentDto,
+  ) {
+    const userId = req.user['sub'];
+    return this.paymentRecruitmentService.confirmFreeRecruitmentPaymentDto(confirmFreeRecruitmentPaymentDto, userId);
+  }
+
+  @ApiOperation({ summary: '채용상품 사용가능한 쿠폰 목록' })
+  @Post('coupon')
+  async AvailableCoupon(@Req() req: Request, @Body() availableCouponResponseDto: AvailableCouponResponseDto) {
+    const userId = req.user['sub'];
+    return this.paymentRecruitmentService.AvailableCoupon(availableCouponResponseDto.orderId, userId);
+  }
+
+  @ApiOperation({ summary: '결제상품 쿠폰 적용' })
+  @Post('coupon/apply')
+  async applyCoupon(@Body() applyCouponDto: ApplyCouponDto, @Req() req: Request) {
+    const userId = req.user['sub'];
+    return this.paymentRecruitmentService.applyCoupon(applyCouponDto, userId);
+  }
+
+  @ApiOperation({ summary: '결제상품 쿠폰 적용 취소' })
+  @Post('coupon/cancel')
+  async cancelCoupon(@Body() cancelCouponDto: CancelCouponDto, @Req() req: Request) {
+    const userId = req.user['sub'];
+    return this.paymentRecruitmentService.cancelCoupon(cancelCouponDto, userId);
+  }
+
   @ApiOperation({ summary: '채용상품 결제정보 상세' })
   @Get(':orderId')
   async getOrderDetails(@Param('orderId') orderId: string, @Req() req: Request) {
     const userId = req.user['sub'];
 
     return this.paymentRecruitmentService.getOrderDetails(orderId, userId);
-  }
-
-  @ApiOperation({ summary: '채용상품 결제상품 쿠폰 적용' })
-  @Patch('apply-coupon')
-  async applyCoupon(@Body() body: { orderId: string; couponId: string }, @Req() req: Request) {
-    const userId = req.user['sub'];
-    // return this.paymentRecruitmentService.applyCoupon(body.orderId, body.couponId, userId);
   }
 }
