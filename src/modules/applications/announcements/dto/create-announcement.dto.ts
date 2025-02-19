@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsEnum, IsString } from 'class-validator';
-import { AnnouncementType, ReviewStageStatus } from '../../../../common/constants/application';
+import { AnnouncementType, ResultNotificationStatus } from '../../../../common/constants/application';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAnnouncementDto {
@@ -12,13 +12,17 @@ export class CreateAnnouncementDto {
   @IsEnum(AnnouncementType)
   announcementType: AnnouncementType; // 합격/불합격 구분
 
-  @ApiProperty({ description: '전형 단계', enum: ReviewStageStatus, examples: ReviewStageStatus })
-  @IsEnum(ReviewStageStatus)
-  reviewStage: ReviewStageStatus; // 전형 단계
+  @ApiProperty({
+    description: '전형 단계',
+    enum: ResultNotificationStatus,
+    examples: ResultNotificationStatus,
+  })
+  @IsEnum(ResultNotificationStatus)
+  resultNotificationStatus: ResultNotificationStatus; // 전형 단계
 
   @IsNotEmpty()
   recruitmentId: string; // 채용 공고 ID
 
   @IsNotEmpty()
-  recipientApplicationIds: number[]; // 발표 대상자
+  recipientApplicationIds: number[]; // 발표 대상 지원서 ID
 }
