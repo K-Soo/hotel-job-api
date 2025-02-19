@@ -1,4 +1,16 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { ApplyResumeDto } from './dto/apply-resume.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -9,10 +21,10 @@ import { Request } from 'express';
 import { ApplicantsService } from '../applicants/applicants.service';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { EmployersService } from '../employers/employers.service';
-import { ReviewStageStatus } from '../../common/constants/application';
+import { EmployerReviewStageStatus } from '../../common/constants/application';
 import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
 import { customHttpException } from '../../common/constants/custom-http-exception';
-import { UpdateDecisionStatusDto } from './dto/update-decision-status.dto';
+import { HistoryQueryDto } from './dto/history-query.dto';
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
 @Controller('applications')
@@ -82,7 +94,7 @@ export class ApplicationsController {
   async getApplicationsForRecruitment(
     @Req() req: Request,
     @Param('id') recruitmentId: string,
-    @Query('step') step?: ReviewStageStatus,
+    @Query('step') step?: EmployerReviewStageStatus,
   ) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
     if (!employer) {
@@ -94,8 +106,15 @@ export class ApplicationsController {
   @ApiOperation({ summary: '채용공고 지원내역' })
   @Roles('JOB_SEEKER')
   @Get('/history')
-  async getUserApplicationsHistory(@Req() req: Request) {
-    return this.applicationsService.calculateApplicationHistory(req.user['sub']);
+  async getUserApplicationsHistory(@Req() req: Request, @Query() query: HistoryQueryDto) {
+    return this.applicationsService.getUserApplicationsHistory(req.user['sub'], query);
+  }
+
+  @ApiOperation({ summary: '채용공고 지원내역' })
+  @Roles('JOB_SEEKER')
+  @Get('/history/status')
+  async getUserApplicationsHistoryStatus(@Req() req: Request) {
+    return this.applicationsService.getUserApplicationsHistoryStatus(req.user['sub']);
   }
 
   @ApiOperation({ summary: '전형 상태 변경', description: '지원자의 전형 상태를 변경합니다.' })
@@ -115,10 +134,27 @@ export class ApplicationsController {
   @Roles('EMPLOYER')
   @Patch('/view')
   async updateMarkResumeAsView(@Req() req: Request, @Body() body: { applicationId: number }) {
+    if (!body.applicationId) {
+      throw new BadRequestException();
+    }
+
     const employer = await this.employersService.findOneUuid(req.user['sub']);
+
     if (!employer) {
       throw new NotFoundException(customHttpException.NOT_FOUND_USER);
     }
+
     return this.applicationsService.markResumeAsViewed(body.applicationId, employer);
+  }
+
+  @ApiOperation({ summary: '채용공고 지원 취소', description: '지원자의 이력서 지원을 취소합니다.' })
+  @Roles('JOB_SEEKER')
+  @Patch('/cancel')
+  async cancelApplication(@Req() req: Request, @Body() body: { applicationId: number }) {
+    if (!body.applicationId) {
+      throw new BadRequestException();
+    }
+
+    return this.applicationsService.cancelApplication(body.applicationId, req.user['sub']);
   }
 }
