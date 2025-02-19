@@ -11,6 +11,7 @@ export const regex = {
   KOREAN: /^[가-힣]+$/, //한글
   GATHER: /^[^ㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣ]*$/, //모음 체크
   CONSONANT: /^[^ㄱ-ㅎ]*$/, //자음 체크
+  NICKNAME: /^[a-zA-Z0-9가-힣]{2,10}$/, // 닉네임
 };
 
 export const validationMessage = (text: string) => {

@@ -13,6 +13,10 @@ import { Recruitment } from './recruitment.entity';
 
 @Entity('recruitment_nationality')
 export class Nationality {
+  @OneToOne(() => Recruitment, (recruitment) => recruitment.nationality, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  recruitment: Recruitment;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -24,8 +28,4 @@ export class Nationality {
 
   @Column({ nullable: true, length: 30 })
   marriageVisa: string;
-
-  @OneToOne(() => Recruitment, (recruitment) => recruitment.nationality, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  recruitment: Recruitment;
 }

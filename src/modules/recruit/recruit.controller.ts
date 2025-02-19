@@ -1,18 +1,8 @@
 import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { RecruitService } from './recruit.service';
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Req,
-  Query,
-  UseInterceptors,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RecruitQueryDto } from './dto/recruit-query.dto';
+import { RecruitmentProductType } from '../../common/constants/product';
 
 @Controller('recruit')
 export class RecruitController {
@@ -21,21 +11,19 @@ export class RecruitController {
   @ApiOperation({ summary: '채용 스페셜 공고' })
   @Get('special')
   recruitSpecial(@Query() query: RecruitQueryDto) {
-    return this.recruitService.getRecruitment('special', query);
+    return this.recruitService.getSpecialRecruit(query);
   }
 
   @ApiOperation({ summary: '채용 급구 공고' })
   @Get('urgent')
   recruitUrgent(@Query() query: RecruitQueryDto) {
-    console.log('query: ', query);
-    return this.recruitService.getRecruitment('urgent', query);
+    return this.recruitService.getUrgentRecruit(query);
   }
 
   @ApiOperation({ summary: '채용 일반 공고' })
   @Get('basic')
   recruitBasic(@Query() query: RecruitQueryDto) {
-    console.log('query: ', query);
-    return this.recruitService.getRecruitment('basic', query);
+    return this.recruitService.getBasicRecruit(query);
   }
 
   @ApiParam({

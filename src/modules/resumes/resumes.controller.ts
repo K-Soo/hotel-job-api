@@ -34,9 +34,9 @@ export class ResumesController {
 
   @ApiOperation({ summary: '이력서 생성' })
   @Post()
-  async initialCreateResume(@Req() req: Request) {
+  async createResume(@Req() req: Request) {
     const applicant = await this.applicantsService.findByUuid(req.user['sub']);
-    return this.resumesService.initialCreateResume(applicant);
+    return this.resumesService.createResume(applicant);
   }
 
   @ApiOperation({ summary: '이력서 제출' })

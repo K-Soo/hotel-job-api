@@ -1,31 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseInterceptors,
-  Res,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { EmployersService } from './employers.service';
-import { CreateEmployerDto } from './dto/create-employer.dto';
 import { EmployerResponseDto } from './dto/employer.response.dto';
-import { UpdateEmployerDto } from './dto/update-employer.dto';
-import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
-import { AuthService } from '../../authentication/auth/auth.service';
-import { Response, Request } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
+import { ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
-import { plainToInstance } from 'class-transformer';
+import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 
-@ApiTags('사업자 유저')
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
 @Roles('EMPLOYER')
@@ -36,10 +18,10 @@ export class EmployersController {
   @ApiOperation({ summary: '계정정보' })
   @ApiResponse({
     status: 200,
-    description: '계정정보 응답값',
+    description: '계정정보',
     type: EmployerResponseDto,
   })
-  // @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
+  @UseInterceptors(new SerializeInterceptor(EmployerResponseDto, { groups: ['account'] }))
   @Get()
   accountInfo(@Req() req: Request) {
     return this.employersService.accountInfo(req.user['sub']);

@@ -21,6 +21,7 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: isLocal,
       connectTimeoutMS: 1000,
+      // autoLoadEntities: true,
       // useUTC: true,
       // extra: {
       //   options: `-c timezone=Asia/Seoul`,

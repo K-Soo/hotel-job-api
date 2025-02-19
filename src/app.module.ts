@@ -36,6 +36,11 @@ import { RecruitModule } from './modules/recruit/recruit.module';
 import { ApplicationsModule } from './modules/applications/applications.module';
 import { ProductsModule } from './modules/products/products.module';
 import { MembershipModule } from './modules/membership/membership.module';
+import { PushModule } from './modules/push/push.module';
+import { SchedulerModule } from './jobs/schedulers/scheduler.module';
+import { CouponModule } from './modules/coupon/coupon.module';
+import { PointModule } from './modules/point/point.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -73,6 +78,12 @@ import { MembershipModule } from './modules/membership/membership.module';
     ProductsModule,
 
     MembershipModule,
+
+    PushModule,
+    SchedulerModule,
+    CouponModule,
+    PointModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],

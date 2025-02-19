@@ -5,7 +5,7 @@ import { Employer } from '../../employers/entities/employer.entity';
 @Entity()
 export class Membership {
   @OneToMany(() => Employer, (employer) => employer.membership)
-  employers: Employer[]; // 여러 Employer와 연결
+  employers: Employer[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -13,7 +13,15 @@ export class Membership {
   @Column({ type: 'enum', enum: MembershipLevel, unique: true, default: MembershipLevel.FAMILY })
   membershipLevel: MembershipLevel;
 
-  @Column({ type: 'numeric', precision: 4, scale: 3 })
+  @Column({
+    type: 'numeric',
+    precision: 4,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
   discountRate: number;
 
   @Column({ type: 'bigint', default: 0 })

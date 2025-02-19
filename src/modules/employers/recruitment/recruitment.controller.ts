@@ -11,6 +11,7 @@ import { RecruitmentDetailResponseDto } from './dto/recruitment-response.dto';
 import { Request } from 'express';
 import { EmployersService } from '../employers.service';
 import { RecruitmentStatusResponseDto } from './dto/recruitment-status-response.dto';
+import { PublishedRecruitmentResponseDto } from './dto/published-recruitment-response.dto';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import {
   Controller,
@@ -40,9 +41,8 @@ export class RecruitmentController {
   @ApiOperation({ summary: '채용공고 생성' })
   @Post()
   async create(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
-    console.log('createRecruitmentDto: ', createRecruitmentDto);
-    const userUuid = req.user['sub'];
-    const employer = await this.employersService.findOneUuid(userUuid);
+    const userId = req.user['sub'];
+    const employer = await this.employersService.findOneUuid(userId);
     if (!employer) {
       throw new NotFoundException(customHttpException.NOT_FOUND_USER);
     }
@@ -52,7 +52,9 @@ export class RecruitmentController {
   @ApiOperation({ summary: '채용공고 수정' })
   @Patch()
   async update(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
-    return this.recruitmentService.update(createRecruitmentDto);
+    const userUuid = req.user['sub'];
+
+    return this.recruitmentService.update(createRecruitmentDto, userUuid);
   }
 
   @ApiOperation({ summary: '채용공고 임시저장' })
@@ -90,6 +92,16 @@ export class RecruitmentController {
     return this.recruitmentService.findAll(recruitmentQueryDto, userUuid);
   }
 
+  @ApiOperation({ summary: '결제 가능한 채용공고 목록' })
+  @ApiResponse({ status: 200, description: '상태값 published 해당하는 공고 목록' })
+  @UseInterceptors(new SerializeInterceptor(PublishedRecruitmentResponseDto))
+  @Get('published')
+  async publishedRecruitmentList(@Req() req: Request) {
+    const userUuid = req.user['sub'];
+
+    return this.recruitmentService.publishedRecruitmentList(userUuid);
+  }
+
   @UseInterceptors(new SerializeInterceptor(RecruitmentDetailResponseDto))
   @ApiOperation({ summary: '채용공고 상세' })
   @Get(':id')
@@ -100,15 +112,34 @@ export class RecruitmentController {
     return recruitment;
   }
 
+  @ApiOperation({ summary: '채용공고상세 총지원자, 열람, 미열람 카운트 수' })
+  @Get(':id/applications/count')
+  async getApplicationCount(@Req() req: Request, @Param('id') recruitmentId: string) {
+    const userId = req.user['sub'];
+    return await this.recruitmentService.getApplicationCountByRecruitmentId(recruitmentId, userId);
+  }
+
   @ApiOperation({ summary: '채용공고 삭제' })
   @Post('/remove')
   removeMultiple(@Req() req: Request, @Body('ids') ids: string[]) {
-    const userUuid = req.user['sub'];
+    const userId = req.user['sub'];
 
     if (ids.length === 0) {
       throw new BadRequestException('Invalid IDs. Provide a non-empty array of IDs.');
     }
 
-    return this.recruitmentService.removeMultiple(ids, userUuid);
+    return this.recruitmentService.removeMultiple(ids, userId);
+  }
+
+  @ApiOperation({ summary: '채용공고 마감' })
+  @Patch('/close')
+  closedRecruitment(@Req() req: Request, @Body('recruitmentId') recruitmentId: string) {
+    if (!recruitmentId) {
+      throw new BadRequestException('Invalid recruitment ID. Provide a valid recruitment ID.');
+    }
+
+    const userId = req.user['sub'];
+
+    return this.recruitmentService.closedRecruitment(recruitmentId, userId);
   }
 }

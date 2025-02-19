@@ -6,6 +6,7 @@ import { ExperienceCondition } from '../../../common/constants/recruitment';
 import { Benefits } from '../../../common/constants/benefits';
 import { EmploymentType, Jobs } from '../../../common/constants/app.enum';
 import { ArrayMaxSize } from 'class-validator';
+import { RecruitmentProductType } from '../../../common/constants/product';
 
 export class RecruitQueryDto {
   @ApiProperty({
@@ -40,6 +41,15 @@ export class RecruitQueryDto {
   @IsEnum(ExperienceCondition, validationMessage('experience'))
   experience?: ExperienceCondition;
 
+  @ApiProperty({
+    description: '상품 타입',
+    type: String,
+    enum: RecruitmentProductType,
+    example: RecruitmentProductType.RECRUIT,
+  })
+  @IsEnum(RecruitmentProductType, validationMessage('type'))
+  type: RecruitmentProductType;
+
   @ApiPropertyOptional({
     required: false,
     description: '고용형태',
@@ -60,16 +70,15 @@ export class RecruitQueryDto {
     type: [String],
     enum: Jobs,
     isArray: true,
-    // example: [Jobs.ADMIN_SUPPORT, Jobs.BARTENDER],
     example: [Jobs.ADMIN_SUPPORT],
   })
-  // @ArrayMaxSize(3, { message: 'You can select up to 3 Jobs only.' })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @IsOptional()
   @IsArray({ message: 'Jobs must be an array.' })
   @ArrayUnique({ message: 'Jobs must not contain duplicate values.' })
+  @ArrayMaxSize(3, { message: 'You can select up to 3 Jobs only.' })
   @IsEnum(Jobs, { each: true, message: 'Invalid Jobs value provided.' })
-  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
-  jobs?: Jobs[];
+  job?: Jobs | Jobs[];
 
   // 복리후생 (5개까지)
   @ApiPropertyOptional({

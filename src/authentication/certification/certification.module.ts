@@ -10,6 +10,7 @@ import { Employer } from '../../modules/employers/entities/employer.entity';
 import { ApplicantsModule } from '../../modules/applicants/applicants.module';
 import { Applicant } from '../../modules/applicants/entities/applicant.entity';
 import { AuthModule } from '../auth/auth.module';
+import { CouponModule } from '../../modules/coupon/coupon.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Certification, Employer, Applicant]),
@@ -18,6 +19,7 @@ import { AuthModule } from '../auth/auth.module';
     HttpModule,
     EmployersModule,
     ApplicantsModule,
+    CouponModule,
   ],
   controllers: [CertificationController],
   providers: [CertificationService],

@@ -36,7 +36,7 @@ export class AccountHistoryService {
     changedBy: string,
     note?: string,
   ) {
-    const history = this.accountHistoryRepo.create({
+    const createdHistory = this.accountHistoryRepo.create({
       applicant: entity instanceof Applicant ? entity : null,
       employer: entity instanceof Employer ? entity : null,
       status: newStatus,
@@ -45,7 +45,7 @@ export class AccountHistoryService {
       note,
     });
 
-    await this.accountHistoryRepo.save(history);
+    await this.accountHistoryRepo.save(createdHistory);
 
     entity.accountStatus = newStatus;
 

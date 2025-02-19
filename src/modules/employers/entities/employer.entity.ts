@@ -23,6 +23,8 @@ import { Certification } from '../../../authentication/certification/entities/ce
 import { Recruitment } from '../recruitment/entities/recruitment.entity';
 import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
 import { Membership } from '../../membership/entities/membership.entity';
+import { EmployerCoupon } from '../../../modules/coupon/entities/employer-coupon.entity';
+import { PointTransaction } from '../../point/entities/point-transaction.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -45,11 +47,17 @@ export class Employer {
   @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
   recruitment: Recruitment[];
 
+  @OneToMany(() => EmployerCoupon, (employerCoupon) => employerCoupon.employer)
+  coupon: EmployerCoupon[];
+
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
   certificationStatus: CertificationStatus;
 
   @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
   accountHistory: AccountHistory[];
+
+  @OneToMany(() => PointTransaction, (transaction) => transaction.employer)
+  pointTransactions: PointTransaction[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -77,7 +85,10 @@ export class Employer {
   nickname: string;
 
   @Column({ type: 'int', default: 0 })
-  score: number;
+  totalScore: number; //현재 맴버십 보유 점수
+
+  @Column({ type: 'int', default: 0 })
+  totalPoint: number; // 현재 보유 포인트
 
   @BeforeInsert()
   async generateUniqueNickname() {
@@ -93,4 +104,8 @@ export class Employer {
 
   @Column({ type: 'timestamptz', precision: 0, nullable: true })
   passwordChangedAt: Date | null;
+
+  static generateRandom10Digit(): string {
+    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+  }
 }

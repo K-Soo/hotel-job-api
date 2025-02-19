@@ -8,6 +8,10 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  AfterUpdate,
+  BeforeUpdate,
+  AfterInsert,
+  Index,
 } from 'typeorm';
 import {
   EducationCondition,
@@ -32,8 +36,8 @@ export class Recruitment {
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
-  @OneToMany(() => PaymentRecruitment, (payment) => payment.recruitment)
-  payments: PaymentRecruitment[];
+  @OneToMany(() => PaymentRecruitment, (paymentRecruitment) => paymentRecruitment.recruitment)
+  paymentRecruitment: PaymentRecruitment[];
 
   @OneToOne(() => Nationality, (nationality) => nationality.recruitment, { cascade: true })
   nationality: Nationality;
@@ -44,6 +48,7 @@ export class Recruitment {
   @Column()
   recruitmentTitle: string;
 
+  @Index()
   @Column({ type: 'enum', enum: RecruitmentStatus })
   recruitmentStatus: RecruitmentStatus;
 
@@ -130,9 +135,53 @@ export class Recruitment {
   @Column({ default: false })
   isEmailPrivate: boolean;
 
+  @Column({ type: 'timestamptz', precision: 0, nullable: true })
+  postingStartDate: Date | null;
+
+  @Column({ type: 'timestamptz', precision: 3, nullable: true })
+  postingEndDate: Date | null;
+
+  // new
+  @Index()
+  @Column({ type: 'timestamptz', precision: 6, nullable: true })
+  priorityDate: Date; //정렬 기준 필드 (부스팅 or 게시일 자동 할당)
+
+  @Column({ type: 'int', default: 0 })
+  listUpCount: number;
+
+  @Column({ type: 'boolean', default: false })
+  isListUp: boolean;
+
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
+
+  // 업데이트 전
+  @BeforeUpdate()
+  logBeforeUpdate() {
+    console.log('✏️ [BeforeUpdate] 채용공고 업데이트 전:');
+    console.log(`ID: ${this.id}`);
+    console.log(`시작일: ${this.postingStartDate}`);
+    console.log(`마감일: ${this.postingEndDate}`);
+  }
+
+  // 저장 후
+  @AfterInsert()
+  logAfterInsert() {
+    console.log('✅ [AfterInsert] 채용공고 저장 완료:');
+    console.log(`ID: ${this.id}`);
+    console.log(`저장된 시작일: ${this.postingStartDate}`);
+    console.log(`저장된 마감일: ${this.postingEndDate}`);
+  }
+
+  // 업데이트 후
+  @AfterUpdate()
+  logAfterUpdate() {
+    console.log('🔄 [AfterUpdate] 채용공고 업데이트 완료:');
+    console.log(`ID: ${this.id}`);
+    console.log(`업데이트된 시작일: ${this.postingStartDate}`);
+    console.log(`업데이트된 마감일: ${this.postingEndDate}`);
+  }
 }

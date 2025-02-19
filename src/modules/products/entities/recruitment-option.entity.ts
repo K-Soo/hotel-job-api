@@ -38,6 +38,9 @@ export class RecruitmentProductOption {
   @Column({ type: 'enum', enum: RecruitmentOptionTag, array: true, default: [] })
   tags: RecruitmentOptionTag[];
 
+  @Column({ type: 'int', default: 0 })
+  price: number;
+
   @Exclude()
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
