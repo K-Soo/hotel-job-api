@@ -55,6 +55,8 @@ export class RecruitService {
         'recruitment.addressDetail',
         'recruitment.priorityDate',
         'recruitment.recruitmentStatus',
+        'recruitment.postingStartDate',
+        'recruitment.postingEndDate',
         'paymentRecruitment',
         'options.id',
         'options.name',
@@ -65,7 +67,7 @@ export class RecruitService {
         'options.maxListUpPerDay',
       ])
       .where('recruitment.recruitmentStatus IN (:...statuses)', {
-        statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
+        statuses: [RecruitmentStatus.PROGRESS],
       });
 
     if (job !== undefined && job.length > 0) {
@@ -156,7 +158,7 @@ export class RecruitService {
         'options.maxListUpPerDay',
       ])
       .where('recruitment.recruitmentStatus IN (:...statuses)', {
-        statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
+        statuses: [RecruitmentStatus.PROGRESS],
       });
 
     if (job !== undefined && job.length > 0) {
