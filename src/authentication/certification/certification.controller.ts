@@ -59,31 +59,31 @@ export class CertificationController {
     return saveCertification;
   }
 
-  @ApiOperation({ summary: '아이디 찾기 인증' })
-  @Post('verify/employer/recover/account')
-  async verifyEmployerRecoverAccount(@Body() verify: VerifyDto) {
-    if (!verify) {
-      throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
-    }
+  // @ApiOperation({ summary: '아이디 찾기 인증' })
+  // @Post('verify/employer/recover/account')
+  // async verifyEmployerRecoverAccount(@Body() verify: VerifyDto) {
+  //   if (!verify) {
+  //     throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
+  //   }
 
-    const verifyDnHash = await this.certificationService.verifyDnHash(verify);
+  //   const verifyDnHash = await this.certificationService.verifyDnHash(verify);
 
-    const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
+  //   const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
 
-    return decryptCert;
-  }
+  //   return decryptCert;
+  // }
 
-  @ApiOperation({ summary: '비밀번호 찾기 인증' })
-  @Post('verify/employer/recover/password')
-  async verifyEmployerRecoverPassword(@Body() verify: VerifyDto) {
-    if (!verify) {
-      throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
-    }
+  // @ApiOperation({ summary: '비밀번호 찾기 인증' })
+  // @Post('verify/employer/recover/password')
+  // async verifyEmployerRecoverPassword(@Body() verify: VerifyDto) {
+  //   if (!verify) {
+  //     throw new BadRequestException(customHttpException.CERTIFICATION_BAD_REQUEST);
+  //   }
 
-    const verifyDnHash = await this.certificationService.verifyDnHash(verify);
+  //   const verifyDnHash = await this.certificationService.verifyDnHash(verify);
 
-    const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
+  //   const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
 
-    return decryptCert;
-  }
+  //   return decryptCert;
+  // }
 }
