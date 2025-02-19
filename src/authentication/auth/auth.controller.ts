@@ -10,6 +10,8 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  Get,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
@@ -18,7 +20,7 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
 import { SignInResponseDto } from './dto/sign-in.response.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
 import { PassportJwtGuard } from './guards/passport-jwt.guard';
 import { EmployerUser } from '../../common/interfaces/user.interface';
@@ -33,6 +35,13 @@ import { DataSource } from 'typeorm';
 import { CreateSignupDto } from './interfaces/create-sign-up.dto';
 import { ResponseSignUpDto } from './interfaces/response-sign-up.dto';
 import { Employer } from '../../modules/employers/entities/employer.entity';
+import { ResponseStatus } from '../../common/constants/responseStatus';
+import { NicknameCheckDto } from './interfaces/nickname-check.dto';
+import { Applicant } from '../../modules/applicants/entities/applicant.entity';
+import { BLACKLISTED_NAMES } from '../../common/constants/blacklist';
+import { Roles } from '../../common/decorators/metadata/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -119,7 +128,7 @@ export class AuthController {
     });
 
     return {
-      status: 'success',
+      status: ResponseStatus.SUCCESS,
     };
   }
 
@@ -138,7 +147,7 @@ export class AuthController {
     }
   }
 
-  @ApiOperation({ summary: 'token 인증 갱신' })
+  @ApiOperation({ summary: 'token 갱신' })
   @Post('refresh')
   @UseInterceptors(new SerializeInterceptor(SignInResponseDto))
   async updateToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -164,5 +173,35 @@ export class AuthController {
     });
 
     return { accessToken: newAccessToken };
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '닉네임 변경' })
+  @UseGuards(PassportJwtGuard, RolesGuard)
+  @Roles('EMPLOYER', 'JOB_SEEKER')
+  @Patch('nickname')
+  async changeNickname(@Req() req: Request, @Body() nicknameCheckDto: NicknameCheckDto) {
+    const user = req.user as RequestUser;
+    const { newNickname } = nicknameCheckDto;
+
+    if (BLACKLISTED_NAMES.includes(newNickname.toLowerCase())) {
+      return { status: ResponseStatus.FAILURE };
+    }
+
+    const isDuplicate = await this.authService.isNicknameTaken(newNickname);
+
+    if (isDuplicate) {
+      return { status: ResponseStatus.DUPLICATE };
+    }
+
+    if (user.role === 'JOB_SEEKER') {
+      await this.applicantsService.updateNickname(user.sub, newNickname);
+    }
+
+    if (user.role === 'EMPLOYER') {
+      await this.employersService.updateNickname(user.sub, newNickname);
+    }
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }
