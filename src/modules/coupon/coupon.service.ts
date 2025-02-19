@@ -88,7 +88,7 @@ export class CouponService {
   }
 
   /**
-   * ✅ 특정 사용자에게 수동으로 쿠폰 발급
+   * 특정 사용자에게 수동으로 쿠폰 발급
    */
   async assignCouponToEmployer(dto: CreateEmployerCouponDto) {
     const { employerId, couponCode, description, expiresAt } = dto;
