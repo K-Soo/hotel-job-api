@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Resume } from './entities/resume.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +13,6 @@ import { safeQuery } from '../../common/helpers/database.helper';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { ExperiencesService } from '../experiences/experiences.service';
-import { MilitaryService } from '../military/military.service';
 import { DataSource } from 'typeorm';
 import { ResumeStatus, SanctionReason, ResumeType, Role } from '../../common/constants/app.enum';
 import { PublishResumeDto } from './dto/publish-resume.dto';
@@ -22,19 +27,22 @@ export class ResumesService {
     private readonly certificationService: CertificationService,
   ) {}
 
-  async initialCreateResume(applicant: Applicant) {
+  async createResume(applicant: Applicant) {
     try {
       const existingResumes = await this.resumeRepo.find({
         where: { applicant },
         relations: ['experience'],
       });
 
-      console.log('existingResumes: ', existingResumes);
-      const userCertInfo = await this.certificationService.findCertificationByUserUUid(applicant.id, Role.JOB_SEEKER);
+      if (existingResumes.length >= 5) {
+        throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+      }
 
-      // if (existingResumes >= 5) {
-      //   throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
-      // }
+      const userCertInfo = await this.certificationService.findCertificationByUser(applicant.id, Role.JOB_SEEKER);
+
+      if (!userCertInfo) {
+        throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
+      }
 
       // initial Create Resume
       if (existingResumes.length === 0) {
@@ -77,7 +85,6 @@ export class ResumesService {
       // 이력서 복사
       if (existingResumes.length !== 0) {
         const baseResume = existingResumes.find((resume) => resume.isDefault);
-        console.log('baseResume: ', baseResume);
 
         const copiedResume = this.resumeRepo.create({
           ...baseResume,
@@ -105,36 +112,10 @@ export class ResumesService {
 
         return { status: ResponseStatus.SUCCESS, id: savedCopiedResume.id };
       }
-
-      // return this.dataSource.transaction(async (manager) => {
-      //   try {
-      //     // 1. Resume 저장
-      //     const resume = this.resumeRepo.create({ ...createResumeDto, applicant });
-      //     const savedResume = await manager.save(Resume, resume);
-
-      //     // 2. Experiences 저장
-      //     if (createResumeDto.experiences?.length > 0) {
-      //       await this.experienceService.create(createResumeDto.experiences, savedResume, manager);
-      //     }
-
-      //     // 3. Licenses 저장
-      //     if (createResumeDto.licenses?.length > 0) {
-      //       await this.licensesService.create(createResumeDto.licenses, savedResume, manager);
-      //     }
-
-      //     // 4. Military 저장
-      //     if (createResumeDto.military) {
-      //       await this.militaryService.create(createResumeDto.military, savedResume, manager);
-      //     }
-
-      //     return { status: 'success' };
-      //   } catch (error) {
-      //     console.log('error: ', error.message);
-      //     throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
-      //   }
-      // });
     } catch (error) {
-      console.log('error: ', error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new BadRequestException(customHttpException.DATABASE_OPERATION_FAILED);
     }
   }
