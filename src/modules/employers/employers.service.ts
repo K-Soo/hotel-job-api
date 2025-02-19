@@ -56,10 +56,14 @@ export class EmployersService {
   // 계정정보
   accountInfo(id: string) {
     return safeQuery(async () => {
-      const account = await this.employerRepo.findOne({ where: { id }, relations: ['membership'] });
+      const account = await this.employerRepo.findOne({ where: { id }, relations: ['membership', 'coupon'] });
+
+      const coupons = account.coupon.filter((coupon) => coupon.isUsed === false);
+
       return {
         ...account,
         certification: account.certification ?? null,
+        availableCouponCount: coupons.length,
       };
     });
   }
@@ -99,4 +103,17 @@ export class EmployersService {
   }
 
   async updateEmployerMemberships(): Promise<void> {}
+
+  async existsEmployerNickname(nickname: string) {
+    const employer = await this.employerRepo
+      .createQueryBuilder('employer')
+      .where('employer.nickname = :nickname', { nickname })
+      .getOne();
+
+    return !!employer;
+  }
+
+  updateNickname(id: string, nickname: string) {
+    return this.employerRepo.update({ id }, { nickname });
+  }
 }
