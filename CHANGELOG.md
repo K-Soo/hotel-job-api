@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/K-Soo/hotel-job-api/compare/v0.0.13...v1.0.0) (2025-02-20)
+
+
+### Features
+
+* SignInDto의 예제 값을 빈 문자열로 수정하여 보안 강화 ([565d615](https://github.com/K-Soo/hotel-job-api/commit/565d6158a016dd3833918a0caf2027ab0203fe15))
+* Swagger 문서 접근을 위한 인증 미들웨어 제거 ([6e6c0b5](https://github.com/K-Soo/hotel-job-api/commit/6e6c0b5b7250d5a1e8a841f12411b0d6f0075aba))
+* Swagger 문서 접근을 위한 인증 미들웨어 추가 및 설정 ([cfe4cdc](https://github.com/K-Soo/hotel-job-api/commit/cfe4cdc1f631d31f8d4c9e6543b3404b61a0609c))
+
 ### [0.0.13](https://github.com/K-Soo/hotel-job-api/compare/v0.0.12...v0.0.13) (2025-02-19)
 
 
