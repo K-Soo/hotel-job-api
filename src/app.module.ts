@@ -94,7 +94,6 @@ export class AppModule implements NestModule {
     consumer.apply(RefreshTokenMiddleware).forRoutes('*');
     consumer.apply(AccessTokenMiddleware).forRoutes('*');
     consumer.apply(LoggingMiddleware).forRoutes('*');
-    consumer.apply(SwaggerAuthMiddleware).forRoutes('/api/v1/docs');
     //DEBUG
     // consumer.apply(DelayMiddleware).forRoutes('*');
   }
