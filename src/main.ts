@@ -7,6 +7,7 @@ import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
 import { SwaggerConfigService } from './config/swagger/swagger.config.service';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { SwaggerAuthMiddleware } from './config/swagger/swagger-auth.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -39,6 +40,9 @@ async function bootstrap() {
     // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
+  //Swagger 미들웨어 먼저 적용
+  const swaggerAuthMiddleware = app.get(SwaggerAuthMiddleware);
+  app.use('/api/v1/docs', swaggerAuthMiddleware.use.bind(swaggerAuthMiddleware));
   const swaggerConfigService = app.get(SwaggerConfigService);
 
   swaggerConfigService.setupSwagger(app);
