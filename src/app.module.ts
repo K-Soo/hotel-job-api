@@ -10,6 +10,7 @@ import { SwaggerConfigModule } from './config/swagger/swagger.config.module';
 import { RefreshTokenMiddleware } from './common/middlewares/refresh-token.middleware';
 import { AccessTokenMiddleware } from './common/middlewares/access-token.middleware';
 import { LoggingMiddleware } from './common/middlewares/logging.middleware';
+import { SwaggerAuthMiddleware } from './config/swagger/swagger-auth.middleware';
 import { DelayMiddleware } from './common/middlewares/delay.middleware';
 
 import { EmployersModule } from './modules/employers/employers.module';
@@ -86,7 +87,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
+  providers: [AppService, SwaggerAuthMiddleware, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
