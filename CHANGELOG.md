@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/K-Soo/hotel-job-api/compare/v1.0.0...v1.1.0) (2025-02-25)
+
+
+### Features
+
+* 결제 모듈에서 불필요한 모듈 제거 ([5f381f8](https://github.com/K-Soo/hotel-job-api/commit/5f381f8c48b9df9b34d1b57be77f57e960186894))
+* 결제 모듈에서 불필요한 임포트 제거 ([9d67825](https://github.com/K-Soo/hotel-job-api/commit/9d6782598af77098bf6a50bb1ca8d793a5690781))
+* 사용자 에이전트 정보를 위한 인터페이스 추가 ([9942a79](https://github.com/K-Soo/hotel-job-api/commit/9942a795a26086db053eea66815225be6da462cf))
+* 사용자에게 푸시 알림 전송을 위한 DTO 추가 ([a7d417f](https://github.com/K-Soo/hotel-job-api/commit/a7d417f75f92922d4f07eb0e2d04bd8a1c04c231))
+* 알림 관련 모듈, 서비스, DTO 및 엔티티 추가 ([b6b4787](https://github.com/K-Soo/hotel-job-api/commit/b6b47875ecb5484211b512b6064f7382ad46fc8d))
+* 알림 관련 상수 파일 추가 ([2bb7304](https://github.com/K-Soo/hotel-job-api/commit/2bb730469f7a8afa689162f7810f579015d46095))
+* 알림 모듈 추가 및 관련 서비스, 컨트롤러 설정 ([4625f06](https://github.com/K-Soo/hotel-job-api/commit/4625f06b07aca3665d15890e9dd05fef7adb790d))
+* 알림 및 결제 관련 모듈과 DTO, 서비스, 컨트롤러 삭제 ([3d1502b](https://github.com/K-Soo/hotel-job-api/commit/3d1502b22ce4fbb57c48068b98b12c18f20b70f2))
+* 알림 서비스 추가 및 기본 CRUD 메서드 구현 ([f0854ea](https://github.com/K-Soo/hotel-job-api/commit/f0854ea0b72c237776d5ec25118114850b1050ae))
+* 알림 엔티티 추가 및 알림 유형 정의 ([1232bca](https://github.com/K-Soo/hotel-job-api/commit/1232bca9e91a0865838297d2a22cf8a8c05eda70))
+* 알림 컨트롤러 추가 및 기본 CRUD 메서드 구현 ([9cbf131](https://github.com/K-Soo/hotel-job-api/commit/9cbf13198d2bae81f407a652b73d53acf5e0dad9))
+* 인앱 알림 모듈 파일 추가 ([ab8e056](https://github.com/K-Soo/hotel-job-api/commit/ab8e05666655e84c27a3fa6abf8f40b928f80475))
+* 인앱 알림 서비스 파일 추가 ([12d4fd6](https://github.com/K-Soo/hotel-job-api/commit/12d4fd6d1e65e184462585d50cd8f82a82cc1f87))
+* 인앱 알림 컨트롤러 추가 ([b1f459b](https://github.com/K-Soo/hotel-job-api/commit/b1f459bad1efa6c82b1faede55e0b52e94dadd06))
+* 지원자 엔티티에 알림 관계 추가 ([226f0a1](https://github.com/K-Soo/hotel-job-api/commit/226f0a11778a74c16fb57a40f5758465b38859f2))
+* 테스트 모듈 제거 및 알림 관련 모듈 이름 변경 ([7d20e0e](https://github.com/K-Soo/hotel-job-api/commit/7d20e0e3d2944fdebcd25919161aae6df176659b))
+* 포인트 모듈에서 불필요한 삭제 메서드 제거 ([d99435f](https://github.com/K-Soo/hotel-job-api/commit/d99435f4743284ade5680019c2f2210af1bd8cc4))
+* 포인트 서비스에서 불필요한 삭제 메서드 제거 ([9ca516b](https://github.com/K-Soo/hotel-job-api/commit/9ca516bb7a443700101fe88c556a0ab5d5b8c10d))
+* 푸시 알림 모듈 추가 및 관련 서비스, 컨트롤러 설정 ([af2630c](https://github.com/K-Soo/hotel-job-api/commit/af2630cd67780107d5a27773b7a0e588317dabd0))
+* 푸시 알림 서비스 및 관련 기능 구현 ([a9602e1](https://github.com/K-Soo/hotel-job-api/commit/a9602e1273c7f08a58bbc1b25631a1aaa709e518))
+* 푸시 알림 엔티티 추가 ([110152b](https://github.com/K-Soo/hotel-job-api/commit/110152b4384ff28d4e5a371da2e9d20f1dd17c5d))
+* 푸시 알림 컨트롤러 추가 및 FCM 토큰 저장, 전송, 확인, 설정 변경 기능 구현 ([70600b7](https://github.com/K-Soo/hotel-job-api/commit/70600b75f3cf0991b129e720f8d2d27dd53a1d86))
+* 푸시관련 마이그레이션 ([f47c437](https://github.com/K-Soo/hotel-job-api/commit/f47c4378cf914a31ac835034a1f908505e846f12))
+* 푸시관련 마이그레이션 ([4647d01](https://github.com/K-Soo/hotel-job-api/commit/4647d0167385489dbb0e199e271a17e12e6accdd))
+* CreateNotificationDto 클래스 추가 ([9c71297](https://github.com/K-Soo/hotel-job-api/commit/9c71297339b15879ad3c33735d238a61384fef09))
+* Employer 엔티티에 알림 관계 추가 ([8d9b0cb](https://github.com/K-Soo/hotel-job-api/commit/8d9b0cb7a17dc11f12a4226afa0ef98fdb45f492))
+* FCM 토큰 저장을 위한 DTO 추가 ([2177bcc](https://github.com/K-Soo/hotel-job-api/commit/2177bcc953ff615c6f1b76c06e637f3e2530ab39))
+* Firebase 모듈 추가 및 서비스 제공 ([b0741b3](https://github.com/K-Soo/hotel-job-api/commit/b0741b370f281d5a03e51aaf968fcbed13dbcaba))
+* firebase-admin 패키지 추가 ([99ee330](https://github.com/K-Soo/hotel-job-api/commit/99ee330a12a215bd1dd2ad09eef316eda3440dd8))
+* FirebaseProvider 추가 및 초기화 설정 구현 ([3080edc](https://github.com/K-Soo/hotel-job-api/commit/3080edcb46971655c3447e70472fe9492dc44e6a))
+* FirebaseService 추가 및 푸시 알림 전송 기능 구현 ([449a767](https://github.com/K-Soo/hotel-job-api/commit/449a7670c7b28dce1a806a6cedb5195a2809cf95))
+
+
+### Bug Fixes
+
+* 불필요한 BadRequestException 임포트 제거 ([8892bcd](https://github.com/K-Soo/hotel-job-api/commit/8892bcdb5e3d6475d5e304879f32f53ebb2aa121))
+
 ## [1.0.0](https://github.com/K-Soo/hotel-job-api/compare/v0.0.13...v1.0.0) (2025-02-20)
 
 
