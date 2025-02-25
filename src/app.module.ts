@@ -17,7 +17,6 @@ import { EmployersModule } from './modules/employers/employers.module';
 import { CompanyModule } from './modules/employers/company/company.module';
 
 import { HealthModule } from './modules/health/health.module';
-import { TestsModule } from './modules/tests/tests.module';
 import { ApplicantsModule } from './modules/applicants/applicants.module';
 import { AuthModule } from './authentication/auth/auth.module';
 import { OauthModule } from './authentication/oauth/oauth.module';
@@ -37,11 +36,11 @@ import { RecruitModule } from './modules/recruit/recruit.module';
 import { ApplicationsModule } from './modules/applications/applications.module';
 import { ProductsModule } from './modules/products/products.module';
 import { MembershipModule } from './modules/membership/membership.module';
-import { PushModule } from './modules/push/push.module';
+import { PushModule } from './modules/notifications/push/push.module';
 import { SchedulerModule } from './jobs/schedulers/scheduler.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { PointModule } from './modules/point/point.module';
-import { NotificationModule } from './modules/notification/notification.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -50,7 +49,6 @@ import { NotificationModule } from './modules/notification/notification.module';
     JwtModule,
     SwaggerConfigModule,
     HealthModule,
-    TestsModule,
     EmployersModule,
     ApplicantsModule,
     AuthModule,
@@ -63,28 +61,19 @@ import { NotificationModule } from './modules/notification/notification.module';
     UploadModule,
     ConditionsModule,
     TalentsModule,
-
     CompanyModule,
-
     VerificationsModule,
-
     CertificationModule,
-
     PaymentModule,
-
     RecruitModule,
-
     ApplicationsModule,
-
     ProductsModule,
-
     MembershipModule,
-
     PushModule,
     SchedulerModule,
     CouponModule,
     PointModule,
-    NotificationModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, SwaggerAuthMiddleware, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
