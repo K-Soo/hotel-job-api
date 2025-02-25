@@ -14,6 +14,7 @@ import { Exclude } from 'class-transformer';
 import { Resume } from '../../resumes/entities/resume.entity';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
 import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -36,6 +37,9 @@ export class Applicant {
 
   @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.applicant)
   accountHistory: AccountHistory[];
+
+  @OneToMany(() => Notification, (notification) => notification.applicant)
+  notifications: Notification[];
 
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
