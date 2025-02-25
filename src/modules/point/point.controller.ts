@@ -26,9 +26,4 @@ export class PointController {
   update(@Param('id') id: string, @Body() updatePointDto: UpdatePointDto) {
     return this.pointService.update(+id, updatePointDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pointService.remove(+id);
-  }
 }

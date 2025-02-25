@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Req, Patch, Param, Get } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Req, Param, Get } from '@nestjs/common';
 import { PaymentRecruitmentService } from './payment-recruitment.service';
 import { InitiateRecruitmentPaymentDto } from './dto/initiate-recruitment-payment.dto';
 import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';

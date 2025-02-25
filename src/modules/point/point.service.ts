@@ -19,8 +19,4 @@ export class PointService {
   update(id: number, updatePointDto: UpdatePointDto) {
     return `This action updates a #${id} point`;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} point`;
-  }
 }
