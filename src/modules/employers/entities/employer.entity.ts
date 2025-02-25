@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { Consent } from '../../consents/entities/consent.entity';
 import {
   Role,
   Provider,
@@ -18,6 +17,7 @@ import {
   CertificationStatus,
 } from '../../../common/constants/app.enum';
 import { Company } from '../company/entities/company.entity';
+import { Consent } from '../../consents/entities/consent.entity';
 import { Exclude } from 'class-transformer';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
 import { Recruitment } from '../recruitment/entities/recruitment.entity';
@@ -25,6 +25,7 @@ import { AccountHistory } from '../../../authentication/account-history/entities
 import { Membership } from '../../membership/entities/membership.entity';
 import { EmployerCoupon } from '../../../modules/coupon/entities/employer-coupon.entity';
 import { PointTransaction } from '../../point/entities/point-transaction.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 
 function generateRandom10Digit(): string {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -55,6 +56,9 @@ export class Employer {
 
   @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
   accountHistory: AccountHistory[];
+
+  @OneToMany(() => Notification, (notification) => notification.employer)
+  notifications: Notification[];
 
   @OneToMany(() => PointTransaction, (transaction) => transaction.employer)
   pointTransactions: PointTransaction[];

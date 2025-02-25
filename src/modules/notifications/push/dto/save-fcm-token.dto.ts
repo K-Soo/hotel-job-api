@@ -1,16 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsOptional,
-  IsBoolean,
-  IsDate,
-  IsNumber,
-  IsEnum,
-  ValidateIf,
-  Min,
-  Length,
-  Max,
-} from 'class-validator';
+import { IsString, IsBoolean } from 'class-validator';
 
 export class SaveFcmTokenDto {
   @ApiProperty({ description: '토큰', example: 'ABCD' })
