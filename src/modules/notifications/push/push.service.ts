@@ -61,15 +61,23 @@ export class PushService {
       console.log(`${invalidTokens.length}개의 잘못된 FCM 토큰 삭제 완료`);
     }
 
-    return { status: ResponseStatus.SUCCESS };
+    return { status: ResponseStatus.SUCCESS, responses: response.responses };
   }
 
   async saveFcmToken(saveFcmTokenDto: SaveFcmTokenDto, userAgent: UserAgent, user: RequestUser) {
     const existingToken = await this.pushRepo.findOne({ where: { token: saveFcmTokenDto.token } });
 
+    console.log('existingToken: ', existingToken.userId);
+    console.log('sub: ', user.sub);
+
+    // 사업자 5ef779c1-7eed-4fff-b155-1650bc2fe0a1
+    //유저 91aa8042-78e9-4cbb-a30d-f976f85c1078
+    //daxivcQIMPSbJvdGduH5IR:APA91bFfgI2b8_YRqlTJ78EEcII3x
+
     if (existingToken) {
       // 기존 토큰이 다른 사용자에게 등록된 경우 -> 사용자 변경
       if (existingToken.userId !== user.sub) {
+        console.log('사용자 변경');
         await this.pushRepo.update(existingToken.id, {
           userId: user.sub,
           device: userAgent.device,
@@ -77,12 +85,24 @@ export class PushService {
           updatedAt: new Date(),
         });
 
-        return { success: ResponseStatus.SUCCESS, message: 'FCM 토큰이 새로운 사용자로 업데이트되었습니다.' };
+        return {
+          success: ResponseStatus.SUCCESS,
+          token: existingToken.token,
+          message: 'FCM token has been reassigned to a new user.',
+        };
       }
 
       // 기존 사용자와 동일하면 `updatedAt`만 갱신
-      await this.pushRepo.update(existingToken.id, { updatedAt: new Date() });
-      return { success: ResponseStatus.SUCCESS, message: 'FCM 토큰이 갱신되었습니다.' };
+      if (existingToken.userId === user.sub) {
+        console.log('날짜만 변경');
+        await this.pushRepo.update(existingToken.id, { updatedAt: new Date() });
+
+        return {
+          success: ResponseStatus.SUCCESS,
+          message: 'FCM token has been updated successfully.',
+          token: existingToken.token,
+        };
+      }
     }
 
     // 새로운 사용자 ID로 푸시 토큰 저장
@@ -95,7 +115,7 @@ export class PushService {
 
     await this.pushRepo.save(newFcmToken);
 
-    return { success: ResponseStatus.SUCCESS };
+    return { success: ResponseStatus.SUCCESS, token: saveFcmTokenDto.token };
   }
 
   /**
