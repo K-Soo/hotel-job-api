@@ -7,11 +7,11 @@ release-version:
 	git push --follow-tags origin main
 
 
-increas-major-version :
+increase-major-version :
 	npm run release -- --release-as major
 	git push --follow-tags origin 
 
-increas-minor-version :
+increase-minor-version :
 	npm run release -- --release-as minor
 	git push --follow-tags origin 
 
