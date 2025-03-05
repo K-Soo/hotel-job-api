@@ -1,56 +1,34 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Provider } from '../../../common/constants/app.enum';
-import { Applicant } from '../../../modules/applicants/entities/applicant.entity';
-import { Employer } from '../../../modules/employers/entities/employer.entity';
-
-export enum NotificationType {
-  PUSH = 'PUSH', // 푸시 알림
-  EMAIL = 'EMAIL', // 이메일 알림
-  IN_APP = 'IN_APP', // 인앱 알림
-}
-
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CategoryType, NotificationType } from '../../../common/constants/notification';
 @Entity('notification')
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Applicant, (applicant) => applicant.notifications, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn({ name: 'applicant_id', referencedColumnName: 'id' })
-  applicant: Applicant;
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  userIds: string[];
 
-  @ManyToOne(() => Employer, (employer) => employer.notifications, {
-    onDelete: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
-  employer: Employer;
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  readByUserIds: string[]; // 알림을 읽은 사용자 목록
 
-  @Column({ type: 'enum', enum: Provider })
-  provider: Provider;
+  // @Column({ type: 'enum', enum: Provider })
+  // provider: Provider;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'enum', enum: CategoryType })
+  category: CategoryType;
+
+  @Column({ type: 'varchar', length: 255, default: '' })
   title: string;
 
   @Column({ type: 'text' })
   message: string;
 
+  @Column({ default: '' })
+  link: string;
+
   @Column({ type: 'enum', enum: NotificationType, array: true })
   notificationType: NotificationType[]; // 알림 유형
 
-  @Column({ type: 'boolean', default: false })
-  isRead: boolean;
-
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
-  updatedAt: Date;
 }
