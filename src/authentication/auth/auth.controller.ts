@@ -10,7 +10,6 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
-  Get,
   Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -23,7 +22,6 @@ import { SignInResponseDto } from './dto/sign-in.response.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { PassportLocalGuard } from './guards/passport-local.guard';
 import { PassportJwtGuard } from './guards/passport-jwt.guard';
-import { EmployerUser } from '../../common/interfaces/user.interface';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
@@ -37,7 +35,6 @@ import { ResponseSignUpDto } from './interfaces/response-sign-up.dto';
 import { Employer } from '../../modules/employers/entities/employer.entity';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { NicknameCheckDto } from './interfaces/nickname-check.dto';
-import { Applicant } from '../../modules/applicants/entities/applicant.entity';
 import { BLACKLISTED_NAMES } from '../../common/constants/blacklist';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
