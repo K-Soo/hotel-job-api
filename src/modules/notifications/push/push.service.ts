@@ -22,6 +22,7 @@ export class PushService {
    * 푸시 알림 전송
    */
   async sendPushNotification(sendPushToUserDto: SendPushToUserDto) {
+    console.log('sendPushToUserDto: ', sendPushToUserDto);
     const tokens = await this.getUserPushTokens(sendPushToUserDto.userIds);
 
     if (tokens.length === 0) {
@@ -36,7 +37,7 @@ export class PushService {
       tokens: registrationTokens,
       webpush: {
         fcmOptions: {
-          link: sendPushToUserDto.link ?? undefined,
+          link: sendPushToUserDto.link,
         },
       },
     };
