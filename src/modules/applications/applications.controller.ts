@@ -1,3 +1,19 @@
+import { ApplicationsService } from './applications.service';
+import { ApplyResumeDto } from './dto/apply-resume.dto';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
+import { Roles } from '../../common/decorators/metadata/roles.decorator';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Request } from 'express';
+import { ApplicantsService } from '../applicants/applicants.service';
+import { ResponseStatus } from '../../common/constants/responseStatus';
+import { EmployersService } from '../employers/employers.service';
+import { NotificationService } from '../notifications/notifications.service';
+import { EmployerReviewStageStatus } from '../../common/constants/application';
+import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
+import { customHttpException } from '../../common/constants/custom-http-exception';
+import { HistoryQueryDto } from './dto/history-query.dto';
+import { CategoryType, NotificationType } from '../../common/constants/notification';
 import {
   BadRequestException,
   Body,
@@ -11,20 +27,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApplicationsService } from './applications.service';
-import { ApplyResumeDto } from './dto/apply-resume.dto';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
-import { Roles } from '../../common/decorators/metadata/roles.decorator';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { Request } from 'express';
-import { ApplicantsService } from '../applicants/applicants.service';
-import { ResponseStatus } from '../../common/constants/responseStatus';
-import { EmployersService } from '../employers/employers.service';
-import { EmployerReviewStageStatus } from '../../common/constants/application';
-import { UpdateReviewStageDto } from './dto/update-review-stage.dto';
-import { customHttpException } from '../../common/constants/custom-http-exception';
-import { HistoryQueryDto } from './dto/history-query.dto';
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
 @Controller('applications')
@@ -33,6 +35,7 @@ export class ApplicationsController {
     private readonly applicationsService: ApplicationsService,
     private readonly applicantsService: ApplicantsService,
     private readonly employersService: EmployersService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @ApiOperation({ summary: '채용공고 지원하기' })
@@ -40,21 +43,41 @@ export class ApplicationsController {
   @Post('/apply')
   async createApplyResume(@Req() req: Request, @Body() applyResumeDto: ApplyResumeDto) {
     const applicant = await this.applicantsService.findByUuid(req.user['sub']);
-    return this.applicationsService.applyResume(applyResumeDto, applicant);
+
+    const application = await this.applicationsService.applyResume(applyResumeDto, applicant);
+
+    await this.notificationService.sendNotification({
+      category: CategoryType.APPLICANT,
+      title: '',
+      userIds: [application.applicantId],
+      message: `${application.recruitmentSnapshot.hotelName}의 ${application.recruitmentSnapshot.recruitmentTitle} 지원이 완료되었습니다.`,
+      link: '/user/application/history',
+      notificationType: [NotificationType.IN_APP],
+    });
+
+    await this.notificationService.sendNotification({
+      category: CategoryType.APPLICANT,
+      title: `${application.recruitmentSnapshot.hotelName}`,
+      link: `/employer/recruitment/${application.recruitmentSnapshot.id}/applicant`,
+      userIds: [application.recruitmentSnapshot.employerId],
+      message: `${application.resume?.name}님이 ${application.recruitmentSnapshot?.recruitmentTitle} 포지션에 지원했습니다.`,
+      notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
+    });
+
+    return { status: ResponseStatus.SUCCESS };
   }
 
   @ApiOperation({ summary: '채용공고 이력서 지원여부 체크' })
   @Roles('JOB_SEEKER')
   @Get(':id/apply/check')
   async checkIfAlreadyApplied(@Req() req: Request, @Param('id') recruitId: string) {
-    const applicant = await this.applicantsService.findByUuid(req.user['sub']);
-    const isApplied = await this.applicationsService.checkIfAlreadyApplied(applicant, recruitId);
-
-    if (isApplied) {
-      return { status: ResponseStatus.DUPLICATE };
+    if (!recruitId) {
+      throw new BadRequestException();
     }
 
-    return { status: ResponseStatus.AVAILABLE };
+    const applicant = await this.applicantsService.findByUuid(req.user['sub']);
+
+    return this.applicationsService.checkIfAlreadyApplied(applicant, recruitId);
   }
 
   @ApiOperation({ summary: '공고지원자관리 -> 채용공고상세 전형 상태 통계' })
@@ -110,7 +133,7 @@ export class ApplicationsController {
     return this.applicationsService.getUserApplicationsHistory(req.user['sub'], query);
   }
 
-  @ApiOperation({ summary: '채용공고 지원내역' })
+  @ApiOperation({ summary: '채용공고 지원 상태별 개수' })
   @Roles('JOB_SEEKER')
   @Get('/history/status')
   async getUserApplicationsHistoryStatus(@Req() req: Request) {
@@ -155,6 +178,17 @@ export class ApplicationsController {
       throw new BadRequestException();
     }
 
-    return this.applicationsService.cancelApplication(body.applicationId, req.user['sub']);
+    const application = await this.applicationsService.cancelApplication(body.applicationId, req.user['sub']);
+
+    await this.notificationService.sendNotification({
+      category: CategoryType.APPLICANT,
+      title: '',
+      link: `/employer/recruitment/${application.recruitmentSnapshot.id}/applicant`,
+      userIds: [application.recruitmentSnapshot.employerId],
+      message: `${application.resumeSnapshot?.name}님이 ${application.recruitmentSnapshot?.recruitmentTitle} 포지션의 지원을 취소했습니다.`,
+      notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
+    });
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }
