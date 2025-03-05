@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/K-Soo/hotel-job-api/compare/v1.1.0...v1.2.0) (2025-03-05)
+
+
+### Features
+
+* 계정 비밀번호 재설정 DTO 추가 및 유효성 검사 구현 ([e6e17c9](https://github.com/K-Soo/hotel-job-api/commit/e6e17c90fe462574da7754d0a6d3a442e2ea67f0))
+* 본인인증 서비스 개선 및 중복 인증 체크 기능 추가 ([093cf88](https://github.com/K-Soo/hotel-job-api/commit/093cf8820c290d2a53be82a2878df637d50d4a06))
+* 비밀번호 변경 기능 추가 ([f84c695](https://github.com/K-Soo/hotel-job-api/commit/f84c695752800d070507abbc7c1ac0439fbc3ef4))
+* 비밀번호 변경 기능 추가 및 예외 처리 개선 ([34a2c79](https://github.com/K-Soo/hotel-job-api/commit/34a2c7917348e5fb3e3df46bd6a39ab3f7fb7ac3))
+* 알림 경로 수정 및 컨트롤러 이름 변경 ([2916332](https://github.com/K-Soo/hotel-job-api/commit/29163324d654979a7677fbe379dea0a5fbcc7c96))
+* 알림 관련 DTO 및 인앱 모듈 삭제 ([b9fe707](https://github.com/K-Soo/hotel-job-api/commit/b9fe707865e5f255050ce24416f82b365a8d4f41))
+* 알림 모듈에 인증 모듈 및 게이트웨이 추가 ([8f3c351](https://github.com/K-Soo/hotel-job-api/commit/8f3c351061edcf2c09bee42cdf86373d477b0c78))
+* 알림 발송 및 목록 조회 기능 구현 ([49cbec3](https://github.com/K-Soo/hotel-job-api/commit/49cbec39f7a1539c6665359850db1145575fb727))
+* 알림 발송 및 목록 조회 기능 추가 ([3c5bf3a](https://github.com/K-Soo/hotel-job-api/commit/3c5bf3a6462447ea9302e449f580f19ab47b74de))
+* 알림 엔티티 및 DTO 수정, 푸시 알림 링크 처리 개선 ([18d6f45](https://github.com/K-Soo/hotel-job-api/commit/18d6f4544b8f52b9059e6b707ce50d9da8c34e6f))
+* 알림 엔티티 수정 및 사용자 목록 처리 개선 ([db31a74](https://github.com/K-Soo/hotel-job-api/commit/db31a74aea9a8215d81cd6295d4314e667218fff))
+* 알림 웹소켓 게이트웨이 구현 및 사용자 연결 관리 추가 ([5b5b4ec](https://github.com/K-Soo/hotel-job-api/commit/5b5b4ec088f7a3e999bc0cd5de2e6d7e55fd8c47))
+* 알림 유형 및 카테고리 상수 추가 ([1bdc9a3](https://github.com/K-Soo/hotel-job-api/commit/1bdc9a32f9614b2998d4425f5e32ebe1198619f0))
+* 알림 조회를 위한 DTO 추가 및 유효성 검사 구현 ([cbcaabb](https://github.com/K-Soo/hotel-job-api/commit/cbcaabb5d6ea49e102991a8da2dfff8bb8a2389a))
+* 알림 테이블 구조 변경 및 새로운 열 추가 ([3baf0e1](https://github.com/K-Soo/hotel-job-api/commit/3baf0e1a0a31a788fd40bbadd4c4a3597353e45f))
+* 응답 상태 상수에 사용 불가능 및 알림 읽음 상태 추가 ([c95086d](https://github.com/K-Soo/hotel-job-api/commit/c95086d4326ea56733a847a797cf9a53a16ec37d))
+* 인증 컨트롤러에 비밀번호 재설정 검증 및 알림 전송 기능 추가 ([5136c88](https://github.com/K-Soo/hotel-job-api/commit/5136c88431a6c754b01d8aac8bd0d5061d152b75))
+* 지원 취소 시 중복 지원 가능 횟수 제한 및 이력서 지원 로직 개선 ([5c0db5f](https://github.com/K-Soo/hotel-job-api/commit/5c0db5fafabdbbc5f1a2472fe312743445ac4cc3))
+* 지원서 제출 및 취소 시 알림 전송 기능 추가 ([15e35ab](https://github.com/K-Soo/hotel-job-api/commit/15e35ab88de4f5df5986f088b74d0c21e1340539))
+* 쿠폰 발급 실패에 대한 예외 처리 추가 ([1ee095f](https://github.com/K-Soo/hotel-job-api/commit/1ee095fe6cc4450accfe673c0d5ca9489617828e))
+* 패키지.json에 Socket.IO 및 관련 의존성 추가 ([500c0e7](https://github.com/K-Soo/hotel-job-api/commit/500c0e7088c12078c71544675e0df37998bfc4c2))
+* 푸시 알림 전송 메서드의 매개변수 타입 수정 및 불필요한 로그 제거 ([29d3beb](https://github.com/K-Soo/hotel-job-api/commit/29d3beb174f2488900a598628f842828af04c9eb))
+* 푸시 알림 전송 시 DTO 로그 추가 및 링크 처리 개선 ([e16ec3e](https://github.com/K-Soo/hotel-job-api/commit/e16ec3eb495c71b40fb6d141160c0a1b82e94bf5))
+* 합격 및 불합격 발표 시 지원자에게 알림 전송 기능 추가 ([9b96d1b](https://github.com/K-Soo/hotel-job-api/commit/9b96d1b439af7dcfe2446e768d4ecdc7d1f79585))
+* FCM 토큰 저장 메서드에 예외 처리 추가 및 로그 제거 ([5bc26be](https://github.com/K-Soo/hotel-job-api/commit/5bc26be225e2622290d326890b020093e78285f8))
+
+
+### Bug Fixes
+
+* 불필요한 임포트 제거 ([b5fa8ce](https://github.com/K-Soo/hotel-job-api/commit/b5fa8ce80204c43186f63a23a54b826e2d1649e8))
+* 지원자 엔티티에서 불필요한 알림 관계 제거 ([da7ab5a](https://github.com/K-Soo/hotel-job-api/commit/da7ab5a49b598794ade10b0868d37274de4e5edc))
+* 쿠폰 발급 오류 메시지에서 이모지 제거 ([6ecace1](https://github.com/K-Soo/hotel-job-api/commit/6ecace1535c3bb969a9804facfa08b7cb61a5949))
+* makefile에서 함수 이름 오타 수정 및 PushService에서 FCM 토큰 응답 개선 ([2da37d8](https://github.com/K-Soo/hotel-job-api/commit/2da37d8782f7f4b0cae9d232ca8de8c9392fe2fe))
+
+
+### Refactors
+
+* 고용주 엔티티에서 불필요한 알림 관계 제거 ([2865ba7](https://github.com/K-Soo/hotel-job-api/commit/2865ba73a44832ec87c2171418a0a9d3d66c87cb))
+* 리프레시 토큰 미들웨어의 생성자 코드 간소화 ([2de43ab](https://github.com/K-Soo/hotel-job-api/commit/2de43ab4c61e7fb3e5af6e616b3ce6cbdc2a7511))
+* 인증 엔티티에서 불필요한 관계 제거 ([35d03dd](https://github.com/K-Soo/hotel-job-api/commit/35d03ddf33f10d67513b17a29af61086226084e8))
+
 ## [1.1.0](https://github.com/K-Soo/hotel-job-api/compare/v1.0.0...v1.1.0) (2025-02-25)
 
 
