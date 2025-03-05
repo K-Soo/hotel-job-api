@@ -31,9 +31,9 @@ export class ApplicationsService {
 
   /**
    * 유저 - 지원이력 체크
-   * @description: 지원 취소 시 중복 지원 가능
+   * @description: 지원 취소 시 중복 지원 가능 (3회 제한)
    */
-  async checkIfAlreadyApplied(applicant: Applicant, recruitId: string): Promise<boolean> {
+  async checkIfAlreadyApplied(applicant: Applicant, recruitId: string) {
     const existingApplication = await this.applicationRepo.findOne({
       where: {
         resume: { applicant: { id: applicant.id } },
@@ -42,20 +42,33 @@ export class ApplicationsService {
       },
     });
 
-    console.log('existingApplication: ', existingApplication);
+    const cancelCount = await this.applicationRepo.count({
+      where: {
+        resume: { applicant: { id: applicant.id } },
+        recruitment: { id: recruitId },
+        applicationStatus: ApplicationStatus.CANCELED,
+      },
+    });
 
-    return !!existingApplication;
+    // 취소 횟수가 3회 이상이면 더 이상 지원 불가
+    if (cancelCount >= 3) {
+      // return { status: ResponseStatus.UNAVAILABLE };
+    }
+
+    return { status: existingApplication ? ResponseStatus.DUPLICATE : ResponseStatus.AVAILABLE };
   }
 
   // 이력서 지원
   async applyResume(applyResumeDto: ApplyResumeDto, applicant: Applicant) {
     const { resumeId, recruitId } = applyResumeDto;
 
-    const alreadyApplied = await this.checkIfAlreadyApplied(applicant, recruitId);
-    if (alreadyApplied) {
+    // 이미 지원했는지 확인
+    const isAlreadyApplied = await this.checkIfAlreadyApplied(applicant, recruitId);
+    if (isAlreadyApplied.status !== 'available') {
       throw new ConflictException('Already Applied');
     }
 
+    // 이력서 조회
     const resume = await this.resumeRepo.findOne({
       where: { id: resumeId, applicant },
       relations: ['experience', 'military', 'condition'],
@@ -65,23 +78,43 @@ export class ApplicationsService {
       throw new NotFoundException('Resume Not found');
     }
 
-    const recruitment = await this.recruitmentRepo.findOne({ where: { id: recruitId } });
+    // 채용 공고 조회 (고용주 정보 포함)
+    const recruitment = await this.recruitmentRepo.findOne({ where: { id: recruitId }, relations: ['employer'] });
 
     if (!recruitment) {
-      throw new NotFoundException('Recruitment Not found');
+      throw new NotFoundException('recruitment Not found');
     }
+
+    // 채용 공고 스냅샷 저장 (고용주 정보 제외)
+    const recruitmentClone = cloneDeep(recruitment);
+
+    const employerId = recruitmentClone.employer.id;
+
+    delete recruitmentClone.employer;
+
+    const recruitmentSnapshot = {
+      ...recruitmentClone,
+      employerId,
+    };
 
     const application = this.applicationRepo.create({
       resume,
       resumeSnapshot: cloneDeep(resume),
       recruitment,
       applicantId: applicant.id,
-      recruitmentSnapshot: cloneDeep(recruitment),
+      recruitmentSnapshot: recruitmentSnapshot,
       applicationStatus: ApplicationStatus.APPLIED,
       applyAt: new Date(),
     });
 
-    return await this.applicationRepo.save(application);
+    const savedApplication = await this.applicationRepo.save(application);
+
+    return savedApplication;
+
+    // return {
+    //   ...savedApplication,
+    //   employerId,
+    // };
   }
 
   /**
@@ -128,19 +161,28 @@ export class ApplicationsService {
         recruitmentStatus: application.recruitmentSnapshot.recruitmentStatus,
       },
 
-      announcementRecipients: application.announcementRecipients.map((recipient) => {
-        const { message, ...rest } = recipient.announcement;
+      announcementRecipients: application.announcementRecipients
+        .sort((a, b) => new Date(b.announcement.announcedAt).getTime() - new Date(a.announcement.announcedAt).getTime())
+        .map((recipient) => {
+          const { message, ...rest } = recipient.announcement;
 
-        const filledTemplateMessage = message
-          .replace(/\$이름\$/g, application.resumeSnapshot.name)
-          .replace(/\$업체명\$/g, application.recruitmentSnapshot.hotelName)
-          .replace(/\$공고명\$/g, application.recruitmentSnapshot.recruitmentTitle);
+          const filledTemplateMessage = message
+            .replace(/\$이름\$/g, application.resumeSnapshot.name)
+            .replace(/\$업체명\$/g, application.recruitmentSnapshot.hotelName)
+            .replace(/\$공고명\$/g, application.recruitmentSnapshot.recruitmentTitle)
+            .replace(/\$담당자\$/g, application.recruitmentSnapshot.managerName)
 
-        return {
-          ...rest,
-          message: filledTemplateMessage,
-        };
-      }),
+            .replace(/\$담당자 연락처\$/g, application.recruitmentSnapshot.managerNumber)
+            .replace(
+              /\$업체주소\$/g,
+              `${application.recruitmentSnapshot.address} ${application.recruitmentSnapshot.addressDetail}`,
+            );
+
+          return {
+            ...rest,
+            message: filledTemplateMessage,
+          };
+        }),
 
       resumeSnapshot: {
         title: application.resumeSnapshot.title,
@@ -299,9 +341,17 @@ export class ApplicationsService {
    *  유저 -채용공고 지원취소
    */
   async cancelApplication(applicationId: number, userId: string) {
+    const application = await this.applicationRepo.findOne({
+      where: { id: applicationId, applicantId: userId },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
     const result = await safeQuery(() =>
       this.applicationRepo.update(
-        { id: applicationId, applicantId: userId },
+        { id: applicationId },
         { applicationStatus: ApplicationStatus.CANCELED, cancelAt: new Date() },
       ),
     );
@@ -310,6 +360,6 @@ export class ApplicationsService {
       throw new NotFoundException();
     }
 
-    return { status: ResponseStatus.SUCCESS };
+    return application;
   }
 }
