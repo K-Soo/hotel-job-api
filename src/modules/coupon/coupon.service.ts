@@ -41,6 +41,7 @@ export class CouponService {
     }
 
     const firstDayOfMonth = dateFormat.getFirstDayOfMonth();
+
     const lastDayOfMonth = dateFormat.getLastDayOfMonth();
 
     const employerCoupon = this.employerCouponRepo.create({

@@ -1,11 +1,22 @@
 import { CreateEmployerDto } from './dto/create-employer.dto';
-import { HttpException, Injectable, HttpStatus, ConflictException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  HttpStatus,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+  Res,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { hashPassword, comparePassword } from '../../common/helpers/password.helper';
 import { safeQuery } from '../../common/helpers/database.helper';
 import { EntityManager, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Membership } from '../membership/entities/membership.entity';
+import { AccountResetDto } from './dto/account-reset.dto';
+import { customHttpException } from '../../common/constants/custom-http-exception';
+import { ResponseStatus } from '../../common/constants/responseStatus';
 
 @Injectable()
 export class EmployersService {
@@ -18,6 +29,7 @@ export class EmployersService {
   //회원가입 시 Employer 생성 및 Membership 설정
   async create(createEmployerDto: CreateEmployerDto, manager: EntityManager) {
     const isExistUser = await this.findOneUserId(createEmployerDto.userId);
+
     if (isExistUser) {
       throw new ConflictException('User ID already exists');
     }
@@ -68,6 +80,35 @@ export class EmployersService {
     });
   }
 
+  // 비밀번호 변경
+  async accountReset(accountResetDto: AccountResetDto, id: string) {
+    try {
+      const employer = await this.findOneUuid(id);
+
+      if (!employer) {
+        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      }
+
+      // 기존 비밀번호 확인
+      const isPasswordHashValid = await comparePassword(accountResetDto.currentPassword, employer.password);
+
+      if (!isPasswordHashValid) {
+        return { status: ResponseStatus.FAILURE };
+      }
+
+      const hashedPassword = await hashPassword(accountResetDto.newPassword);
+
+      await this.employerRepo.update({ id }, { password: hashedPassword });
+
+      return { status: ResponseStatus.SUCCESS };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new BadRequestException();
+    }
+  }
+
   async validateEmployerUser({ userId, password }: { userId: string; password: string }) {
     try {
       const doesExist = await this.findOneUserId(userId);
@@ -83,13 +124,9 @@ export class EmployersService {
       }
 
       return doesExist;
-    } catch (_) {
+    } catch {
       throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
     }
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} employer`;
   }
 
   // 점수 기반으로 Membership 찾기

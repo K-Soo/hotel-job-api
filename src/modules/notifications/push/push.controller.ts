@@ -11,7 +11,7 @@ import { UAParser } from 'ua-parser-js';
 import { SendPushToUserDto } from './dto/send-push-to-user.dto';
 // import * as requestIp from 'request-ip';
 
-@Controller('notifications/push')
+@Controller('notification/push')
 export class PushController {
   constructor(private readonly pushService: PushService) {}
 
