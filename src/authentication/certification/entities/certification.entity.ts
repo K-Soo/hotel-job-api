@@ -4,9 +4,7 @@ import {
   Entity,
   OneToOne,
   PrimaryGeneratedColumn,
-  OneToMany,
   UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { CertificationType, CommType } from '../../../common/constants/app.enum';

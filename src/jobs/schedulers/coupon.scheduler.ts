@@ -103,7 +103,7 @@ export class CouponScheduler {
         }
       });
     } catch (error) {
-      this.logger.error('❌ 쿠폰 발급 중 오류 발생:', error);
+      this.logger.error('쿠폰 발급 중 오류 발생:', error);
     }
   }
 }

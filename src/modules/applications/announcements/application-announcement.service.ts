@@ -6,6 +6,8 @@ import { ApplicationAnnouncementRecipient } from './entities/application-announc
 import { Recruitment } from '../../employers/recruitment/entities/recruitment.entity';
 import { Application } from '../../applications/entities/application.entity';
 import { AnnouncementType, ResultNotificationStatus, ReviewStageStatus } from '../../../common/constants/application';
+import { NotificationService } from '../../../modules/notifications/notifications.service';
+import { CategoryType, NotificationType } from '../../../common/constants/notification';
 
 export class ApplicationAnnouncementService {
   constructor(
@@ -14,6 +16,7 @@ export class ApplicationAnnouncementService {
     @InjectRepository(Application) private readonly applicationRepo: Repository<Application>,
     @InjectRepository(ApplicationAnnouncementRecipient)
     private readonly announcementRecipientRepo: Repository<ApplicationAnnouncementRecipient>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   /**
@@ -44,29 +47,45 @@ export class ApplicationAnnouncementService {
     for (const appId of recipientApplicationIds) {
       const application = await this.applicationRepo.findOne({ where: { id: appId } });
 
-      if (application) {
-        //AnnouncementType 에따라서 reviewStage를 동적 변경
-        if (announcementType === AnnouncementType.ACCEPT) {
-          if (resultNotificationStatus === ResultNotificationStatus.DOCUMENT_PASS) {
-            application.reviewStageStatus = ReviewStageStatus.INTERVIEW;
-          }
-          if (resultNotificationStatus === ResultNotificationStatus.INTERVIEW_PASS) {
-            application.reviewStageStatus = ReviewStageStatus.INTERVIEW_PASS;
-          }
-          if (resultNotificationStatus === ResultNotificationStatus.FINAL_PASS) {
-            application.reviewStageStatus = ReviewStageStatus.ACCEPT;
-          }
+      if (!application) continue;
+
+      // 합격 발표 - 실제 지원자에게 보여지는 전형단계 업데이트
+      if (announcementType === AnnouncementType.ACCEPT) {
+        if (resultNotificationStatus === ResultNotificationStatus.DOCUMENT_PASS) {
+          application.reviewStageStatus = ReviewStageStatus.INTERVIEW;
         }
-
-        if (announcementType === AnnouncementType.REJECT) {
-          application.reviewStageStatus = ReviewStageStatus.REJECT; // 실제 지원자에게 보여지는 전형단계 업데이트
+        if (resultNotificationStatus === ResultNotificationStatus.INTERVIEW_PASS) {
+          application.reviewStageStatus = ReviewStageStatus.INTERVIEW_PASS;
         }
-
-        await this.applicationRepo.save(application);
-
-        const recipient = this.announcementRecipientRepo.create({ announcement, application });
-        recipients.push(recipient);
+        if (resultNotificationStatus === ResultNotificationStatus.FINAL_PASS) {
+          application.reviewStageStatus = ReviewStageStatus.ACCEPT;
+        }
       }
+
+      // 불합격 발표 - 실제 지원자에게 보여지는 전형단계 업데이트
+      if (announcementType === AnnouncementType.REJECT) {
+        application.reviewStageStatus = ReviewStageStatus.REJECT;
+      }
+
+      // 지원자 상태 업데이트
+      await this.applicationRepo.save(application);
+
+      const isAccept = announcementType === AnnouncementType.ACCEPT;
+      const acceptMessage = `${application.recruitmentSnapshot.hotelName}의 ${application.recruitmentSnapshot.recruitmentTitle} 포지션에 합격 발표가 있습니다.`;
+      const rejectMessage = `${application.recruitmentSnapshot.hotelName}의 ${application.recruitmentSnapshot.recruitmentTitle} 포지션에 안타깝게도 합격되지 않았습니다.`;
+
+      // 지원자에게 알림 전송
+      await this.notificationService.sendNotification({
+        category: CategoryType.APPLICANT,
+        title: isAccept ? '합격 발표 🎉' : '불합격 발표',
+        userIds: [application.applicantId],
+        message: isAccept ? acceptMessage : rejectMessage,
+        link: isAccept ? '/user/application/history' : '/user/application/history?status=reject',
+        notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
+      });
+
+      const recipient = this.announcementRecipientRepo.create({ announcement, application });
+      recipients.push(recipient);
     }
 
     await this.announcementRecipientRepo.save(recipients);

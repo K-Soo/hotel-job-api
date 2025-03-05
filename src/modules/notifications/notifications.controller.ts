@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards, Query } from '@nestjs/common';
 import { NotificationService } from './notifications.service';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { SendNotificationDto } from './dto/send-notification.dto';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { Request } from 'express';
+import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/metadata/roles.decorator';
+import { NotificationQueryDto } from './dto/notification-query.dto';
 
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
+  @ApiOperation({ summary: '알림 발송' })
   @Post()
-  create(@Body() createNotificationDto: CreateNotificationDto) {
-    return this.notificationService.create(createNotificationDto);
+  sendNotification(@Body() sendNotificationDto: SendNotificationDto) {
+    return this.notificationService.sendNotification(sendNotificationDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(PassportJwtGuard, RolesGuard)
+  @Roles('EMPLOYER', 'JOB_SEEKER')
+  @ApiOperation({ summary: '알림 목록 리스트' })
   @Get()
-  findAll() {
-    return this.notificationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notificationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationService.update(+id, updateNotificationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notificationService.remove(+id);
+  notificationList(@Req() req: Request, @Query() query: NotificationQueryDto) {
+    return this.notificationService.notificationList(req.user['sub'], query);
   }
 }
