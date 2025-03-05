@@ -28,7 +28,6 @@ export const customHttpException = {
     customCode: 1030,
     message: 'Not found User.',
   },
-
   USER_ROLE_INVALID: {
     customCode: 1040,
     message: 'Permission denied',
@@ -168,6 +167,10 @@ export const customHttpException = {
   COUPON_NOT_APPLIED: {
     customCode: 4053,
     message: 'Coupon Not Applied.',
+  },
+  COUPON_ISSUE_FAILED: {
+    customCode: 4054,
+    message: 'Coupon Issuance Failed.',
   },
   //데이터베이스
   DATABASE_OPERATION_FAILED: {
