@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { SecretsManagerService } from '../../providers/secrets-manager/secrets-manager.service';
 import { makeSignature } from '../../common/helpers/makeSignature.help';
 import { generateDate } from '../../common/utils/generateDate';
@@ -21,7 +21,6 @@ import { Applicant } from '../../modules/applicants/entities/applicant.entity';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { ProviderType, RoleType } from '../../common/types';
 import { safeQuery } from '../../common/helpers/database.helper';
-
 const g_conf_cert_info =
   '-----BEGIN CERTIFICATE-----MIIDgTCCAmmgAwIBAgIHBy4lYNG7ojANBgkqhkiG9w0BAQsFADBzMQswCQYDVQQGEwJLUjEOMAwGA1UECAwFU2VvdWwxEDAOBgNVBAcMB0d1cm8tZ3UxFTATBgNVBAoMDE5ITktDUCBDb3JwLjETMBEGA1UECwwKSVQgQ2VudGVyLjEWMBQGA1UEAwwNc3BsLmtjcC5jby5rcjAeFw0yMTA2MjkwMDM0MzdaFw0yNjA2MjgwMDM0MzdaMHAxCzAJBgNVBAYTAktSMQ4wDAYDVQQIDAVTZW91bDEQMA4GA1UEBwwHR3Vyby1ndTERMA8GA1UECgwITG9jYWxXZWIxETAPBgNVBAsMCERFVlBHV0VCMRkwFwYDVQQDDBAyMDIxMDYyOTEwMDAwMDI0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAppkVQkU4SwNTYbIUaNDVhu2w1uvG4qip0U7h9n90cLfKymIRKDiebLhLIVFctuhTmgY7tkE7yQTNkD+jXHYufQ/qj06ukwf1BtqUVru9mqa7ysU298B6l9v0Fv8h3ztTYvfHEBmpB6AoZDBChMEua7Or/L3C2vYtU/6lWLjBT1xwXVLvNN/7XpQokuWq0rnjSRThcXrDpWMbqYYUt/CL7YHosfBazAXLoN5JvTd1O9C3FPxLxwcIAI9H8SbWIQKhap7JeA/IUP1Vk4K/o3Yiytl6Aqh3U1egHfEdWNqwpaiHPuM/jsDkVzuS9FV4RCdcBEsRPnAWHz10w8CX7e7zdwIDAQABox0wGzAOBgNVHQ8BAf8EBAMCB4AwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAg9lYy+dM/8Dnz4COc+XIjEwr4FeC9ExnWaaxH6GlWjJbB94O2L26arrjT2hGl9jUzwd+BdvTGdNCpEjOz3KEq8yJhcu5mFxMskLnHNo1lg5qtydIID6eSgew3vm6d7b3O6pYd+NHdHQsuMw5S5z1m+0TbBQkb6A9RKE1md5/Yw+NymDy+c4NaKsbxepw+HtSOnma/R7TErQ/8qVioIthEpwbqyjgIoGzgOdEFsF9mfkt/5k6rR0WX8xzcro5XSB3T+oecMS54j0+nHyoS96/llRLqFDBUfWn5Cay7pJNWXCnw4jIiBsTBa3q95RVRyMEcDgPwugMXPXGBwNoMOOpuQ==-----END CERTIFICATE-----';
 @Injectable()
@@ -152,7 +151,10 @@ export class CertificationService {
     }
   }
 
-  // 본인인증 검증
+  /**
+   * NHN KCP 본인인증 서비스와 통신하여 사용자의 `dn_hash`를 검증
+   * 검증 요청이 성공하면 `ordr_idxx`, `enc_cert_data2`, `dn_hash`, `cert_no` 값을 반환
+   */
   async verifyDnHash(verifyDto: any) {
     const dn_hash = verifyDto.dn_hash;
     const ordr_idxx = verifyDto.ordr_idxx;
@@ -211,7 +213,9 @@ export class CertificationService {
     }
   }
 
-  // 본인인증 복호화
+  /**
+   * 본인인증 복호화 및 개인정보 응답
+   */
   async decryptCert(decryptCertDto: DecryptCertDto) {
     try {
       const site_cd = this.configService.get('SITE_CODE');
@@ -259,74 +263,91 @@ export class CertificationService {
     }
   }
 
-  async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer, role: RoleType) {
+  async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer) {
     try {
-      // 사업자 유저
-      if (role === 'EMPLOYER') {
-        const employer = await this.employersService.findOneUuid(user.id);
-        if (!employer) {
-          throw new Error('Employer not found');
-        }
+      // 해당 유저가 이미 본인인증을 완료했는지 확인
+      const existCertification = await this.checkDuplicateCertification(user);
 
-        const existingCertification = await this.certificationRepository.findOne({
-          where: { employer, certificationType: CertificationType.EMPLOYER },
-        });
+      if (existCertification) {
+        return { status: ResponseStatus.DUPLICATE };
+      }
 
-        if (existingCertification) {
-          throw new ConflictException('already exists');
-        }
+      if (user instanceof Employer) {
+        // 사업자 전용 - 존재하는 DI인지 체크(휴대폰 번호 중복확인)
+        // const isDuplicateDi = await this.isDiAlreadyVerified(decryptCert.di);
+
+        // if (isDuplicateDi) {
+        //   return { status: ResponseStatus.UNAVAILABLE };
+        // }
 
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,
             certificationType: CertificationType.EMPLOYER,
-            employer,
+            employer: user,
           }),
         );
 
         await safeQuery(() => this.certificationRepository.save(createdCertification));
 
-        await safeQuery(() =>
-          this.employerRepo.update(employer.id, { certificationStatus: CertificationStatus.VERIFIED }),
-        );
+        await safeQuery(() => this.employerRepo.update(user.id, { certificationStatus: CertificationStatus.VERIFIED }));
 
         return { status: ResponseStatus.SUCCESS };
       }
 
-      // 일반유저
-      if (role === 'JOB_SEEKER') {
-        const applicant = await this.applicantsService.findOne(user.id);
-        if (!applicant) {
-          throw new Error('Applicant not found');
-        }
-
-        const existingCertification = await this.certificationRepository.findOne({
-          where: { applicant, certificationType: CertificationType.APPLICANT },
-        });
-
-        if (existingCertification) {
-          throw new ConflictException('already exists');
-        }
-
+      if (user instanceof Applicant) {
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,
             certificationType: CertificationType.APPLICANT,
-            applicant,
+            applicant: user,
           }),
         );
 
         await safeQuery(() => this.certificationRepository.save(createdCertification));
 
         await safeQuery(() =>
-          this.applicantRepo.update(applicant.id, { certificationStatus: CertificationStatus.VERIFIED }),
+          this.applicantRepo.update(user.id, { certificationStatus: CertificationStatus.VERIFIED }),
         );
 
         return { status: ResponseStatus.SUCCESS };
       }
     } catch (error) {
-      throw new UnauthorizedException(error.message);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_FAILED(error.message));
     }
+  }
+
+  /**
+   * 해당 유저가 이미 본인인증을 완료했는지 확인
+   */
+  private async checkDuplicateCertification(user: Applicant | Employer) {
+    if (user instanceof Employer) {
+      const existingCertification = await this.certificationRepository.findOne({
+        where: { employer: { id: user.id }, certificationType: CertificationType.EMPLOYER },
+      });
+
+      return existingCertification;
+    }
+
+    if (user instanceof Applicant) {
+      const existingCertification = await this.certificationRepository.findOne({
+        where: { applicant: { id: user.id }, certificationType: CertificationType.APPLICANT },
+      });
+
+      return existingCertification;
+    }
+  }
+
+  /**
+   * DI 값으로 중복 체크
+   */
+  private async isDiAlreadyVerified(di: string): Promise<boolean> {
+    const existingCertification = await this.certificationRepository.findOne({ where: { di } });
+
+    return !!existingCertification;
   }
 
   createApplicantsCertification() {
@@ -360,5 +381,14 @@ export class CertificationService {
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
+  }
+
+  async findEmployerByDiAndUserId(di: string, employer: Employer) {
+    const certification = await this.certificationRepository.findOne({
+      where: { di, employer: { id: employer.id } },
+      relations: ['employer'],
+    });
+
+    return certification;
   }
 }
