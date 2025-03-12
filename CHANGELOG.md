@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/K-Soo/hotel-job-api/compare/v1.2.0...v1.2.1) (2025-03-12)
+
+
+### Features
+
+* 결제 서비스에서 옵션에 보너스 일수 추가 ([14fb8dd](https://github.com/K-Soo/hotel-job-api/commit/14fb8dd36632a9abde963bc1324927474cb5cfe4))
+* 리크루트 서비스에서 결제 상태 및 타입에 따른 필터링 개선 및 페이지네이션 로직 최적화 ([e8cec03](https://github.com/K-Soo/hotel-job-api/commit/e8cec03b9e2e5612483a44f12d7cb942ee938963))
+* 채용공고 목록 조회 메서드 개선 및 페이징 처리 로직 최적화 ([2ef1f2c](https://github.com/K-Soo/hotel-job-api/commit/2ef1f2c384a7fc97e9982e8cbe3d50f65d4c1472))
+* 채용공고 목록 조회 메서드 이름 변경 및 응답 설명 수정 ([9306868](https://github.com/K-Soo/hotel-job-api/commit/930686820bcf712131be25cfaf1e84c1dca00d5b))
+* FCM 토큰 저장 메서드에서 불필요한 로그 제거 ([1f2d864](https://github.com/K-Soo/hotel-job-api/commit/1f2d864d5198383d2f9f8cb96d128e019af36f72))
+
 ## [1.2.0](https://github.com/K-Soo/hotel-job-api/compare/v1.1.0...v1.2.0) (2025-03-05)
 
 
