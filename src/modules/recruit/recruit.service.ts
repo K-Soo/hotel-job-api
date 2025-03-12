@@ -9,6 +9,7 @@ import { PaymentStatus, PaymentType } from '../../common/constants/payment';
 import { RecruitmentProductType, RecruitmentProductName } from '../../common/constants/product';
 import { RecruitmentStatus } from '../../common/constants/recruitment';
 import { Payment } from '../payment/entities/payment.entity';
+
 @Injectable()
 export class RecruitService {
   constructor(
@@ -16,32 +17,21 @@ export class RecruitService {
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
   ) {}
 
+  /**
+   * 스페셜 채용
+   */
   async getSpecialRecruit(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
     const optionPagination: IPaginationOptions = { page, limit };
 
     try {
-      const completedPayments = await this.paymentRepo
+      const paymentIds = await this.paymentRepo
         .createQueryBuilder('payment')
         .select('payment.id')
         .where('payment.paymentStatus = :status', { status: PaymentStatus.PAYMENT_COMPLETED })
-        .getMany();
-
-      const paymentIds = completedPayments.map((payment) => payment.id);
-
-      if (paymentIds.length === 0) {
-        return {
-          items: [],
-          pagination: {
-            totalItems: 0,
-            currentPage: page,
-            totalPages: 0,
-            nextPage: null,
-            prevPage: null,
-          },
-        };
-      }
+        .getMany()
+        .then((payments) => payments.map((p) => p.id));
 
       const query = this.recruitmentRepo.createQueryBuilder('recruitment');
 
@@ -72,7 +62,9 @@ export class RecruitService {
           'recruitment.recruitmentStatus',
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
+
           'paymentRecruitment',
+
           'options.id',
           'options.name',
           'options.postingEndDate',
@@ -81,9 +73,7 @@ export class RecruitService {
           'options.listUpIntervalHours',
           'options.maxListUpPerDay',
         ])
-        .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS],
-        });
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS });
 
       if (job !== undefined && job.length > 0) {
         query.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
@@ -91,36 +81,25 @@ export class RecruitService {
 
       query.orderBy('recruitment.priorityDate', 'DESC');
 
-      const totalItemsQuery = this.recruitmentRepo
-        .createQueryBuilder('recruitment')
-        .innerJoin(
-          'recruitment.paymentRecruitment',
-          'paymentRecruitment',
-          'paymentRecruitment.payment_id IN (:...paymentIds)',
-          { paymentIds },
-        )
-        .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
-        });
+      const paginatedItems = await query
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getMany();
 
-      if (job !== undefined && job.length > 0) {
-        totalItemsQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
-      }
-
-      const totalItems = await totalItemsQuery.select('COUNT(DISTINCT recruitment.id)', 'count').getRawOne();
-
-      const paginatedResult = await paginate(query, optionPagination);
+      const totalCount = await query.getCount();
 
       return {
-        items: paginatedResult.items,
+        items: paginatedItems,
         pagination: {
-          ...paginatedResult.meta,
-          totalItems: parseInt(totalItems.count, 10), // ✅ 정확한 totalItems 사용
-          nextPage:
-            paginatedResult.meta.currentPage < paginatedResult.meta.totalPages
-              ? paginatedResult.meta.currentPage + 1
-              : null,
-          prevPage: paginatedResult.meta.currentPage > 1 ? paginatedResult.meta.currentPage - 1 : null,
+          itemCount: paginatedItems.length,
+          itemsPerPage: limit,
+
+          totalItems: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+
+          nextPage: page < Math.ceil(totalCount / limit) ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+          currentPage: page,
         },
       };
     } catch (error) {
@@ -129,31 +108,20 @@ export class RecruitService {
     }
   }
 
+  /**
+   * 급구 채용
+   */
   async getUrgentRecruit(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
-    const optionPagination: IPaginationOptions = { page, limit };
 
     try {
-      const completedPayments = await this.paymentRepo
+      const paymentIds = await this.paymentRepo
         .createQueryBuilder('payment')
         .select('payment.id')
         .where('payment.paymentStatus = :status', { status: PaymentStatus.PAYMENT_COMPLETED })
-        .getMany();
-
-      const paymentIds = completedPayments.map((payment) => payment.id);
-
-      if (paymentIds.length === 0) {
-        return {
-          items: [],
-          pagination: {
-            totalItems: 0,
-            currentPage: page,
-            totalPages: 0,
-            nextPage: null,
-            prevPage: null,
-          },
-        };
-      }
+        .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
+        .getMany()
+        .then((payments) => payments.map((p) => p.id));
 
       const query = this.recruitmentRepo
         .createQueryBuilder('recruitment')
@@ -181,7 +149,11 @@ export class RecruitService {
           'recruitment.addressDetail',
           'recruitment.priorityDate',
           'recruitment.recruitmentStatus',
+          'recruitment.postingStartDate',
+          'recruitment.postingEndDate',
+
           'paymentRecruitment',
+
           'options.id',
           'options.name',
           'options.postingEndDate',
@@ -190,9 +162,7 @@ export class RecruitService {
           'options.listUpIntervalHours',
           'options.maxListUpPerDay',
         ])
-        .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS],
-        });
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS });
 
       if (job !== undefined && job.length > 0) {
         query.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
@@ -200,36 +170,25 @@ export class RecruitService {
 
       query.orderBy('recruitment.priorityDate', 'DESC');
 
-      const totalItemsQuery = this.recruitmentRepo
-        .createQueryBuilder('recruitment')
-        .innerJoin(
-          'recruitment.paymentRecruitment',
-          'paymentRecruitment',
-          'paymentRecruitment.payment_id IN (:...paymentIds)',
-          { paymentIds },
-        )
-        .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
-        });
+      const paginatedItems = await query
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getMany();
 
-      if (job !== undefined && job.length > 0) {
-        totalItemsQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
-      }
-
-      const totalItems = await totalItemsQuery.select('COUNT(DISTINCT recruitment.id)', 'count').getRawOne();
-
-      const paginatedResult = await paginate(query, optionPagination);
+      const totalCount = await query.getCount();
 
       return {
-        items: paginatedResult.items,
+        items: paginatedItems,
         pagination: {
-          ...paginatedResult.meta,
-          totalItems: parseInt(totalItems.count, 10), // ✅ 정확한 totalItems 사용
-          nextPage:
-            paginatedResult.meta.currentPage < paginatedResult.meta.totalPages
-              ? paginatedResult.meta.currentPage + 1
-              : null,
-          prevPage: paginatedResult.meta.currentPage > 1 ? paginatedResult.meta.currentPage - 1 : null,
+          itemCount: paginatedItems.length,
+          itemsPerPage: limit,
+
+          totalItems: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+
+          nextPage: page < Math.ceil(totalCount / limit) ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+          currentPage: page,
         },
       };
     } catch (error) {
@@ -238,32 +197,21 @@ export class RecruitService {
     }
   }
 
+  /**
+   * 기본 공고
+   * @description CLOSE 상태의 채용공고 포함해서 노출 및 스페셜, 급구 결제한 상품도 기본에 포함해서 노출
+   */
   async getBasicRecruit(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
-    const optionPagination: IPaginationOptions = { page, limit };
-
     try {
-      const completedPayments = await this.paymentRepo
+      const paymentIds = await this.paymentRepo
         .createQueryBuilder('payment')
         .select('payment.id')
         .where('payment.paymentStatus = :status', { status: PaymentStatus.PAYMENT_COMPLETED })
-        .getMany();
-
-      const paymentIds = completedPayments.map((payment) => payment.id);
-
-      if (paymentIds.length === 0) {
-        return {
-          items: [],
-          pagination: {
-            totalItems: 0,
-            currentPage: page,
-            totalPages: 0,
-            nextPage: null,
-            prevPage: null,
-          },
-        };
-      }
+        .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
+        .getMany()
+        .then((payments) => payments.map((p) => p.id));
 
       const query = this.recruitmentRepo
         .createQueryBuilder('recruitment')
@@ -322,36 +270,26 @@ export class RecruitService {
         .orderBy('status_order', 'ASC')
         .addOrderBy('recruitment.priorityDate', 'DESC');
 
-      const totalItemsQuery = this.recruitmentRepo
-        .createQueryBuilder('recruitment')
-        .innerJoin(
-          'recruitment.paymentRecruitment',
-          'paymentRecruitment',
-          'paymentRecruitment.payment_id IN (:...paymentIds)',
-          { paymentIds },
-        )
-        .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
-        });
+      const paginatedItems = await query
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .getMany();
 
-      if (job !== undefined && job.length > 0) {
-        totalItemsQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
-      }
-
-      const totalItems = await totalItemsQuery.select('COUNT(DISTINCT recruitment.id)', 'count').getRawOne();
-
-      const paginatedResult = await paginate(query, optionPagination);
+      const totalCount = await query.getCount();
 
       return {
-        items: paginatedResult.items,
+        items: paginatedItems,
+
         pagination: {
-          ...paginatedResult.meta,
-          totalItems: parseInt(totalItems.count, 10),
-          nextPage:
-            paginatedResult.meta.currentPage < paginatedResult.meta.totalPages
-              ? paginatedResult.meta.currentPage + 1
-              : null,
-          prevPage: paginatedResult.meta.currentPage > 1 ? paginatedResult.meta.currentPage - 1 : null,
+          itemCount: paginatedItems.length,
+          itemsPerPage: limit,
+
+          totalItems: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+
+          nextPage: page < Math.ceil(totalCount / limit) ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+          currentPage: page,
         },
       };
     } catch (error) {
