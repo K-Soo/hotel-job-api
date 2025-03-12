@@ -84,12 +84,12 @@ export class RecruitmentController {
   }
 
   @ApiOperation({ summary: '채용공고 목록' })
-  @ApiResponse({ status: 200, description: '이력서 목록 응답값' })
+  @ApiResponse({ status: 200, description: '상태별 채용공고 목록' })
   @Get()
-  async findAll(@Req() req: Request, @Query() recruitmentQueryDto: RecruitmentQueryDto) {
+  async getRecruitmentList(@Req() req: Request, @Query() recruitmentQueryDto: RecruitmentQueryDto) {
     const userUuid = req.user['sub'];
 
-    return this.recruitmentService.findAll(recruitmentQueryDto, userUuid);
+    return this.recruitmentService.recruitmentList(recruitmentQueryDto, userUuid);
   }
 
   @ApiOperation({ summary: '결제 가능한 채용공고 목록' })
@@ -121,14 +121,14 @@ export class RecruitmentController {
 
   @ApiOperation({ summary: '채용공고 삭제' })
   @Post('/remove')
-  removeMultiple(@Req() req: Request, @Body('ids') ids: string[]) {
+  removeRecruitment(@Req() req: Request, @Body('ids') ids: string[]) {
     const userId = req.user['sub'];
 
     if (ids.length === 0) {
       throw new BadRequestException('Invalid IDs. Provide a non-empty array of IDs.');
     }
 
-    return this.recruitmentService.removeMultiple(ids, userId);
+    return this.recruitmentService.removeRecruitment(ids, userId);
   }
 
   @ApiOperation({ summary: '채용공고 마감' })
