@@ -311,6 +311,7 @@ export class PaymentRecruitmentService {
               id: option.id,
               name: option.name,
               duration: option.duration,
+              bonusDays: option.bonusDays,
               price: option.price,
               maxListUpPerDay: option.maxListUpPerDay,
               listUpIntervalHours: option.listUpIntervalHours,

@@ -67,11 +67,6 @@ export class PushService {
   async saveFcmToken(saveFcmTokenDto: SaveFcmTokenDto, userAgent: UserAgent, user: RequestUser) {
     try {
       const existingToken = await this.pushRepo.findOne({ where: { token: saveFcmTokenDto.token } });
-      console.log('existingToken: ', existingToken);
-
-      // 사업자 5ef779c1-7eed-4fff-b155-1650bc2fe0a1
-      //유저 91aa8042-78e9-4cbb-a30d-f976f85c1078
-      //daxivcQIMPSbJvdGduH5IR:APA91bFfgI2b8_YRqlTJ78EEcII3x
 
       if (existingToken) {
         // 기존 토큰이 다른 사용자에게 등록된 경우 -> 사용자 변경

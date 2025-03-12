@@ -201,15 +201,37 @@ export class RecruitmentService {
     });
   }
 
-  // findAll - 채용공고 목록
-  async findAll(recruitmentQueryDto: RecruitmentQueryDto, uuid: string) {
+  /**
+   * 채용공고 목록
+   */
+  async recruitmentList(recruitmentQueryDto: RecruitmentQueryDto, uuid: string) {
     const { page, limit, status } = recruitmentQueryDto;
 
-    const options: IPaginationOptions = { page, limit };
+    const offset = (page - 1) * limit;
 
-    const statusCondition =
-      status === RecruitmentQueryStatus.ALL ? {} : { recruitmentStatus: RecruitmentStatus[status] };
-    console.log('statusCondition: ', statusCondition);
+    const totalItemsQuery = this.recruitmentRepo
+      .createQueryBuilder('recruitment')
+      .innerJoin('recruitment.employer', 'employer')
+      .where('employer.id = :uuid', { uuid });
+
+    if (status !== RecruitmentQueryStatus.ALL) {
+      totalItemsQuery.andWhere('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus[status] });
+    }
+
+    const totalItems = await totalItemsQuery.getCount();
+
+    const recruitmentIdsQuery = this.recruitmentRepo
+      .createQueryBuilder('recruitment')
+      .select('recruitment.id')
+      .innerJoin('recruitment.employer', 'employer')
+      .where('employer.id = :uuid', { uuid })
+      .orderBy('recruitment.createdAt', 'DESC')
+      .offset(offset)
+      .limit(limit);
+
+    if (status !== RecruitmentQueryStatus.ALL) {
+      recruitmentIdsQuery.andWhere('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus[status] });
+    }
 
     const queryBuilder = this.recruitmentRepo
       .createQueryBuilder('recruitment')
@@ -220,13 +242,12 @@ export class RecruitmentService {
         'EXISTS (SELECT 1 FROM payment p WHERE p.id = paymentRecruitment.payment AND p.payment_status = :paymentCompleted)',
       )
       .leftJoinAndSelect('paymentRecruitment.options', 'options')
-      .innerJoin('recruitment.employer', 'employer')
-      .where('employer.id = :uuid', { uuid })
-      .andWhere(statusCondition, { status })
-      .orderBy('recruitment.createdAt', 'DESC')
+      .where('recruitment.id IN (' + recruitmentIdsQuery.getQuery() + ')')
       .setParameters({
-        paymentCompleted: PaymentStatus.PAYMENT_COMPLETED,
-      });
+        ...recruitmentIdsQuery.getParameters(),
+        paymentCompleted: PaymentStatus.PAYMENT_COMPLETED, // 추가된 파라미터
+      })
+      .orderBy('recruitment.createdAt', 'DESC');
 
     queryBuilder.select([
       'recruitment.id',
@@ -242,10 +263,10 @@ export class RecruitmentService {
       'options',
     ]);
 
-    const paginatedResult = await paginate<Recruitment>(queryBuilder, options);
+    const paginatedResult = await queryBuilder.getMany();
 
     // 각 채용공고의 applications을 카운트
-    const formattedItems = paginatedResult.items.map((recruitment) => {
+    const formattedItems = paginatedResult.map((recruitment) => {
       const totalApplications = recruitment.applications.length;
       const viewedApplications = recruitment.applications.filter((app) => app.isView).length;
       const notViewedApplications = totalApplications - viewedApplications;
@@ -264,11 +285,20 @@ export class RecruitmentService {
       };
     });
 
-    // 새 객체로 반환
-    return formatPagination({
-      ...paginatedResult,
+    return {
       items: formattedItems,
-    });
+      pagination: {
+        itemCount: paginatedResult.length,
+        itemsPerPage: limit,
+
+        totalItems: totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+
+        nextPage: page < Math.ceil(totalItems / limit) ? page + 1 : null,
+        prevPage: page > 1 ? page - 1 : null,
+        currentPage: page,
+      },
+    };
   }
 
   publishedRecruitmentList(uuid: string) {
@@ -385,7 +415,7 @@ export class RecruitmentService {
     };
   }
 
-  removeMultiple(ids: string[], userUuid: string) {
+  removeRecruitment(ids: string[], userUuid: string) {
     return this.dataSource.transaction(async (manager) => {
       const recruitmentRepo = manager.getRepository(Recruitment);
 
@@ -419,8 +449,11 @@ export class RecruitmentService {
     });
   }
 
+  /**
+   *
+   * 공고 마감
+   */
   closedRecruitment(recruitmentId: string, userId: string) {
-    console.log('recruitmentId: ', recruitmentId);
     return this.dataSource.transaction(async (manager) => {
       const recruitmentRepo = manager.getRepository(Recruitment);
 
@@ -431,7 +464,6 @@ export class RecruitmentService {
       if (!recruitment) {
         throw new NotFoundException();
       }
-      console.log('recruitment: ', recruitment);
 
       if (recruitment.recruitmentStatus !== 'PROGRESS') {
         throw new BadRequestException(customHttpException.BAD_REQUEST_REMOVE('마감할 수 없는 공고입니다.'));
