@@ -2,7 +2,6 @@ import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { RecruitService } from './recruit.service';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RecruitQueryDto } from './dto/recruit-query.dto';
-import { RecruitmentProductType } from '../../common/constants/product';
 
 @Controller('recruit')
 export class RecruitController {
