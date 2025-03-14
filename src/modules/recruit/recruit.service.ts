@@ -1,17 +1,17 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { RecruitQueryDto } from './dto/recruit-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Recruitment } from '../employers/recruitment/entities/recruitment.entity';
-import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { formatPagination } from '../../common/helpers/pagination.helper';
 import { PaymentStatus, PaymentType } from '../../common/constants/payment';
-import { RecruitmentProductType, RecruitmentProductName } from '../../common/constants/product';
+import { RecruitmentProductName } from '../../common/constants/product';
 import { RecruitmentStatus } from '../../common/constants/recruitment';
 import { Payment } from '../payment/entities/payment.entity';
 
 @Injectable()
 export class RecruitService {
+  private readonly logger = new Logger(RecruitService.name);
+
   constructor(
     @InjectRepository(Recruitment) private readonly recruitmentRepo: Repository<Recruitment>,
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
@@ -23,30 +23,28 @@ export class RecruitService {
   async getSpecialRecruit(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
-    const optionPagination: IPaginationOptions = { page, limit };
-
     try {
       const paymentIds = await this.paymentRepo
         .createQueryBuilder('payment')
         .select('payment.id')
         .where('payment.paymentStatus = :status', { status: PaymentStatus.PAYMENT_COMPLETED })
+        .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
-      const query = this.recruitmentRepo.createQueryBuilder('recruitment');
-
-      query.innerJoin(
-        'recruitment.paymentRecruitment',
-        'paymentRecruitment',
-        `paymentRecruitment.payment_id IN (:...paymentIds) 
-           AND paymentRecruitment.type = :type 
-           AND paymentRecruitment.name = :name`,
-        { paymentIds, type, name: RecruitmentProductName.SPECIAL },
-      );
-
-      query.leftJoinAndSelect('paymentRecruitment.options', 'options');
-
-      query
+      const baseQuery = this.recruitmentRepo
+        .createQueryBuilder('recruitment')
+        .innerJoin(
+          'recruitment.paymentRecruitment',
+          'paymentRecruitment',
+          `
+          paymentRecruitment.payment_id IN (:...paymentIds)
+          AND paymentRecruitment.type = :type
+          AND paymentRecruitment.name = :name 
+        `,
+          { paymentIds, type, name: RecruitmentProductName.SPECIAL },
+        )
+        .leftJoinAndSelect('paymentRecruitment.options', 'options')
         .select([
           'recruitment.id',
           'recruitment.recruitmentTitle',
@@ -58,35 +56,73 @@ export class RecruitService {
           'recruitment.jobs',
           'recruitment.address',
           'recruitment.addressDetail',
-          'recruitment.priorityDate',
           'recruitment.recruitmentStatus',
+
+          'recruitment.priorityDate',
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
 
-          'paymentRecruitment',
+          'paymentRecruitment.type',
+          'paymentRecruitment.name',
+          'paymentRecruitment.duration',
+          'paymentRecruitment.bonusDays',
 
-          'options.id',
-          'options.name',
-          'options.postingEndDate',
-          'options.duration',
-          'options.bonusDays',
-          'options.listUpIntervalHours',
-          'options.maxListUpPerDay',
+          `COALESCE(
+            json_agg(
+              json_build_object(
+                'id', options.id,
+                'name', options.name,
+                'postingEndDate', options.postingEndDate,
+                'duration', options.duration,
+                'bonusDays', options.bonusDays,
+                'listUpIntervalHours', options.listUpIntervalHours,
+                'maxListUpPerDay', options.max_list_up_per_day
+              )
+            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          ) AS options`,
         ])
-        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS });
+        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
+        .groupBy('recruitment.id')
+        .addGroupBy('paymentRecruitment.id')
+        .addOrderBy('recruitment.priorityDate', 'DESC');
 
       if (job !== undefined && job.length > 0) {
-        query.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
       }
 
-      query.orderBy('recruitment.priorityDate', 'DESC');
+      const [rawPaginatedItems, totalCount] = await Promise.all([
+        baseQuery
+          .clone()
+          .offset((page - 1) * limit)
+          .limit(limit)
+          .getRawMany(),
+        baseQuery.clone().getCount(),
+      ]);
 
-      const paginatedItems = await query
-        .offset((page - 1) * limit)
-        .limit(limit)
-        .getMany();
-
-      const totalCount = await query.getCount();
+      const paginatedItems = rawPaginatedItems.map((item) => ({
+        id: item.recruitment_id,
+        recruitmentTitle: item.recruitment_recruitment_title,
+        experienceCondition: item.recruitment_experience_condition,
+        hotelName: item.recruitment_hotel_name,
+        employmentType: item.recruitment_employment_type,
+        salaryAmount: item.recruitment_salary_amount,
+        salaryType: item.recruitment_salary_type,
+        jobs: item.recruitment_jobs,
+        address: item.recruitment_address,
+        addressDetail: item.recruitment_address_detail,
+        recruitmentStatus: item.recruitment_recruitment_status,
+        priorityDate: item.recruitment_priority_date,
+        postingStartDate: item.recruitment_posting_start_date,
+        postingEndDate: item.recruitment_posting_end_date,
+        paymentRecruitment: {
+          type: item.paymentRecruitment_type,
+          name: item.paymentRecruitment_name,
+          duration: Number(item.paymentRecruitment_duration),
+          bonusDays: item.paymentRecruitment_bonus_days,
+          options: item.options,
+        },
+      }));
 
       return {
         items: paginatedItems,
@@ -123,7 +159,7 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
-      const query = this.recruitmentRepo
+      const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
           'recruitment.paymentRecruitment',
@@ -147,35 +183,73 @@ export class RecruitService {
           'recruitment.jobs',
           'recruitment.address',
           'recruitment.addressDetail',
-          'recruitment.priorityDate',
           'recruitment.recruitmentStatus',
+
+          'recruitment.priorityDate',
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
 
-          'paymentRecruitment',
+          'paymentRecruitment.type',
+          'paymentRecruitment.name',
+          'paymentRecruitment.duration',
+          'paymentRecruitment.bonusDays',
 
-          'options.id',
-          'options.name',
-          'options.postingEndDate',
-          'options.duration',
-          'options.bonusDays',
-          'options.listUpIntervalHours',
-          'options.maxListUpPerDay',
+          `COALESCE(
+            json_agg(
+              json_build_object(
+                'id', options.id,
+                'name', options.name,
+                'postingEndDate', options.postingEndDate,
+                'duration', options.duration,
+                'bonusDays', options.bonusDays,
+                'listUpIntervalHours', options.listUpIntervalHours,
+                'maxListUpPerDay', options.max_list_up_per_day
+              )
+            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          ) AS options`,
         ])
-        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS });
+        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
+        .groupBy('recruitment.id')
+        .addGroupBy('paymentRecruitment.id')
+        .addOrderBy('recruitment.priorityDate', 'DESC');
 
       if (job !== undefined && job.length > 0) {
-        query.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
       }
 
-      query.orderBy('recruitment.priorityDate', 'DESC');
+      const [rawPaginatedItems, totalCount] = await Promise.all([
+        baseQuery
+          .clone()
+          .offset((page - 1) * limit)
+          .limit(limit)
+          .getRawMany(),
+        baseQuery.clone().getCount(),
+      ]);
 
-      const paginatedItems = await query
-        .offset((page - 1) * limit)
-        .limit(limit)
-        .getMany();
-
-      const totalCount = await query.getCount();
+      const paginatedItems = rawPaginatedItems.map((item) => ({
+        id: item.recruitment_id,
+        recruitmentTitle: item.recruitment_recruitment_title,
+        experienceCondition: item.recruitment_experience_condition,
+        hotelName: item.recruitment_hotel_name,
+        employmentType: item.recruitment_employment_type,
+        salaryAmount: item.recruitment_salary_amount,
+        salaryType: item.recruitment_salary_type,
+        jobs: item.recruitment_jobs,
+        address: item.recruitment_address,
+        addressDetail: item.recruitment_address_detail,
+        recruitmentStatus: item.recruitment_recruitment_status,
+        priorityDate: item.recruitment_priority_date,
+        postingStartDate: item.recruitment_posting_start_date,
+        postingEndDate: item.recruitment_posting_end_date,
+        paymentRecruitment: {
+          type: item.paymentRecruitment_type,
+          name: item.paymentRecruitment_name,
+          duration: Number(item.paymentRecruitment_duration),
+          bonusDays: item.paymentRecruitment_bonus_days,
+          options: item.options,
+        },
+      }));
 
       return {
         items: paginatedItems,
@@ -192,7 +266,8 @@ export class RecruitService {
         },
       };
     } catch (error) {
-      console.log('error: ', error?.message);
+      this.logger.error(`getUrgentRecruit: ${error.message}`);
+
       throw new InternalServerErrorException();
     }
   }
@@ -213,7 +288,7 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
-      const query = this.recruitmentRepo
+      const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
           'recruitment.paymentRecruitment',
@@ -236,28 +311,44 @@ export class RecruitService {
           'recruitment.jobs',
           'recruitment.address',
           'recruitment.addressDetail',
-          'recruitment.priorityDate',
           'recruitment.recruitmentStatus',
+
+          'recruitment.priorityDate',
+          'recruitment.postingStartDate',
+          'recruitment.postingEndDate',
+
           'paymentRecruitment.type',
           'paymentRecruitment.name',
-          'options.id',
-          'options.name',
-          'options.postingEndDate',
-          'options.duration',
-          'options.bonusDays',
-          'options.listUpIntervalHours',
-          'options.maxListUpPerDay',
+          'paymentRecruitment.duration',
+          'paymentRecruitment.bonusDays',
+
+          `COALESCE(
+            json_agg(
+              json_build_object(
+                'id', options.id,
+                'name', options.name,
+                'postingEndDate', options.postingEndDate,
+                'duration', options.duration,
+                'bonusDays', options.bonusDays,
+                'listUpIntervalHours', options.listUpIntervalHours,
+                'maxListUpPerDay', options.max_list_up_per_day
+              )
+            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          ) AS options`,
         ])
+        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
         .where('recruitment.recruitmentStatus IN (:...statuses)', {
           statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
-        });
+        })
+        .groupBy('recruitment.id')
+        .addGroupBy('paymentRecruitment.id')
+        .orderBy('recruitment.id', 'ASC');
 
       if (job !== undefined && job.length > 0) {
-        query.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
       }
 
-      // 정렬용 필드를 먼저 선택 ACS에러 방지
-      query
+      baseQuery
         .addSelect(
           `
         CASE 
@@ -270,12 +361,38 @@ export class RecruitService {
         .orderBy('status_order', 'ASC')
         .addOrderBy('recruitment.priorityDate', 'DESC');
 
-      const paginatedItems = await query
-        .offset((page - 1) * limit)
-        .limit(limit)
-        .getMany();
+      const [rawPaginatedItems, totalCount] = await Promise.all([
+        baseQuery
+          .clone()
+          .offset((page - 1) * limit)
+          .limit(limit)
+          .getRawMany(),
+        baseQuery.clone().getCount(),
+      ]);
 
-      const totalCount = await query.getCount();
+      const paginatedItems = rawPaginatedItems.map((item) => ({
+        id: item.recruitment_id,
+        recruitmentTitle: item.recruitment_recruitment_title,
+        experienceCondition: item.recruitment_experience_condition,
+        hotelName: item.recruitment_hotel_name,
+        employmentType: item.recruitment_employment_type,
+        salaryAmount: item.recruitment_salary_amount,
+        salaryType: item.recruitment_salary_type,
+        jobs: item.recruitment_jobs,
+        address: item.recruitment_address,
+        addressDetail: item.recruitment_address_detail,
+        recruitmentStatus: item.recruitment_recruitment_status,
+        priorityDate: item.recruitment_priority_date,
+        postingStartDate: item.recruitment_posting_start_date,
+        postingEndDate: item.recruitment_posting_end_date,
+        paymentRecruitment: {
+          type: item.paymentRecruitment_type,
+          name: item.paymentRecruitment_name,
+          duration: Number(item.paymentRecruitment_duration),
+          bonusDays: item.paymentRecruitment_bonus_days,
+          options: item.options,
+        },
+      }));
 
       return {
         items: paginatedItems,
@@ -293,7 +410,8 @@ export class RecruitService {
         },
       };
     } catch (error) {
-      console.log('error: ', error?.message);
+      this.logger.error(`getBasicRecruit: ${error.message}`);
+
       throw new InternalServerErrorException();
     }
   }
