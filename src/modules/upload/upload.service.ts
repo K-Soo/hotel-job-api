@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { S3Service } from '../../providers/storage/s3.service';
 import { ConfigService } from '@nestjs/config';
-import { dateFormat } from '../../common/utils/dateFormat';
 import { Response } from 'express';
 import { customHttpException } from '../../common/constants/custom-http-exception';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UploadService {
@@ -12,22 +12,32 @@ export class UploadService {
     private readonly configService: ConfigService,
   ) {}
 
-  async uploadProfileImage(userUuid: string, file: Express.Multer.File): Promise<string> {
+  async uploadProfileImage(userUuid: string, file: Express.Multer.File) {
     const bucketName = this.configService.get<string>('AWS_S3_BUCKET_NAME');
-    const encodedFileName = encodeURIComponent(file.originalname);
     const CLOUD_FRONT_DOMAIN = 'https://cdn.hotel-job-connect.com';
 
-    const currentDate = new Date();
+    const fileExtension = file.originalname.split('.').pop();
 
-    const key = `resources/resume/profile/${userUuid}_${currentDate.getTime()}_${encodedFileName}`;
-
-    const uploadFile = await this.s3Service.uploadFile(bucketName, key, file);
-
-    if (!uploadFile) {
-      throw new BadRequestException(customHttpException.IMAGE_UPLOAD_FAILED);
+    if (!fileExtension) {
+      throw new BadRequestException(customHttpException.IMAGE_FORMAT_NOT_SUPPORTED);
     }
 
-    return CLOUD_FRONT_DOMAIN + '/' + key;
+    const key = `resources/resume/profile/${uuidv4()}.${fileExtension}`;
+
+    try {
+      const uploadedKey = await this.s3Service.uploadFile(bucketName, key, file);
+
+      if (!uploadedKey) {
+        throw new BadRequestException(customHttpException.IMAGE_UPLOAD_FAILED);
+      }
+
+      return { uploadedKey: CLOUD_FRONT_DOMAIN + '/' + uploadedKey };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new BadRequestException(customHttpException.IMAGE_UPLOAD_FAILED);
+    }
   }
 
   async deleteProfileImage(userUuid: string) {
