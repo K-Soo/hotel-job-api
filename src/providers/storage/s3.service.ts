@@ -6,6 +6,7 @@ import {
   DeleteObjectsCommand,
   ListObjectsV2Command,
   GetObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { S3_PROVIDER } from './s3.provider';
 import { customHttpException } from '../../common/constants/custom-http-exception';
@@ -15,6 +16,28 @@ import { Response } from 'express';
 @Injectable()
 export class S3Service {
   constructor(@Inject(S3_PROVIDER) private readonly s3Client: S3Client) {}
+
+  async getFileMetadata(bucketName: string, key: string) {
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+      });
+
+      const metadata = await this.s3Client.send(command);
+      console.log('metadata: ', metadata);
+
+      return {
+        contentDisposition: metadata.ContentDisposition,
+        contentType: metadata.ContentType,
+        contentLength: metadata.ContentLength,
+        lastModified: metadata.LastModified,
+      };
+    } catch (error) {
+      this.logS3Error('getFileMetadata', error);
+      throw new BadRequestException(customHttpException.IMAGE_METADATA_FETCH_FAILED);
+    }
+  }
 
   async listFiles(bucket: string, prefix: string): Promise<string[]> {
     const command = new ListObjectsV2Command({
@@ -36,10 +59,11 @@ export class S3Service {
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
-        ContentDisposition: `attachment; filename="${encodedFileName}"; filename*=UTF-8'`,
+        ContentDisposition: `inline; filename="${encodedFileName}"; filename*=UTF-8'`,
       });
 
       await this.s3Client.send(command);
+
       return key;
     } catch (error) {
       this.logS3Error('uploadFile', error);
@@ -108,7 +132,6 @@ export class S3Service {
     console.error(`S3 Error in ${method}:`, {
       name: error.name,
       message: error.message,
-      // stack: error.stack,
     });
   }
 }
