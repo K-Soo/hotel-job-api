@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/K-Soo/hotel-job-api/compare/v1.2.1...v1.2.2) (2025-03-15)
+
+
+### Features
+
+* 불필요한 임포트 제거 ([e36c154](https://github.com/K-Soo/hotel-job-api/commit/e36c154a5e20eeaeb1f5044ac45886b74f62a5c0))
+* 이미지 메타데이터 가져오기 실패에 대한 사용자 정의 예외 추가 ([69b6e55](https://github.com/K-Soo/hotel-job-api/commit/69b6e551e9564d08c99eaa9211fdd0e0144bac91))
+* 채용 프리미엄 공고 기능 추가 및 기존 메서드 이름 변경 ([b0d90f3](https://github.com/K-Soo/hotel-job-api/commit/b0d90f37939e36791d8b653581be12b8a6156694))
+* 코드 변경 사항에 따른 기능 개선 및 최적화 ([cab883e](https://github.com/K-Soo/hotel-job-api/commit/cab883e2911afc72872a62dca68f08d936c0f3d1))
+* 패치 버전 증가를 위한 메서드 추가 ([8e4985a](https://github.com/K-Soo/hotel-job-api/commit/8e4985a503c2a94b9244c363132258a88cedf4ce))
+* 프로필 이미지 업로드 기능 개선 및 UUID 기반 파일 이름 생성 ([e6364fe](https://github.com/K-Soo/hotel-job-api/commit/e6364fe2217755620288ad7df35afffddd33e1ea))
+* 프로필 이미지 파일 크기 제한을 5MB로 변경 및 사용자 메시지 추가 ([dbe8957](https://github.com/K-Soo/hotel-job-api/commit/dbe89578c71bc65ee021b296841e6acff985a8f5))
+* S3Service에 파일 메타데이터 가져오기 기능 추가 및 오류 처리 개선 ([233b4bf](https://github.com/K-Soo/hotel-job-api/commit/233b4bf3b6a259a79a85805de1dd0a936f27184b))
+* uuid 패키지 추가 ([1a76de4](https://github.com/K-Soo/hotel-job-api/commit/1a76de46de756a4e9b41faef132898930d281ed3))
+
 ### [1.2.1](https://github.com/K-Soo/hotel-job-api/compare/v1.2.0...v1.2.1) (2025-03-12)
 
 
