@@ -17,10 +17,133 @@ export class RecruitService {
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
   ) {}
 
+  async premium(filters: RecruitQueryDto) {
+    const { page, limit, type, job } = filters;
+    try {
+      const paymentIds = await this.paymentRepo
+        .createQueryBuilder('payment')
+        .select('payment.id')
+        .where('payment.paymentStatus = :status', { status: PaymentStatus.PAYMENT_COMPLETED })
+        .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
+        .getMany()
+        .then((payments) => payments.map((p) => p.id));
+
+      const baseQuery = this.recruitmentRepo
+        .createQueryBuilder('recruitment')
+        .innerJoin(
+          'recruitment.paymentRecruitment',
+          'paymentRecruitment',
+          `
+          paymentRecruitment.payment_id IN (:...paymentIds)
+          AND paymentRecruitment.type = :type
+          AND paymentRecruitment.name = :name 
+        `,
+          { paymentIds, type, name: RecruitmentProductName.PREMIUM },
+        )
+        .leftJoinAndSelect('paymentRecruitment.options', 'options')
+        .select([
+          'recruitment.id',
+          'recruitment.recruitmentTitle',
+          'recruitment.experienceCondition',
+          'recruitment.hotelName',
+          'recruitment.employmentType',
+          'recruitment.salaryAmount',
+          'recruitment.salaryType',
+          'recruitment.jobs',
+          'recruitment.address',
+          'recruitment.addressDetail',
+          'recruitment.recruitmentStatus',
+
+          'recruitment.priorityDate',
+          'recruitment.postingStartDate',
+          'recruitment.postingEndDate',
+
+          'paymentRecruitment.type',
+          'paymentRecruitment.name',
+          'paymentRecruitment.duration',
+          'paymentRecruitment.bonusDays',
+
+          `COALESCE(
+            json_agg(
+              json_build_object(
+                'id', options.id,
+                'name', options.name,
+                'postingEndDate', options.postingEndDate,
+                'duration', options.duration,
+                'bonusDays', options.bonusDays,
+                'listUpIntervalHours', options.listUpIntervalHours,
+                'maxListUpPerDay', options.max_list_up_per_day
+              )
+            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          ) AS options`,
+        ])
+        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
+        .groupBy('recruitment.id')
+        .addGroupBy('paymentRecruitment.id')
+        .addOrderBy('recruitment.priorityDate', 'DESC');
+
+      if (job !== undefined && job.length > 0) {
+        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+      }
+
+      const [rawPaginatedItems, totalCount] = await Promise.all([
+        baseQuery
+          .clone()
+          .offset((page - 1) * limit)
+          .limit(limit)
+          .getRawMany(),
+        baseQuery.clone().getCount(),
+      ]);
+
+      const paginatedItems = rawPaginatedItems.map((item) => ({
+        id: item.recruitment_id,
+        recruitmentTitle: item.recruitment_recruitment_title,
+        experienceCondition: item.recruitment_experience_condition,
+        hotelName: item.recruitment_hotel_name,
+        employmentType: item.recruitment_employment_type,
+        salaryAmount: item.recruitment_salary_amount,
+        salaryType: item.recruitment_salary_type,
+        jobs: item.recruitment_jobs,
+        address: item.recruitment_address,
+        addressDetail: item.recruitment_address_detail,
+        recruitmentStatus: item.recruitment_recruitment_status,
+        priorityDate: item.recruitment_priority_date,
+        postingStartDate: item.recruitment_posting_start_date,
+        postingEndDate: item.recruitment_posting_end_date,
+        paymentRecruitment: {
+          type: item.paymentRecruitment_type,
+          name: item.paymentRecruitment_name,
+          duration: Number(item.paymentRecruitment_duration),
+          bonusDays: item.paymentRecruitment_bonus_days,
+          options: item.options,
+        },
+      }));
+
+      return {
+        items: paginatedItems,
+        pagination: {
+          itemCount: paginatedItems.length,
+          itemsPerPage: limit,
+
+          totalItems: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+
+          nextPage: page < Math.ceil(totalCount / limit) ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+          currentPage: page,
+        },
+      };
+    } catch (error) {
+      console.log('error: ', error?.message);
+      throw new InternalServerErrorException();
+    }
+  }
+
   /**
    * 스페셜 채용
    */
-  async getSpecialRecruit(filters: RecruitQueryDto) {
+  async special(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
     try {
@@ -147,7 +270,7 @@ export class RecruitService {
   /**
    * 급구 채용
    */
-  async getUrgentRecruit(filters: RecruitQueryDto) {
+  async urgent(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
     try {
@@ -276,7 +399,7 @@ export class RecruitService {
    * 기본 공고
    * @description CLOSE 상태의 채용공고 포함해서 노출 및 스페셜, 급구 결제한 상품도 기본에 포함해서 노출
    */
-  async getBasicRecruit(filters: RecruitQueryDto) {
+  async basic(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
 
     try {

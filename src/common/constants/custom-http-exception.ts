@@ -194,6 +194,10 @@ export const customHttpException = {
     customCode: 7003,
     message: 'Failed to process the file. Please try again.',
   },
+  IMAGE_METADATA_FETCH_FAILED: {
+    customCode: 7004,
+    message: 'Failed to process the file. Please try again.',
+  },
   // 계정 상태
   ACCOUNT_STATUS_INACTIVE: {
     customCode: 8000,
