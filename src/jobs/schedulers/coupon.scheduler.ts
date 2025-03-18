@@ -14,10 +14,9 @@ export class CouponScheduler {
   constructor(private readonly dataSource: DataSource) {}
 
   // 매일 자정에 실행
-  // @Cron('*/10 * * * * *')
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async expireCoupons() {
-    this.logger.log('🔔 [스케줄러] 매일 자정 만료된 쿠폰 정리');
+    this.logger.log('🕒 [스케줄러 시작] 매일 자정 만료된 쿠폰 정리');
     const now = new Date();
 
     // test 한 달 추가 후 마지막 날 계산
@@ -32,13 +31,13 @@ export class CouponScheduler {
       .andWhere('expiresAt <= :now', { now })
       .execute();
 
-    this.logger.log('✅ 만료된 쿠폰 상태 업데이트 완료');
+    this.logger.log('🕒 [스케줄러 종료] 매일 자정 만료된 쿠폰 정리');
   }
 
-  // 매달 1일 00:00에 멤버십 등급에 맞는 쿠폰 자동 발급
+  // 매달 1일 자정 멤버십 등급에 맞는 쿠폰 자동 발급
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   async assignMonthlyCoupons() {
-    this.logger.log('🔔 [스케줄러] 매달 1일 쿠폰 발급 시작');
+    this.logger.log('🕒 [스케줄러 시작] 매달 1일 쿠폰 발급');
 
     try {
       await this.dataSource.transaction(async (transactionManager) => {
@@ -55,7 +54,7 @@ export class CouponScheduler {
           const membershipLevel = employer.membership?.membershipLevel;
 
           if (!membershipLevel) {
-            this.logger.warn(`🔔 [스케줄러] 멤버십 정보가 없는 사용자: ${employer.nickname}`);
+            this.logger.warn(`[스케줄러] 멤버십 정보가 없는 사용자: ${employer.nickname}`);
             continue;
           }
 
@@ -67,7 +66,7 @@ export class CouponScheduler {
           });
 
           if (!coupon) {
-            this.logger.warn(`⚠️ [주의] 쿠폰 코드 ${couponCode} 가 존재하지 않습니다.`);
+            this.logger.warn(`쿠폰 코드 ${couponCode} 가 존재하지 않습니다.`);
             continue;
           }
 
@@ -86,7 +85,7 @@ export class CouponScheduler {
             continue;
           }
 
-          // 4️⃣ 쿠폰 발급
+          // 4️. 쿠폰 발급
           const employerCoupon = transactionManager.create(EmployerCoupon, {
             employer,
             coupon,
@@ -97,9 +96,11 @@ export class CouponScheduler {
           });
 
           await transactionManager.save(employerCoupon);
+
           this.logger.log(
             `🎁 쿠폰 발급 완료: ${employer.nickname} (쿠폰 코드: ${coupon.code}) (만료일: ${lastDayOfMonth})`,
           );
+          this.logger.log('🕒 [스케줄러 종료] 매달 1일 쿠폰 발급');
         }
       });
     } catch (error) {
