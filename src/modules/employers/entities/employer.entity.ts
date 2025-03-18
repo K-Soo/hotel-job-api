@@ -88,7 +88,7 @@ export class Employer {
 
   @BeforeInsert()
   async generateUniqueNickname() {
-    const randomNumber = this.generateUniqueNickname();
+    const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000).toString();
     this.nickname = `${randomNumber}`;
   }
 
@@ -100,8 +100,4 @@ export class Employer {
 
   @Column({ type: 'timestamptz', precision: 0, nullable: true })
   passwordChangedAt: Date | null;
-
-  static generateRandom10Digit(): string {
-    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-  }
 }

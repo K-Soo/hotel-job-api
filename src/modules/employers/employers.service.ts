@@ -37,6 +37,7 @@ export class EmployersService {
     const hashedPassword = await hashPassword(createEmployerDto.password);
 
     const defaultScore = 0;
+
     const membership = await this.findMembershipByScore(defaultScore);
 
     if (!membership) {
