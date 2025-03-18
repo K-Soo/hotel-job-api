@@ -60,7 +60,7 @@ export class Applicant {
 
   @BeforeInsert()
   async generateUniqueNickname() {
-    const randomNumber = this.generateUniqueNickname();
+    const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000).toString();
     this.nickname = `${randomNumber}`;
   }
 
@@ -70,8 +70,4 @@ export class Applicant {
   @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
-
-  static generateRandom10Digit(): string {
-    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-  }
 }
