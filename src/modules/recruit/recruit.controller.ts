@@ -7,6 +7,12 @@ import { RecruitQueryDto } from './dto/recruit-query.dto';
 export class RecruitController {
   constructor(private readonly recruitService: RecruitService) {}
 
+  @ApiOperation({ summary: '진행중인 채용공고 ids' })
+  @Get('progress')
+  progressRecruitIds() {
+    return this.recruitService.progressRecruitIds();
+  }
+
   @ApiOperation({ summary: '채용 프리미엄 공고' })
   @Get('premium')
   premium(@Query() query: RecruitQueryDto) {
@@ -34,7 +40,7 @@ export class RecruitController {
   @ApiParam({
     name: 'id',
     type: Number,
-    description: '채용 공고 id',
+    description: '채용 공고 상세정보',
     example: 123,
     required: true,
   })

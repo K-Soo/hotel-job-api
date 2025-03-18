@@ -1,4 +1,4 @@
-import { Logger, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import * as cookie from 'cookie';
 import { AuthService } from '../authentication/auth/auth.service';

@@ -1,49 +1,86 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
-import { Recruitment } from '../../modules/employers/recruitment/entities/recruitment.entity';
-import { RecruitmentStatus } from '../../common/constants/recruitment';
-
+import { PaymentRecruitment } from '../../modules/payment/payment-recruitment/entities/payment-recruitment.entity';
+import { PaymentStatus, PaymentType } from '../../common/constants/payment';
+import { Payment } from '../../modules/payment/entities/payment.entity';
 @Injectable()
 export class PaymentsScheduler {
   private readonly logger = new Logger(PaymentsScheduler.name);
 
   constructor(private readonly dataSource: DataSource) {}
 
-  // @Cron('*/10 * * * * *')
-  // async testRecruitment() {
-  //   this.logger.log('🔔 [스케줄러 실행] 마감된 채용공고 처리 시작');
-  // }
+  @Cron(CronExpression.EVERY_DAY_AT_10PM)
+  async expirePendingPayments() {
+    this.logger.log('🕒 [스케줄러 실행] pending 상태의 payment를 expired로 변경');
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async closeExpiredRecruitment() {
-    this.logger.log('🔔 [스케줄러 실행] 마감된 채용공고 처리 시작');
-    const now = new Date().toISOString();
+    const thirtyMinutesAgo = new Date();
+    thirtyMinutesAgo.setMinutes(thirtyMinutesAgo.getMinutes() - 30);
 
-    const expiredRecruitment = await this.dataSource
-      .createQueryBuilder(Recruitment, 'recruitment')
-      .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
-      .andWhere('recruitment.postingEndDate IS NOT NULL')
-      .andWhere('recruitment.postingEndDate < :now', { now })
+    const pendingPayments = await this.dataSource
+      .createQueryBuilder(Payment, 'payment')
+      .leftJoinAndSelect('payment.recruitmentPayments', 'recruitmentPayments')
+      .leftJoinAndSelect('recruitmentPayments.options', 'options')
+      .where('payment.paymentStatus = :paymentStatus', { paymentStatus: PaymentStatus.PAYMENT_PENDING })
+      .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
+      .andWhere('payment.expiresAt < :thirtyMinutesAgo', { thirtyMinutesAgo })
       .getMany();
 
-    this.logger.log(`🔎 마감 대상 채용공고 수: ${expiredRecruitment.length}`);
+    console.log('pendingPayments: ', pendingPayments);
 
-    expiredRecruitment.forEach((recruit) => this.logger.log(`➡️ - 마감일: ${recruit.postingEndDate}`));
-
-    for (const recruitment of expiredRecruitment) {
-      try {
-        await this.dataSource.transaction(async (manager) => {
-          recruitment.recruitmentStatus = RecruitmentStatus.CLOSED;
-          await manager.save(recruitment);
-        });
-
-        this.logger.log(`✅ 성공: 마감 처리된 공고 ID: ${recruitment.id}`);
-      } catch (error) {
-        this.logger.error(`❌ 실패: 공고 ID ${recruitment.id} 마감 처리 중 오류 발생 - ${error.message}`);
-      }
+    if (pendingPayments.length === 0) {
+      console.log('[스케줄러 완료] 대기중 주문서 없음');
+      return;
     }
 
-    this.logger.log('🎯 모든 채용공고 마감 처리 완료');
+    for (const payment of pendingPayments) {
+      payment.paymentStatus = PaymentStatus.PAYMENT_EXPIRED;
+      payment.failureReason = {
+        code: 'PAYMENT_EXPIRED_ORDER',
+        message: '주문 시간 만료 [Scheduler]',
+      };
+
+      await this.dataSource.getRepository(Payment).save(payment);
+    }
+
+    this.logger.log(`🕒 [스케줄러 완료] ${pendingPayments.length}개의 PENDING 결제건을 EXPIRED로 변경 완료`);
+  }
+
+  @Cron('0 0 1,15 * *')
+  async deleteExpiredPayments() {
+    this.logger.log('🕒 [스케줄러 실행] expired 상태의 recruitment를 삭제');
+
+    const expiredPayments = await this.dataSource
+      .createQueryBuilder(Payment, 'payment')
+      .leftJoinAndSelect('payment.recruitmentPayments', 'recruitmentPayments')
+      .leftJoinAndSelect('recruitmentPayments.options', 'options')
+      .where('payment.paymentStatus = :paymentStatus', { paymentStatus: PaymentStatus.PAYMENT_EXPIRED })
+      .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
+      .getMany();
+
+    if (expiredPayments.length === 0) {
+      console.log('[스케줄러 완료] 만료된 주문서 없음');
+      return;
+    }
+
+    // 만료된 recruitmentPayments 먼저 삭제
+    const paymentIds = expiredPayments.map((payment) => payment.id);
+
+    await this.dataSource
+      .createQueryBuilder()
+      .delete()
+      .from(PaymentRecruitment)
+      .where('payment_id IN (:...paymentIds)', { paymentIds })
+      .execute();
+
+    // payment 삭제
+    await this.dataSource
+      .createQueryBuilder()
+      .delete()
+      .from(Payment)
+      .where('id IN (:...paymentIds)', { paymentIds })
+      .execute();
+
+    this.logger.log(`🕒 [스케줄러 완료] ${expiredPayments.length}개의 만료된 주문서 및 관련 데이터 삭제 완료`);
   }
 }

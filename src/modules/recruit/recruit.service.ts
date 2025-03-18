@@ -17,6 +17,22 @@ export class RecruitService {
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
   ) {}
 
+  async progressRecruitIds(): Promise<string[]> {
+    try {
+      const recruitment = await this.recruitmentRepo
+        .createQueryBuilder('recruitment')
+        .select('recruitment.id')
+        .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
+        .getMany();
+
+      console.log('recruitment: ', recruitment);
+
+      return recruitment.map((recruitment) => recruitment.id);
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async premium(filters: RecruitQueryDto) {
     const { page, limit, type, job } = filters;
     try {

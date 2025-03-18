@@ -36,7 +36,7 @@ export class PaymentRecruitmentController {
     @Body() confirmRecruitmentPaymentDto: ConfirmRecruitmentPaymentDto,
   ) {
     const userId = req.user['sub'];
-    return this.paymentRecruitmentService.confirmRecruitmentPaymentDto(confirmRecruitmentPaymentDto, userId);
+    return this.paymentRecruitmentService.confirmRecruitmentPayment(confirmRecruitmentPaymentDto, userId);
   }
 
   @ApiOperation({ summary: '채용상품 무료 승인요청' })
@@ -46,7 +46,7 @@ export class PaymentRecruitmentController {
     @Body() confirmFreeRecruitmentPaymentDto: ConfirmFreeRecruitmentPaymentDto,
   ) {
     const userId = req.user['sub'];
-    return this.paymentRecruitmentService.confirmFreeRecruitmentPaymentDto(confirmFreeRecruitmentPaymentDto, userId);
+    return this.paymentRecruitmentService.confirmFreeRecruitmentPayment(confirmFreeRecruitmentPaymentDto, userId);
   }
 
   @ApiOperation({ summary: '채용상품 사용가능한 쿠폰 목록' })
