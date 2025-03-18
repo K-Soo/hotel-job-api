@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/K-Soo/hotel-job-api/compare/v1.3.0...v1.3.1) (2025-03-18)
+
+
+### Features
+
+* 쿠폰 생성 및 발급 기능 추가, DTO 수정 ([207cf3a](https://github.com/K-Soo/hotel-job-api/commit/207cf3a70259961a1003e8f2448d0a0a2b5e1a41))
+
+
+### Refactors
+
+* 고유 닉네임 생성 로직 개선 및 불필요한 함수 제거 ([36d9ca0](https://github.com/K-Soo/hotel-job-api/commit/36d9ca0fdc5b0c691d039c8c03c5a16a407902ff))
+* 알림 서비스 호출 주석 추가 및 고유 닉네임 생성 로직 개선 ([de31188](https://github.com/K-Soo/hotel-job-api/commit/de31188a12d7d4c8e9307073ed2e6091045c2270))
+* 쿠폰 관련 로직 개선 및 주석 추가 ([94a98b3](https://github.com/K-Soo/hotel-job-api/commit/94a98b344b54bbd29f5d175cadc8e765457047d5))
+
 ## [1.3.0](https://github.com/K-Soo/hotel-job-api/compare/v1.2.2...v1.3.0) (2025-03-18)
 
 
