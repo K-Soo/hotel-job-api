@@ -43,30 +43,34 @@ export class PaymentRecruitmentService {
   ) {}
 
   // 채용 상품 결제 생성
-  initiateRecruitmentPayment(dto: InitiateRecruitmentPaymentDto, userId: string) {
+  async initiateRecruitmentPayment(dto: InitiateRecruitmentPaymentDto, userId: string) {
+    const { recruitmentId } = dto;
+
+    const employer = await this.dataSource.getRepository(Employer).findOne({
+      where: { id: userId },
+      relations: ['membership'],
+    });
+
+    if (!employer) {
+      throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_EMPLOYER);
+    }
+
+    const recruitment = await this.dataSource.getRepository(Recruitment).findOne({
+      where: { id: recruitmentId, employer: { id: userId } },
+    });
+
+    // 검증 - 채용공고 존재
+    if (!recruitment) {
+      throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_RECRUITMENT);
+    }
+
+    // 검증 - 채용공고 상태
+    if (recruitment.recruitmentStatus !== RecruitmentStatus.PUBLISHED) {
+      throw new BadRequestException(customHttpException.PAYMENT_NOT_PUBLISHED_RECRUITMENT);
+    }
+
     return this.dataSource.transaction(async (manager) => {
-      const { recruitmentId } = dto;
       try {
-        const employer = await manager.findOne(Employer, { where: { id: userId }, relations: ['membership'] });
-
-        if (!employer) {
-          throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_EMPLOYER);
-        }
-
-        const recruitment = await manager.findOne(Recruitment, {
-          where: { id: recruitmentId, employer: { id: userId } },
-        });
-
-        // 검증 - 채용공고 존재 하지않음
-        if (!recruitment) {
-          throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_RECRUITMENT);
-        }
-
-        // 검증 - 채용공고 상태
-        if (recruitment.recruitmentStatus !== RecruitmentStatus.PUBLISHED) {
-          throw new BadRequestException(customHttpException.PAYMENT_NOT_PUBLISHED_RECRUITMENT);
-        }
-
         const completedPayment = await manager.findOne(PaymentRecruitment, {
           where: {
             recruitment,
@@ -80,11 +84,11 @@ export class PaymentRecruitmentService {
           throw new BadRequestException(customHttpException.PAYMENT_INVALID_STATUS);
         }
 
-        // 검증 - 상품
         const product = await manager.findOne(RecruitmentProduct, {
           where: { id: dto.id },
         });
 
+        // 검증 - 상품 존재
         if (!product) {
           throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_PRODUCT);
         }
@@ -129,7 +133,6 @@ export class PaymentRecruitmentService {
         // console.log('originalAmount: ', originalAmount);
         // console.log('totalDiscountAmount: ', totalDiscountAmount);
 
-        // Payment 데이터 생성
         const payment = manager.create(Payment, {
           userId,
           originalAmount,
@@ -179,161 +182,146 @@ export class PaymentRecruitmentService {
     });
   }
 
-  // 주문 상세정보
+  /**
+   * 주문 상세정보
+   */
   async getOrderDetails(orderId: string, userId: string) {
-    return this.dataSource.transaction(async (manager) => {
-      try {
-        const payment = await manager.findOne(Payment, {
-          where: { orderId, userId },
-          relations: ['recruitmentPayments', 'recruitmentPayments.recruitment', 'recruitmentPayments.options'],
-        });
+    try {
+      const payment = await this.dataSource.getRepository(Payment).findOne({
+        where: { orderId, userId },
+        relations: ['recruitmentPayments', 'recruitmentPayments.recruitment', 'recruitmentPayments.options'],
+      });
 
-        //주문번호 검증
-        if (!payment) {
-          throw new NotFoundException(customHttpException.PAYMENT_NOT_FOUND_ORDER);
-        }
+      const employer = await this.dataSource.getRepository(Employer).findOne({
+        where: { id: userId },
+        relations: ['membership', 'certification', 'company'],
+      });
 
-        // 주문 금액이 0원 이하인지 확인 (쿠폰 미사용 시 0원 이하면 주문 삭제)
-        if (payment.appliedCouponId === null && payment.totalAmount <= 0) {
-          await manager.remove(payment);
-          await manager.query(`COMMIT`);
-          throw new InternalServerErrorException(customHttpException.PAYMENT_INVALID_TOTAL_AMOUNT);
-        }
-
-        // 결제 상태 확인 (PAYMENT_PENDING이 아니면 예외 처리)
-        if (payment.expiresAt < new Date()) {
-          await manager.remove(payment);
-          await manager.query(`COMMIT`);
-          throw new BadRequestException(customHttpException.PAYMENT_EXPIRED_ORDER);
-        }
-
-        if (payment.paymentStatus === PaymentStatus.PAYMENT_COMPLETED) {
-          throw new BadRequestException(customHttpException.PAYMENT_COMPLETED_STATUS);
-        }
-
-        if (payment.paymentStatus !== PaymentStatus.PAYMENT_PENDING) {
-          throw new BadRequestException(customHttpException.PAYMENT_INVALID_STATUS);
-        }
-
-        // 주문에 포함된 상품이 정상인지 확인
-        if (!payment.recruitmentPayments || payment.recruitmentPayments.length === 0) {
-          throw new InternalServerErrorException(customHttpException.PAYMENT_EMPTY_ORDER_ITEMS);
-        }
-
-        const employer = await manager.findOne(Employer, {
-          where: { id: userId },
-          relations: ['membership', 'certification', 'company'],
-        });
-
-        if (!employer.certification) {
-          throw new UnauthorizedException(customHttpException.PAYMENT_NOT_CERT_USER);
-        }
-
-        // ✅ 8. 적용된 쿠폰 정보 가져오기
-        // let appliedCoupon = null;
-        const couponDiscountAmount = 0;
-
-        // XXX - 보류
-        if (payment.appliedCouponId) {
-          const employerCoupon = await manager.findOne(EmployerCoupon, {
-            where: { id: payment.appliedCouponId, employer: { id: userId } },
-            relations: ['coupon'],
-          });
-
-          // if (employerCoupon) {
-          //   const coupon = employerCoupon.coupon;
-          //   appliedCoupon = {
-          //     id: coupon.id,
-          //     discountType: coupon.discountType,
-          //     discountRate: coupon.discountRate,
-          //     discountAmount: coupon.discountAmount,
-          //     isSingleUse: coupon.isSingleUse,
-          //   };
-
-          //   if (coupon.discountType === DiscountType.PERCENTAGE) {
-          //     couponDiscountAmount = Math.min(originalProductAmount * coupon.discountRate, coupon.maxDiscountAmount || Infinity);
-          //   } else {
-          //     couponDiscountAmount = coupon.discountAmount;
-          //   }
-          // }
-        }
-
-        // 멤버십 할인금액 (10원단위 소수점내림)
-        const membershipDiscountAmount =
-          Math.floor(((payment.originalAmount - payment.discountAmount) * employer.membership.discountRate) / 10) * 10;
-
-        // 총 할인 금액
-        const totalDiscountAmount = payment.totalDiscountAmount;
-
-        // 최종 결제 금액 계산 초기화에서 멤버십 적용
-        const totalAmount = payment.totalAmount;
-
-        const recruitmentItem = payment.recruitmentPayments[0].recruitment;
-        const recruitmentPayment = payment.recruitmentPayments[0];
-
-        // ✅ 9. 주문 정보 응답
-        return {
-          orderId: payment.orderId,
-          paymentStatus: payment.paymentStatus,
-          expiresAt: payment.expiresAt,
-          appliedCouponId: payment.appliedCouponId,
-          certificationInfo: {
-            phone: employer.certification.phone_no,
-            userName: employer.certification.user_name,
-            managerEmail: employer.company.managerEmail,
-          },
-          amountInfo: {
-            originalAmount: payment.originalAmount,
-            discountAmount: payment.discountAmount, // 상품 할인
-
-            membershipDiscountAmount, // 멤버십 할인금액
-            membershipDiscountRate: employer.membership.discountRate, // 멤버십 할인율
-            couponDiscountAmount: payment.couponDiscountAmount, // 쿠폰 할인금액
-            totalDiscountAmount, // 전체 할인 금액 (상품 할인 + 멤버십 할인)
-
-            TotalAmount: totalAmount, // 최종 결제 금액
-          },
-          recruitmentInfo: {
-            id: recruitmentItem.id,
-            recruitmentTitle: recruitmentItem.recruitmentTitle,
-            jobs: recruitmentItem.jobs,
-            createdAt: recruitmentItem.createdAt,
-          },
-          productInfo: {
-            id: recruitmentPayment.id,
-            name: recruitmentPayment.name,
-            type: recruitmentPayment.type,
-            duration: recruitmentPayment.duration,
-            bonusDays: recruitmentPayment.bonusDays,
-            price: recruitmentPayment.price,
-            discountRate: recruitmentPayment.discountRate,
-            options: recruitmentPayment.options.map((option) => ({
-              id: option.id,
-              name: option.name,
-              duration: option.duration,
-              bonusDays: option.bonusDays,
-              price: option.price,
-              maxListUpPerDay: option.maxListUpPerDay,
-              listUpIntervalHours: option.listUpIntervalHours,
-              tags: option.tags,
-            })),
-          },
-        };
-      } catch (error) {
-        this.logger.error(`PAYMENT DETAIL ERROR: ${error.message}`);
-        if (error instanceof HttpException) {
-          throw error;
-        }
-
-        throw new InternalServerErrorException();
+      // 검증 - 본인인증 여부
+      if (!employer.certification) {
+        throw new UnauthorizedException(customHttpException.PAYMENT_NOT_CERT_USER);
       }
-    });
+
+      // 검증 - 주문번호
+      if (!payment) {
+        throw new NotFoundException(customHttpException.PAYMENT_NOT_FOUND_ORDER);
+      }
+
+      // 검증 - 쿠폰 미 사용 & 주문 금액 음수값
+      if (payment.appliedCouponId === null && payment.totalAmount <= 0) {
+        payment.paymentStatus = PaymentStatus.PAYMENT_FAILED;
+        payment.failureReason = {
+          code: 'INVALID_TOTAL_AMOUNT',
+          message: '주문 금액이 0원 이하입니다.',
+        };
+        await this.dataSource.getRepository(Payment).save(payment);
+
+        throw new InternalServerErrorException(customHttpException.PAYMENT_INVALID_TOTAL_AMOUNT);
+      }
+
+      // 검증 - 결제 상태 (주문 만료 30분 초과시 해당 주문 삭제 및 에러 응답)
+      if (payment.expiresAt < new Date()) {
+        payment.paymentStatus = PaymentStatus.PAYMENT_EXPIRED;
+
+        payment.failureReason = {
+          code: 'PAYMENT_EXPIRED_ORDER',
+          message: '주문 시간 만료',
+        };
+        await this.dataSource.getRepository(Payment).save(payment);
+
+        throw new BadRequestException(customHttpException.PAYMENT_EXPIRED_ORDER);
+      }
+
+      // 검증 - 결제 상태 (결제 완료 에러 응답)
+      if (payment.paymentStatus === PaymentStatus.PAYMENT_COMPLETED) {
+        throw new BadRequestException(customHttpException.PAYMENT_COMPLETED_STATUS);
+      }
+
+      // 결제 상태 (PAYMENT_PENDING 아닐 경우 에러 응답)
+      if (payment.paymentStatus !== PaymentStatus.PAYMENT_PENDING) {
+        throw new BadRequestException(customHttpException.PAYMENT_INVALID_STATUS);
+      }
+
+      // 검증 - 주문에 포함된 상품이 정상인지 확인
+      if (!payment.recruitmentPayments || payment.recruitmentPayments.length === 0) {
+        throw new InternalServerErrorException(customHttpException.PAYMENT_EMPTY_ORDER_ITEMS);
+      }
+
+      // 멤버십 할인금액 (10원단위 소수점내림)
+      const membershipDiscountAmount =
+        Math.floor(((payment.originalAmount - payment.discountAmount) * employer.membership.discountRate) / 10) * 10;
+
+      // 총 할인 금액
+      const totalDiscountAmount = payment.totalDiscountAmount;
+
+      // 최종 결제 금액 계산 초기화에서 멤버십 적용
+      const totalAmount = payment.totalAmount;
+
+      const recruitmentItem = payment.recruitmentPayments[0].recruitment;
+      const recruitmentPayment = payment.recruitmentPayments[0];
+
+      return {
+        orderId: payment.orderId,
+        paymentStatus: payment.paymentStatus,
+        expiresAt: payment.expiresAt,
+        appliedCouponId: payment.appliedCouponId,
+        certificationInfo: {
+          phone: employer.certification.phone_no,
+          userName: employer.certification.user_name,
+          managerEmail: employer.company.managerEmail,
+        },
+        amountInfo: {
+          originalAmount: payment.originalAmount,
+          discountAmount: payment.discountAmount, // 상품 할인
+
+          membershipDiscountAmount, // 멤버십 할인금액
+          membershipDiscountRate: employer.membership.discountRate, // 멤버십 할인율
+          couponDiscountAmount: payment.couponDiscountAmount, // 쿠폰 할인금액
+          totalDiscountAmount, // 전체 할인 금액 (상품 할인 + 멤버십 할인)
+
+          TotalAmount: totalAmount, // 최종 결제 금액
+        },
+        recruitmentInfo: {
+          id: recruitmentItem.id,
+          recruitmentTitle: recruitmentItem.recruitmentTitle,
+          jobs: recruitmentItem.jobs,
+          createdAt: recruitmentItem.createdAt,
+        },
+        productInfo: {
+          id: recruitmentPayment.id,
+          name: recruitmentPayment.name,
+          type: recruitmentPayment.type,
+          duration: recruitmentPayment.duration,
+          bonusDays: recruitmentPayment.bonusDays,
+          price: recruitmentPayment.price,
+          discountRate: recruitmentPayment.discountRate,
+          options: recruitmentPayment.options.map((option) => ({
+            id: option.id,
+            name: option.name,
+            duration: option.duration,
+            bonusDays: option.bonusDays,
+            price: option.price,
+            maxListUpPerDay: option.maxListUpPerDay,
+            listUpIntervalHours: option.listUpIntervalHours,
+            tags: option.tags,
+          })),
+        },
+      };
+    } catch (error) {
+      console.error(`getOrderDetails Error: ${error.message}`);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 
   /**
    * 결제 승인 요청
    */
-  async confirmRecruitmentPaymentDto(confirmRecruitmentPaymentDto: ConfirmRecruitmentPaymentDto, userId: string) {
+  async confirmRecruitmentPayment(confirmRecruitmentPaymentDto: ConfirmRecruitmentPaymentDto, userId: string) {
     const { amount, orderId, paymentKey } = confirmRecruitmentPaymentDto;
 
     return this.dataSource.transaction(async (manager) => {
@@ -357,10 +345,12 @@ export class PaymentRecruitmentService {
         throw new BadRequestException(customHttpException.PAYMENT_ORDER_ALREADY_PROCESSED);
       }
 
+      // 검증 - 주문번호
       if (payment.orderId !== orderId) {
         throw new BadRequestException(customHttpException.PAYMENT_ORDER_TAMPERING_DETECTED);
       }
 
+      // 검증 - toss 결제 금액
       if (payment.totalAmount !== amount) {
         throw new BadRequestException(customHttpException.PAYMENT_AMOUNT_TAMPERING_DETECTED);
       }
@@ -416,7 +406,7 @@ export class PaymentRecruitmentService {
         payment.paymentMethod = paymentResult.method;
         await manager.save(payment);
 
-        // 쿠폰 사용 처리
+        // --- 쿠폰 사용 처리 ---
         if (payment.appliedCouponId) {
           const targetCoupon = await manager.findOne(EmployerCoupon, {
             where: { id: payment.appliedCouponId, employer: { id: userId } },
@@ -433,10 +423,11 @@ export class PaymentRecruitmentService {
 
           targetCoupon.isUsed = true;
           targetCoupon.usedAt = new Date();
+
           await manager.save(targetCoupon);
         }
 
-        // 포인트 적립
+        // --- 포인트 적립 ---
         const earnedPoint = Math.floor(payment.totalAmount * POINT_RATE);
 
         const pointTransaction = manager.create(PointTransaction, {
@@ -451,6 +442,8 @@ export class PaymentRecruitmentService {
         employer.totalPoint += earnedPoint;
         await manager.save(pointTransaction);
         await manager.save(employer);
+
+        // --- 멤버십 점수 적립 ---
 
         // 기존 멤버십 저장
         const previousMembership = employer.membership;
@@ -471,8 +464,8 @@ export class PaymentRecruitmentService {
         }
 
         // 채용공고 상태 변경, 게시기간 설정
-        for (const recruitmentPayment of payment.recruitmentPayments) {
-          const recruitment = recruitmentPayment.recruitment;
+        for (const recruitmentPaymentItem of payment.recruitmentPayments) {
+          const recruitment = recruitmentPaymentItem.recruitment;
 
           if (!recruitment) {
             continue;
@@ -482,7 +475,7 @@ export class PaymentRecruitmentService {
             continue;
           }
 
-          const isListUpProduct = recruitmentPayment.options.some(
+          const isListUpProduct = recruitmentPaymentItem.options.some(
             (option) => option.name === RecruitmentProductOptionName.LIST_UP,
           );
 
@@ -491,14 +484,14 @@ export class PaymentRecruitmentService {
           recruitment.isListUp = isListUpProduct;
 
           const { startDate, endDate } = calculatePostingPeriod(
-            recruitmentPayment.duration,
-            recruitmentPayment.bonusDays,
+            recruitmentPaymentItem.duration,
+            recruitmentPaymentItem.bonusDays,
           );
 
           recruitment.postingStartDate = startDate;
           recruitment.postingEndDate = endDate;
 
-          const updatedOptions = recruitmentPayment.options.map((option) => {
+          const updatedOptions = recruitmentPaymentItem.options.map((option) => {
             const { startDate: optionStartDate, endDate: optionEndDate } = calculatePostingPeriod(
               option.duration,
               option.bonusDays,
@@ -537,11 +530,10 @@ export class PaymentRecruitmentService {
           },
         };
       } catch (error) {
-        console.log('error: ', error.message);
         if (error.response?.data?.code) {
           const errorCode = error.response.data.code;
           const errorMessage = error.response.data.message;
-          this.logger.error(`❌ Payment Error - Code: ${errorCode}, Message: ${errorMessage}`);
+          this.logger.error(`Payment Conform Error - Code: ${errorCode}, Message: ${errorMessage}`);
 
           // 실패 처리 로직 별도 트랜잭션으로 저장
           await this.dataSource.transaction(async (innerManager) => {
@@ -561,7 +553,7 @@ export class PaymentRecruitmentService {
         }
 
         if (error instanceof HttpException) {
-          throw error; // 상위 레이어 에러는 그대로 throw
+          throw error;
         }
 
         throw new BadRequestException(customHttpException.PAYMENT_CONFIRM_FAILED);
@@ -570,9 +562,9 @@ export class PaymentRecruitmentService {
   }
 
   /**
-   * 무료 승인 요청
+   * 쿠폰사용 결제금액 0원 승인요청
    */
-  async confirmFreeRecruitmentPaymentDto(
+  async confirmFreeRecruitmentPayment(
     confirmFreeRecruitmentPaymentDto: ConfirmFreeRecruitmentPaymentDto,
     userId: string,
   ) {
@@ -599,41 +591,48 @@ export class PaymentRecruitmentService {
         throw new BadRequestException(customHttpException.PAYMENT_ORDER_ALREADY_PROCESSED);
       }
 
+      if (payment.paymentStatus !== PaymentStatus.PAYMENT_PENDING) {
+        throw new BadRequestException(customHttpException.PAYMENT_INVALID_STATUS);
+      }
+
       if (payment.orderId !== orderId) {
-        throw new BadRequestException(customHttpException.PAYMENT_ORDER_TAMPERING_DETECTED);
+        throw new BadRequestException(customHttpException.PAYMENT_NOT_FOUND_ORDER);
       }
 
       if (payment.totalAmount !== amount) {
-        throw new BadRequestException(customHttpException.PAYMENT_AMOUNT_TAMPERING_DETECTED);
+        throw new BadRequestException(customHttpException.PAYMENT_INVALID_TOTAL_AMOUNT);
+      }
+
+      if (payment.totalAmount !== 0) {
+        throw new BadRequestException(customHttpException.PAYMENT_INVALID_TOTAL_AMOUNT);
+      }
+
+      if (payment.appliedCouponId === null) {
+        throw new BadRequestException(customHttpException.COUPON_NOT_APPLIED);
       }
 
       try {
-        // 무료 결제
-        if (payment.totalAmount === 0) {
-          payment.paymentStatus = PaymentStatus.PAYMENT_COMPLETED;
-          payment.paymentMethod = '쿠폰';
-          await manager.save(payment);
-        }
+        payment.paymentStatus = PaymentStatus.PAYMENT_COMPLETED;
+        payment.paymentMethod = '쿠폰';
+        await manager.save(payment);
 
         // 쿠폰 사용 처리
-        if (payment.appliedCouponId) {
-          const targetCoupon = await manager.findOne(EmployerCoupon, {
-            where: { id: payment.appliedCouponId, employer: { id: userId } },
-            relations: ['coupon'],
-          });
+        const targetCoupon = await manager.findOne(EmployerCoupon, {
+          where: { id: payment.appliedCouponId, employer: { id: userId } },
+          relations: ['coupon'],
+        });
 
-          if (!targetCoupon) {
-            throw new BadRequestException(customHttpException.COUPON_NOT_FOUND);
-          }
-
-          if (targetCoupon.isUsed) {
-            throw new BadRequestException(customHttpException.COUPON_ALREADY_USED);
-          }
-
-          targetCoupon.isUsed = true;
-          targetCoupon.usedAt = new Date();
-          await manager.save(targetCoupon);
+        if (!targetCoupon) {
+          throw new BadRequestException(customHttpException.COUPON_NOT_FOUND);
         }
+
+        if (targetCoupon.isUsed) {
+          throw new BadRequestException(customHttpException.COUPON_ALREADY_USED);
+        }
+
+        targetCoupon.isUsed = true;
+        targetCoupon.usedAt = new Date();
+        await manager.save(targetCoupon);
 
         // 채용공고 상태 변경, 게시기간 설정
         for (const recruitmentPayment of payment.recruitmentPayments) {
@@ -702,11 +701,10 @@ export class PaymentRecruitmentService {
           },
         };
       } catch (error) {
-        console.log('error: ', error.message);
         if (error.response?.data?.code) {
           const errorCode = error.response.data.code;
           const errorMessage = error.response.data.message;
-          this.logger.error(`❌ Payment Error - Code: ${errorCode}, Message: ${errorMessage}`);
+          this.logger.error(`Payment Conform Error - Code: ${errorCode}, Message: ${errorMessage}`);
 
           // 실패 처리 로직 별도 트랜잭션으로 저장
           await this.dataSource.transaction(async (innerManager) => {
