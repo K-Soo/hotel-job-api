@@ -26,10 +26,6 @@ import { Membership } from '../../membership/entities/membership.entity';
 import { EmployerCoupon } from '../../../modules/coupon/entities/employer-coupon.entity';
 import { PointTransaction } from '../../point/entities/point-transaction.entity';
 
-function generateRandom10Digit(): string {
-  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-}
-
 @Entity()
 export class Employer {
   @ManyToOne(() => Membership, (membership) => membership.employers)
@@ -92,7 +88,7 @@ export class Employer {
 
   @BeforeInsert()
   async generateUniqueNickname() {
-    const randomNumber = generateRandom10Digit();
+    const randomNumber = this.generateUniqueNickname();
     this.nickname = `${randomNumber}`;
   }
 

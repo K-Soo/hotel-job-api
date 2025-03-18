@@ -632,6 +632,7 @@ export class PaymentRecruitmentService {
 
         targetCoupon.isUsed = true;
         targetCoupon.usedAt = new Date();
+
         await manager.save(targetCoupon);
 
         // 채용공고 상태 변경, 게시기간 설정
@@ -751,6 +752,7 @@ export class PaymentRecruitmentService {
 
       const ownedCoupons = await manager.find(EmployerCoupon, {
         where: { employer: { id: userId } },
+        order: { createdAt: 'DESC' },
         relations: ['coupon'],
       });
 
@@ -778,8 +780,8 @@ export class PaymentRecruitmentService {
           reason = `최소 결제 금액이 충족되지 않습니다.`;
         }
 
+        // 사용 불가능한 쿠폰
         if (reason) {
-          // 사용 불가능한 쿠폰
           unavailableCoupons.push({
             id: item.id,
             description: item.description,
@@ -793,8 +795,9 @@ export class PaymentRecruitmentService {
             reason, // 사용 불가능한 사유
           });
         }
+
+        // 사용 가능한 쿠폰
         if (!reason) {
-          // 사용 가능한 쿠폰
           availableCoupons.push({
             id: item.id,
             description: item.description,
@@ -862,6 +865,7 @@ export class PaymentRecruitmentService {
 
       let couponDiscountAmount = 0;
 
+      // 정액 할인
       if (targetCoupon.coupon.discountType === DiscountType.FIXED) {
         couponDiscountAmount = targetCoupon.coupon.discountAmount;
       }
@@ -889,7 +893,7 @@ export class PaymentRecruitmentService {
         updateTotalAmount = payment.totalAmount - couponDiscountAmount;
       }
 
-      // !!! 최종 결제 금액이 음수로 내려갈 경우 무료 결제로 처리
+      // !!! 최종 결제 금액이 음수값일때 무료 결제로 처리
       if (updateTotalAmount < 0) {
         updateTotalAmount = 0;
       }

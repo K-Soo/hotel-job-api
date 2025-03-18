@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Coupon } from './entities/coupon.entity';
@@ -8,10 +8,16 @@ import { COUPON_CODE_LIST, COUPON_DESCRIPTION } from '../../common/constants/cou
 import { dateFormat } from '../../common/utils/dateFormat';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { CreateEmployerCouponDto } from './dto/create-employer-coupon.dto';
+import { ConfigService } from '@nestjs/config';
+import { NotificationService } from '../notifications/notifications.service';
+import { CategoryType, NotificationType } from '../../common/constants/notification';
+import { CreateCouponDto } from './dto/create-coupon.dto';
 
 @Injectable()
 export class CouponService {
   constructor(
+    private readonly notificationService: NotificationService,
+    private readonly configService: ConfigService,
     @InjectRepository(Coupon)
     private readonly couponRepo: Repository<Coupon>,
     @InjectRepository(EmployerCoupon)
@@ -89,25 +95,70 @@ export class CouponService {
   }
 
   /**
-   * 특정 사용자에게 수동으로 쿠폰 발급
+   * 쿠폰 생성
    */
-  async assignCouponToEmployer(dto: CreateEmployerCouponDto) {
-    const { employerId, couponCode, description, expiresAt } = dto;
+  async createCoupon(createCouponDto: CreateCouponDto) {
+    const { employerUserId, secretKey } = createCouponDto;
 
-    // 1️. 사용자 존재 여부 확인
-    const employer = await this.employerRepo.findOne({ where: { id: employerId } });
+    const adminSecretKey = this.configService.get('ADMIN_SECRET_KEY');
+
+    if (adminSecretKey !== secretKey) {
+      throw new UnauthorizedException('인증 실패');
+    }
+
+    const employer = await this.employerRepo.findOne({ where: { userId: employerUserId } });
+
     if (!employer) {
       throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
     }
 
-    // 2️. 쿠폰 존재 여부 확인
+    const coupon = await this.couponRepo.findOne({ where: { code: createCouponDto.code } });
+
+    if (coupon) {
+      throw new NotFoundException('이미 존재하는 쿠폰 코드입니다.');
+    }
+
+    const create = this.couponRepo.create({
+      code: createCouponDto.code,
+      discountType: createCouponDto.discountType,
+      discountRate: createCouponDto.discountRate,
+      discountAmount: createCouponDto.discountAmount,
+      minOrderAmount: createCouponDto.minOrderAmount,
+      maxDiscountAmount: createCouponDto.maxDiscountAmount,
+      isSingleUse: createCouponDto.isSingleUse,
+      isPublic: createCouponDto.isPublic,
+    });
+
+    await this.couponRepo.save(create);
+
+    return { status: ResponseStatus.SUCCESS };
+  }
+
+  /**
+   * 특정 사용자에게 수동으로 쿠폰 발급
+   */
+  async assignCouponToEmployer(createEmployerCouponDto: CreateEmployerCouponDto) {
+    const { employerUserId, couponCode, description, expiresAt, secretKey } = createEmployerCouponDto;
+
+    const adminSecretKey = this.configService.get('ADMIN_SECRET_KEY');
+
+    if (adminSecretKey !== secretKey) {
+      throw new UnauthorizedException('인증 실패');
+    }
+
+    const employer = await this.employerRepo.findOne({ where: { userId: employerUserId } });
+
+    if (!employer) {
+      throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
+    }
+
     const coupon = await this.couponRepo.findOne({ where: { code: couponCode } });
 
     if (!coupon) {
       throw new NotFoundException('해당 쿠폰을 찾을 수 없습니다.');
     }
 
-    // 3 이미 발급된 쿠폰인지 확인 관리자권한 중복쿠폰 발급가능
+    // 관리자권한으로 수동 발급은 중복 허용할까
     // const existingCoupon = await this.employerCouponRepo.findOne({
     //   where: { employer, coupon },
     // });
@@ -126,6 +177,15 @@ export class CouponService {
     });
 
     await this.employerCouponRepo.save(createdCoupon);
+
+    await this.notificationService.sendNotification({
+      category: CategoryType.EVENT,
+      title: '',
+      link: `/employer/coupon`,
+      userIds: [employer.id],
+      message: `${description}이 발급되었습니다.`,
+      notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
+    });
 
     return { status: ResponseStatus.SUCCESS };
   }
