@@ -2,7 +2,6 @@ import { Controller, Post, UseGuards, Req, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { Request, Response } from 'express';
-import { RequestUser } from './interfaces/user.interface';
 import { ConfigService } from '@nestjs/config';
 import { parseTimeToMs } from '../../common/utils/parseTimeToMs';
 import { Applicant } from '../../modules/applicants/entities/applicant.entity';
@@ -17,7 +16,6 @@ export class OauthController {
   @UseGuards(AuthGuard('kakao-custom'))
   async kakaoSignIn(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as Applicant;
-    // console.log('@@@@@@@', user.constructor.name === 'Applicant');
 
     const accessToken = await this.authService.generateAccessToken(user.id, user.provider, user.role);
     const refreshToken = await this.authService.generateRefreshToken(user.id, user.provider);

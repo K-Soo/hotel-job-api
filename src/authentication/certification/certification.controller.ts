@@ -1,18 +1,7 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  UseGuards,
-  Req,
-  NotFoundException,
-  Logger,
-  Res,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, UseGuards, Req, NotFoundException, Logger } from '@nestjs/common';
 import { CertificationService } from './certification.service';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { VerifyDto } from './dto/verify..dto';
 import { PassportJwtGuard } from '../auth/guards/passport-jwt.guard';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
