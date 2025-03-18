@@ -13,15 +13,10 @@ export class CouponScheduler {
 
   constructor(private readonly dataSource: DataSource) {}
 
-  // 매일 자정에 실행
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async expireCoupons() {
-    this.logger.log('🕒 [스케줄러 시작] 매일 자정 만료된 쿠폰 정리');
+    this.logger.log('🕒 [스케줄러 시작] 만료된 쿠폰 정리');
     const now = new Date();
-
-    // test 한 달 추가 후 마지막 날 계산
-    // const nextMonthLastDay = moment(currentLastDay).add(1, 'month').endOf('month').toDate();
-    // console.log('다음 달 마지막 날:', nextMonthLastDay);
 
     await this.dataSource
       .createQueryBuilder()
@@ -31,17 +26,15 @@ export class CouponScheduler {
       .andWhere('expiresAt <= :now', { now })
       .execute();
 
-    this.logger.log('🕒 [스케줄러 종료] 매일 자정 만료된 쿠폰 정리');
+    this.logger.log('🕒 [스케줄러 종료] 만료된 쿠폰 정리');
   }
 
-  // 매달 1일 자정 멤버십 등급에 맞는 쿠폰 자동 발급
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   async assignMonthlyCoupons() {
-    this.logger.log('🕒 [스케줄러 시작] 매달 1일 쿠폰 발급');
+    this.logger.log('🕒 [스케줄러 시작] 매달 1일 멤버십 등급에 맞는 쿠폰 발급');
 
     try {
       await this.dataSource.transaction(async (transactionManager) => {
-        // 1️. 모든 Employer 조회
         const employers = await transactionManager.find(Employer, {
           relations: ['membership'],
         });
@@ -58,7 +51,7 @@ export class CouponScheduler {
             continue;
           }
 
-          // 2. 멤버십 등급에 해당하는 쿠폰 찾기 (예: BRONZE → BRONZE_1000)
+          // 멤버십 등급에 해당하는 쿠폰 찾기 (예: BRONZE → BRONZE_1000)
           const couponCode = MONTHLY_COUPON_CODE[membershipLevel];
 
           const coupon = await transactionManager.findOne(Coupon, {
@@ -70,8 +63,7 @@ export class CouponScheduler {
             continue;
           }
 
-          // 3️. 이미 해당 월에 발급된 쿠폰인지 확인
-          // 해당 월에 이미 발급된 경우
+          // 이미 해당 월에 발급된 쿠폰인지 확인
           const existingCoupon = await transactionManager.findOne(EmployerCoupon, {
             where: {
               employer: { id: employer.id },
@@ -85,7 +77,6 @@ export class CouponScheduler {
             continue;
           }
 
-          // 4️. 쿠폰 발급
           const employerCoupon = transactionManager.create(EmployerCoupon, {
             employer,
             coupon,
@@ -100,7 +91,7 @@ export class CouponScheduler {
           this.logger.log(
             `🎁 쿠폰 발급 완료: ${employer.nickname} (쿠폰 코드: ${coupon.code}) (만료일: ${lastDayOfMonth})`,
           );
-          this.logger.log('🕒 [스케줄러 종료] 매달 1일 쿠폰 발급');
+          this.logger.log('🕒 [스케줄러 종료] 매달 1일 멤버십 등급에 맞는 쿠폰 발급');
         }
       });
     } catch (error) {
