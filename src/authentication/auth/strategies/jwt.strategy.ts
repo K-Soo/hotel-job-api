@@ -8,7 +8,7 @@ import { customHttpException } from '../../../common/constants/custom-http-excep
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
-//리턴값을 주지않으면 401에러 생김 주의
+// 리턴값을 주지않으면 401에러 생김 주의
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -18,17 +18,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: (req: Request): string => {
         const refreshToken = req.cookies?.['refresh_token'];
-        //토큰 없을 경우만 검사 - 미들웨어에서 토큰이 있다면 만료, 위변조 검사했기 때문에 여기서는 검사하지 않음
+        //토큰 없을 경우만 검사 - refresh token 미들웨어에서 토큰이 있다면 만료 및 위변조 검사했기 때문에 여기서는 검사하지 않음
         if (!refreshToken) {
           throw new ForbiddenException(customHttpException.REFRESH_TOKEN_MISSING);
         }
+
         const token: string | null = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+
+        // 토큰이 없을 경우 커스텀 에러 발생
         if (!token) {
           throw new UnauthorizedException(customHttpException.ACCESS_TOKEN_MISSING);
         }
+
         return token;
       },
-      ignoreExpiration: true, // false: return 401, true: next validate func
+      ignoreExpiration: true, // false: return 401, true: next validate func - 커스텀 예외처리 하기위해 true로 설정
       secretOrKey: configService.get('JWT_ACCESS_SECRET'),
       passReqToCallback: true, // Request 객체에 접근할 수 있도록 설정
     });
