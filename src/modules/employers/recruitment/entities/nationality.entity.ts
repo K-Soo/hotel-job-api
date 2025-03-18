@@ -1,14 +1,4 @@
-import {
-  BeforeInsert,
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToOne,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  JoinColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { Recruitment } from './recruitment.entity';
 
 @Entity('recruitment_nationality')
