@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/K-Soo/hotel-job-api/compare/v1.2.2...v1.3.0) (2025-03-18)
+
+
+### Features
+
+* 결제 스케줄러에 만료된 결제 처리 및 삭제 기능 추가 ([33fa03b](https://github.com/K-Soo/hotel-job-api/commit/33fa03bbc13a022cb6bb362a8e2f8daa8d31f1bc))
+* 쿠폰 스케줄러의 로그 메시지 개선 및 코드 주석 정리 ([7ec0d42](https://github.com/K-Soo/hotel-job-api/commit/7ec0d4235be681adfa547d85a5085a34cddedacf))
+* JWT 전략에서 토큰 검사 로직 주석 개선 및 커스텀 예외 처리 설명 추가 ([83562d5](https://github.com/K-Soo/hotel-job-api/commit/83562d5dd6219754acf3b77269500cd707369ff9))
+* MembershipSeeder에서 불필요한 주석 제거 및 upsert 로직 간소화 ([86597e9](https://github.com/K-Soo/hotel-job-api/commit/86597e945fb0b15436e530a83a4274ffd36ccbdf))
+* RecruitmentMainProductSeeder에서 상품 데이터 정의를 상수화하여 코드 간소화 ([e28dd69](https://github.com/K-Soo/hotel-job-api/commit/e28dd69913a066dfac4359620da9ac28e1db8788))
+* RecruitmentScheduler 추가 및 채용 공고 관리 기능 구현 ([22b8fbb](https://github.com/K-Soo/hotel-job-api/commit/22b8fbb85909d40370848d3739c43311e62caa36))
+* RecruitmentScheduler를 SchedulerModule에 추가 ([0641452](https://github.com/K-Soo/hotel-job-api/commit/0641452c5e7b2c636bafa273cfeea26f288db9e5))
+* RecruitService에 진행 중인 채용 ID를 반환하는 메서드 추가 ([abf6ccc](https://github.com/K-Soo/hotel-job-api/commit/abf6cccf0a3e7c143ca45262d767b4a40a61cd4a))
+* RefreshTokenMiddleware에서 토큰 검증 로직 주석 개선 및 흐름 설명 추가 ([d048d98](https://github.com/K-Soo/hotel-job-api/commit/d048d98143333c6737fe97a0ac426ca892d5a337))
+
+
+### Bug Fixes
+
+* 불필요한 OnModuleInit 임포트 제거 ([74f1635](https://github.com/K-Soo/hotel-job-api/commit/74f16359fd575bd931654acf1bfd9c9b7e55a222))
+* confirmRecruitmentPaymentDto 메서드 이름 수정 ([57f26c5](https://github.com/K-Soo/hotel-job-api/commit/57f26c5a1714aaef4e3325c8b5449916da932ea7))
+
+
+### Refactors
+
+* 코드 상수화 및 이동 ([cb6b3b0](https://github.com/K-Soo/hotel-job-api/commit/cb6b3b0b32c154587d952697ed5ce6bf8e4c4d4e))
+* 코드 최적화 및 주석 개선 ([ccaaa49](https://github.com/K-Soo/hotel-job-api/commit/ccaaa4921f3e08c09a8757a64b641f901a1983c6))
+* 쿠폰 스케줄러 로그 메시지 개선 및 주석 정리 ([210eb3b](https://github.com/K-Soo/hotel-job-api/commit/210eb3b0ec36e76cad058f511c0f91057b168cb7))
+
 ### [1.2.2](https://github.com/K-Soo/hotel-job-api/compare/v1.2.1...v1.2.2) (2025-03-15)
 
 
