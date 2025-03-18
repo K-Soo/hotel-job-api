@@ -46,6 +46,7 @@ export class ApplicationsController {
 
     const application = await this.applicationsService.applyResume(applyResumeDto, applicant);
 
+    // 일반유저 알람
     await this.notificationService.sendNotification({
       category: CategoryType.APPLICANT,
       title: '',
@@ -55,6 +56,7 @@ export class ApplicationsController {
       notificationType: [NotificationType.IN_APP],
     });
 
+    // 사업자 알람
     await this.notificationService.sendNotification({
       category: CategoryType.APPLICANT,
       title: `${application.recruitmentSnapshot.hotelName}`,
