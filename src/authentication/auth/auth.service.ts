@@ -7,8 +7,7 @@ import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { DataSource } from 'typeorm';
-import { Employer } from '../../modules/employers/entities/employer.entity';
-import { Applicant } from '../../modules/applicants/entities/applicant.entity';
+
 @Injectable()
 export class AuthService {
   constructor(
