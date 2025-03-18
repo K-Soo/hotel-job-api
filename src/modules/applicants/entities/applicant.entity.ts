@@ -15,10 +15,6 @@ import { Resume } from '../../resumes/entities/resume.entity';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
 import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
 
-function generateRandom10Digit(): string {
-  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-}
-
 @Entity('applicant')
 export class Applicant {
   @OneToOne(() => Consent, (consent) => consent.applicant)
@@ -59,12 +55,12 @@ export class Applicant {
   @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.ACTIVE })
   accountStatus: AccountStatus;
 
-  @Column({ unique: true, default: generateRandom10Digit() })
+  @Column({ unique: true })
   nickname: string;
 
   @BeforeInsert()
   async generateUniqueNickname() {
-    const randomNumber = generateRandom10Digit();
+    const randomNumber = this.generateUniqueNickname();
     this.nickname = `${randomNumber}`;
   }
 
@@ -74,4 +70,8 @@ export class Applicant {
   @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
+
+  static generateRandom10Digit(): string {
+    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+  }
 }
