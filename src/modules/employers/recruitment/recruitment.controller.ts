@@ -142,4 +142,16 @@ export class RecruitmentController {
 
     return this.recruitmentService.closedRecruitment(recruitmentId, userId);
   }
+
+  @ApiOperation({ summary: '채용공고 복사' })
+  @Patch('/copy')
+  copyRecruitment(@Req() req: Request, @Body('recruitmentId') recruitmentId: string) {
+    if (!recruitmentId) {
+      throw new BadRequestException('Invalid recruitment ID. Provide a valid recruitment ID.');
+    }
+
+    const userId = req.user['sub'];
+
+    return this.recruitmentService.copyRecruitment(recruitmentId, userId);
+  }
 }

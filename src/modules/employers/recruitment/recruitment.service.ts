@@ -1,24 +1,20 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRecruitmentDto } from './dto/create-recruitment.dto';
 import { DraftRecruitmentDto } from './dto/draft-recruitment.dto';
-import { UpdateRecruitmentDto } from './dto/update-recruitment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recruitment } from './entities/recruitment.entity';
 import { Repository } from 'typeorm';
 import { RecruitmentStatus, RecruitmentQueryStatus } from '../../../common/constants/recruitment';
 import { dateFormat } from '../../../common/utils/dateFormat';
 import { RecruitmentQueryDto } from './dto/recruitment-query.dto';
-import { paginate, IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { formatPagination } from '../../../common/helpers/pagination.helper';
-import { CryptoService } from '../../../providers/crypto/crypto.service';
 import { customHttpException } from '../../../common/constants/custom-http-exception';
 import { Employer } from '../../employers/entities/employer.entity';
 import { DataSource, In } from 'typeorm';
 import { Nationality } from './entities/nationality.entity';
 import { ResponseStatus } from '../../../common/constants/responseStatus';
-import { isEqual } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { PaymentStatus } from '../../../common/constants/payment';
-import { PaymentRecruitment } from '../../payment/payment-recruitment/entities/payment-recruitment.entity';
+
 @Injectable()
 export class RecruitmentService {
   constructor(
@@ -26,7 +22,18 @@ export class RecruitmentService {
     private readonly dataSource: DataSource,
   ) {}
 
-  create(createRecruitmentDto: CreateRecruitmentDto, employer: Employer) {
+  /**
+   * 채용공고 생성
+   */
+  async create(createRecruitmentDto: CreateRecruitmentDto, employer: Employer) {
+    const recruitmentCount = await this.recruitmentRepo.count({
+      where: { employer: { id: employer.userId } },
+    });
+
+    if (recruitmentCount >= 100) {
+      throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+    }
+
     return this.dataSource.transaction(async (manager) => {
       const { recruitmentInfo } = createRecruitmentDto;
       const { nationality, ...restRecruitmentInfo } = recruitmentInfo;
@@ -85,7 +92,9 @@ export class RecruitmentService {
     });
   }
 
-  // update - 등록된 채용공고 수정
+  /**
+   *  채용공고 수정
+   */
   update(createRecruitmentDto: CreateRecruitmentDto, userUuid: string) {
     const { recruitmentInfo } = createRecruitmentDto;
     return this.dataSource.transaction(async (manager) => {
@@ -118,9 +127,12 @@ export class RecruitmentService {
     });
   }
 
-  // draft - 임시저장
+  /**
+   *  채용공고 임시저장
+   *  DRAFT 상태로 저장
+   * @description 채용공고를 임시저장합니다. 처음 저장하는 경우 새로 생성하고, 기존 공고가 있는 경우 업데이트합니다.
+   */
   async draft(draftRecruitmentDto: DraftRecruitmentDto, employer: Employer) {
-    console.log('draftRecruitmentDto: ', draftRecruitmentDto);
     return this.dataSource.transaction(async (manager) => {
       const { recruitmentInfo } = draftRecruitmentDto;
       const { nationality, ...restRecruitmentInfo } = recruitmentInfo;
@@ -132,7 +144,7 @@ export class RecruitmentService {
 
       const defaultTitle = `[임시저장] ${dateFormat.current()}`;
 
-      // 새로 생성
+      // 기존 공고가 없는 경우 새로 생성
       if (!draftRecruitmentDto.id) {
         const recruitmentEntity = recruitmentRepo.create({
           recruitmentTitle: draftRecruitmentDto.recruitmentTitle || defaultTitle,
@@ -151,7 +163,7 @@ export class RecruitmentService {
         return { status: ResponseStatus.SUCCESS, id: savedRecruitment.id };
       }
 
-      // 업데이트
+      // 기존 공고가 있는 경우 업데이트
       if (draftRecruitmentDto.id) {
         const existingRecruitment = await this.recruitmentRepo.findOne({
           where: { id: draftRecruitmentDto.id },
@@ -477,5 +489,69 @@ export class RecruitmentService {
         status: ResponseStatus.SUCCESS,
       };
     });
+  }
+
+  /**
+   *
+   * 공고 복사
+   */
+  async copyRecruitment(recruitmentId: string, userId: string) {
+    try {
+      const recruitmentCount = await this.recruitmentRepo.count({
+        where: { employer: { id: userId } },
+      });
+
+      if (recruitmentCount >= 100) {
+        throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+      }
+
+      const existingRecruitment = await this.recruitmentRepo.findOne({
+        where: { id: recruitmentId, employer: { id: userId } },
+        relations: ['nationality'],
+      });
+
+      console.log('existingRecruitment: ', existingRecruitment);
+
+      if (!existingRecruitment) {
+        throw new BadRequestException('Recruitment not found.');
+      }
+
+      const { recruitmentStatus } = existingRecruitment;
+
+      if (recruitmentStatus === RecruitmentStatus.DRAFT || recruitmentStatus === RecruitmentStatus.REVIEWING) {
+        throw new BadRequestException('Cannot copy draft recruitment.');
+      }
+
+      const copiedRecruitment = cloneDeep(existingRecruitment);
+      console.log('copiedRecruitment: ', copiedRecruitment);
+
+      const newTitle = `복사 ${dateFormat.date(new Date(), 'YYYY.MM.DD HH:mm')}`;
+
+      const newRecruitment = this.recruitmentRepo.create({
+        ...copiedRecruitment,
+        employer: { id: userId },
+        id: undefined,
+        recruitmentTitle: newTitle,
+        recruitmentStatus: RecruitmentStatus.DRAFT,
+        priorityDate: null,
+        postingStartDate: null,
+        postingEndDate: null,
+        listUpCount: 0,
+        isListUp: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      await this.recruitmentRepo.save(newRecruitment);
+
+      return { status: ResponseStatus.SUCCESS };
+    } catch (error) {
+      console.log('error: ', error.message);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new BadRequestException('Error occurred while copying recruitment.');
+    }
   }
 }
