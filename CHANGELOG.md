@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/K-Soo/hotel-job-api/compare/v1.3.1...v1.4.0) (2025-03-18)
+
+
+### Features
+
+* 채용공고 복사 기능 추가 및 관련 로직 구현 ([0dda24f](https://github.com/K-Soo/hotel-job-api/commit/0dda24fe15870795ca4e62681b941a27d14a6143))
+
+
+### Refactors
+
+* 고유 닉네임 생성 로직 개선 및 불필요한 함수 제거 ([e553d3b](https://github.com/K-Soo/hotel-job-api/commit/e553d3b677278ec074f7aba4b86ff89f0ef886f5))
+* nationality.entity.ts에서 불필요한 import 제거 ([37a89f3](https://github.com/K-Soo/hotel-job-api/commit/37a89f35fcfbbabef8f2cf38fed70bc4259d6d24))
+
 ### [1.3.1](https://github.com/K-Soo/hotel-job-api/compare/v1.3.0...v1.3.1) (2025-03-18)
 
 
