@@ -523,12 +523,14 @@ export class RecruitmentService {
       }
 
       const copiedRecruitment = cloneDeep(existingRecruitment);
-      console.log('copiedRecruitment: ', copiedRecruitment);
+
+      const newNationality = { ...existingRecruitment.nationality, id: undefined };
 
       const newTitle = `복사 ${dateFormat.date(new Date(), 'YYYY.MM.DD HH:mm')}`;
 
       const newRecruitment = this.recruitmentRepo.create({
         ...copiedRecruitment,
+        nationality: newNationality,
         employer: { id: userId },
         id: undefined,
         recruitmentTitle: newTitle,

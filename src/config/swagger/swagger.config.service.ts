@@ -1,9 +1,7 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 import { swaggerOptions } from './swagger.options';
-import { NextFunction, Request, Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SwaggerConfigService {
