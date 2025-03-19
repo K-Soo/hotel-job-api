@@ -14,7 +14,6 @@ import { Exclude } from 'class-transformer';
 @Entity('certification')
 export class Certification {
   @OneToOne(() => Applicant, (applicant) => applicant.certification, {
-    cascade: true,
     onDelete: 'CASCADE',
     nullable: true,
   })
@@ -22,8 +21,7 @@ export class Certification {
   applicant: Applicant;
 
   @OneToOne(() => Employer, (employer) => employer.certification, {
-    cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })

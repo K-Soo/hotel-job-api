@@ -17,8 +17,6 @@ import { EmployersService } from '../../modules/employers/employers.service';
 
 @Controller('certification')
 export class CertificationController {
-  private readonly logger = new Logger(CouponService.name);
-
   constructor(
     private readonly certificationService: CertificationService,
     private readonly authService: AuthService,
