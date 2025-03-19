@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class CertificationResponseDto {
   @ApiProperty({ description: '생년월일', example: '19911029' })
   @Expose()
   birth_day: string;
 
-  @ApiProperty({ description: '인증 타입', example: 'EMPLOYER' })
+  @ApiProperty({ description: '인증 타입', example: 'SIGN_UP' })
   @Expose()
   certificationType: string;
 

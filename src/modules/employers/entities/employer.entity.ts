@@ -1,3 +1,19 @@
+import { Company } from '../company/entities/company.entity';
+import { Consent } from '../../consents/entities/consent.entity';
+import { Exclude } from 'class-transformer';
+import { Certification } from '../../../authentication/certification/entities/certification.entity';
+import { Recruitment } from '../recruitment/entities/recruitment.entity';
+import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
+import { Membership } from '../../membership/entities/membership.entity';
+import { EmployerCoupon } from '../../../modules/coupon/entities/employer-coupon.entity';
+import { PointTransaction } from '../../point/entities/point-transaction.entity';
+import {
+  Role,
+  Provider,
+  AccountStatus,
+  VerificationStatus,
+  CertificationStatus,
+} from '../../../common/constants/app.enum';
 import {
   BeforeInsert,
   Column,
@@ -9,25 +25,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import {
-  Role,
-  Provider,
-  AccountStatus,
-  VerificationStatus,
-  CertificationStatus,
-} from '../../../common/constants/app.enum';
-import { Company } from '../company/entities/company.entity';
-import { Consent } from '../../consents/entities/consent.entity';
-import { Exclude } from 'class-transformer';
-import { Certification } from '../../../authentication/certification/entities/certification.entity';
-import { Recruitment } from '../recruitment/entities/recruitment.entity';
-import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
-import { Membership } from '../../membership/entities/membership.entity';
-import { EmployerCoupon } from '../../../modules/coupon/entities/employer-coupon.entity';
-import { PointTransaction } from '../../point/entities/point-transaction.entity';
 
 @Entity()
 export class Employer {
+  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
+  accountHistory: AccountHistory[];
+
+  @OneToOne(() => Certification, (certification) => certification.employer)
+  certification: Certification;
+
   @ManyToOne(() => Membership, (membership) => membership.employers)
   membership: Membership;
 
@@ -37,23 +43,17 @@ export class Employer {
   @OneToOne(() => Company, (company) => company.employer)
   company: Company;
 
-  @OneToOne(() => Certification, (certification) => certification.employer)
-  certification: Certification;
-
   @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
   recruitment: Recruitment[];
 
   @OneToMany(() => EmployerCoupon, (employerCoupon) => employerCoupon.employer)
   coupon: EmployerCoupon[];
 
-  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
-  certificationStatus: CertificationStatus;
-
-  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
-  accountHistory: AccountHistory[];
-
   @OneToMany(() => PointTransaction, (transaction) => transaction.employer)
   pointTransactions: PointTransaction[];
+
+  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
+  certificationStatus: CertificationStatus;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

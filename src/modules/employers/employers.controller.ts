@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, UseGuards, Req, UseInterceptors, Patch, Body } from '@nestjs/common';
+import { Controller, Get, Delete, UseGuards, Req, UseInterceptors, Patch, Body } from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { EmployerResponseDto } from './dto/employer.response.dto';
 import { Request } from 'express';
@@ -32,5 +32,11 @@ export class EmployersController {
   @Patch('account/reset')
   accountReset(@Req() req: Request, @Body() accountResetDto: AccountResetDto) {
     return this.employersService.accountReset(accountResetDto, req.user['sub']);
+  }
+
+  @ApiOperation({ summary: '사업자 계정삭제' })
+  @Delete('account/withdraw')
+  accountWithdraw(@Req() req: Request) {
+    return this.employersService.accountWithdrawal(req.user['sub']);
   }
 }

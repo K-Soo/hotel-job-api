@@ -23,19 +23,22 @@ export class Applicant {
   @OneToMany(() => Resume, (resumes) => resumes.applicant)
   resumes: Resume[];
 
-  @OneToOne(() => Certification, (certification) => certification.applicant)
+  @OneToOne(() => Certification, (certification) => certification.applicant, { cascade: true })
   certification: Certification;
-
-  //본인인증
-  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
-  certificationStatus: CertificationStatus;
 
   @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.applicant)
   accountHistory: AccountHistory[];
 
+  @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
+  certificationStatus: CertificationStatus;
+
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  //계정상태
+  @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.ACTIVE })
+  accountStatus: AccountStatus;
 
   @Exclude()
   @Column({ type: 'varchar', unique: true })
@@ -50,10 +53,6 @@ export class Applicant {
   @Exclude()
   @Column({ type: 'enum', enum: Role, default: Role.JOB_SEEKER })
   role: Role;
-
-  //계정상태
-  @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.ACTIVE })
-  accountStatus: AccountStatus;
 
   @Column({ unique: true })
   nickname: string;
