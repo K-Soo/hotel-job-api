@@ -29,19 +29,12 @@ export class AccountHistoryService {
   // }
 
   // 계정 상태 변경
-  async changeAccountStatus(
-    entity: Applicant | Employer,
-    newStatus: AccountStatus,
-    userId: string,
-    changedBy: string,
-    note?: string,
-  ) {
+  async createAccountHistory(entity: Applicant | Employer, newStatus: AccountStatus, userId: string, note?: string) {
     const createdHistory = this.accountHistoryRepo.create({
       applicant: entity instanceof Applicant ? entity : null,
       employer: entity instanceof Employer ? entity : null,
       status: newStatus,
       userId,
-      changedBy,
       note,
     });
 
@@ -65,6 +58,7 @@ export class AccountHistoryService {
       order: { changedAt: 'DESC' },
     });
   }
+
   // Employer 상태 변경 이력 조회
   async getStatusHistoryForEmployer(employerId: string) {
     return this.accountHistoryRepo.find({
