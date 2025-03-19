@@ -29,13 +29,13 @@ export class AccountHistoryService {
   // }
 
   // 계정 상태 변경
-  async createAccountHistory(entity: Applicant | Employer, newStatus: AccountStatus, userId: string, note?: string) {
+  async createAccountHistory(entity: Applicant | Employer, newStatus: AccountStatus, userId: string, reason?: string) {
     const createdHistory = this.accountHistoryRepo.create({
       applicant: entity instanceof Applicant ? entity : null,
       employer: entity instanceof Employer ? entity : null,
       status: newStatus,
       userId,
-      note,
+      reason,
     });
 
     await this.accountHistoryRepo.save(createdHistory);
