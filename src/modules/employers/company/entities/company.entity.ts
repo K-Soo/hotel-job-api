@@ -3,12 +3,12 @@ import { Employer } from '../../entities/employer.entity';
 
 @Entity()
 export class Company {
-  @PrimaryGeneratedColumn()
-  id: string;
-
   @OneToOne(() => Employer, (employer) => employer.company, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
+
+  @PrimaryGeneratedColumn()
+  id: string;
 
   @Column()
   businessRegistrationNumber: string;
