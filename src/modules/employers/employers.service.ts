@@ -17,13 +17,15 @@ import { Membership } from '../membership/entities/membership.entity';
 import { AccountResetDto } from './dto/account-reset.dto';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { ResponseStatus } from '../../common/constants/responseStatus';
+import { AccountHistoryService } from '../../authentication/account-history/account-history.service';
+import { AccountStatus } from '../../common/constants/app.enum';
 
 @Injectable()
 export class EmployersService {
   constructor(
     @InjectRepository(Employer) private readonly employerRepo: Repository<Employer>,
-    @InjectRepository(Membership)
-    private readonly membershipRepo: Repository<Membership>,
+    @InjectRepository(Membership) private readonly membershipRepo: Repository<Membership>,
+    private readonly accountHistoryService: AccountHistoryService,
   ) {}
 
   //회원가입 시 Employer 생성 및 Membership 설정
@@ -153,5 +155,17 @@ export class EmployersService {
 
   updateNickname(id: string, nickname: string) {
     return this.employerRepo.update({ id }, { nickname });
+  }
+
+  async accountWithdrawal(userId: string) {
+    const employer = await this.findOneUuid(userId);
+
+    if (!employer) {
+      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+    }
+
+    await this.accountHistoryService.createAccountHistory(employer, AccountStatus.DEACTIVATED, userId);
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }
