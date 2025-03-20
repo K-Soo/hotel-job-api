@@ -333,19 +333,19 @@ export class RecruitService {
           'paymentRecruitment.duration',
           'paymentRecruitment.bonusDays',
 
-          `COALESCE(
-            json_agg(
-              json_build_object(
-                'id', options.id,
-                'name', options.name,
-                'postingEndDate', options.postingEndDate,
-                'duration', options.duration,
-                'bonusDays', options.bonusDays,
-                'listUpIntervalHours', options.listUpIntervalHours,
-                'maxListUpPerDay', options.max_list_up_per_day
-              )
-            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
-          ) AS options`,
+          // `COALESCE(
+          //   json_agg(
+          //     json_build_object(
+          //       'id', options.id,
+          //       'name', options.name,
+          //       'postingEndDate', options.postingEndDate,
+          //       'duration', options.duration,
+          //       'bonusDays', options.bonusDays,
+          //       'listUpIntervalHours', options.listUpIntervalHours,
+          //       'maxListUpPerDay', options.max_list_up_per_day
+          //     )
+          //   ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          // ) AS options`,
         ])
         .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
         .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
