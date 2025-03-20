@@ -347,15 +347,15 @@ export class RecruitService {
           //   ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
           // ) AS options`,
         ])
-        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
+        // .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
         .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
         .groupBy('recruitment.id')
         .addGroupBy('paymentRecruitment.id')
         .addOrderBy('recruitment.priorityDate', 'DESC');
 
-      if (job !== undefined && job.length > 0) {
-        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
-      }
+      // if (job !== undefined && job.length > 0) {
+      //   baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+      // }
 
       const [rawPaginatedItems, totalCount] = await Promise.all([
         baseQuery
