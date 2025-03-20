@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { RecruitQueryDto } from './dto/recruit-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -298,6 +298,10 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
+      if (!paymentIds.length) {
+        throw new BadRequestException('No valid payments found for urgent recruitment.');
+      }
+
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
@@ -406,6 +410,9 @@ export class RecruitService {
       };
     } catch (error) {
       this.logger.error(`getUrgentRecruit: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
 
       throw new InternalServerErrorException();
     }
