@@ -44,6 +44,23 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
+
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
@@ -170,6 +187,23 @@ export class RecruitService {
         .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
         .getMany()
         .then((payments) => payments.map((p) => p.id));
+
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
 
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
@@ -299,7 +333,20 @@ export class RecruitService {
         .then((payments) => payments.map((p) => p.id));
 
       if (!paymentIds.length) {
-        throw new BadRequestException('No valid payments found for urgent recruitment.');
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
       }
 
       const baseQuery = this.recruitmentRepo
@@ -337,29 +384,29 @@ export class RecruitService {
           'paymentRecruitment.duration',
           'paymentRecruitment.bonusDays',
 
-          // `COALESCE(
-          //   json_agg(
-          //     json_build_object(
-          //       'id', options.id,
-          //       'name', options.name,
-          //       'postingEndDate', options.postingEndDate,
-          //       'duration', options.duration,
-          //       'bonusDays', options.bonusDays,
-          //       'listUpIntervalHours', options.listUpIntervalHours,
-          //       'maxListUpPerDay', options.max_list_up_per_day
-          //     )
-          //   ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
-          // ) AS options`,
+          `COALESCE(
+            json_agg(
+              json_build_object(
+                'id', options.id,
+                'name', options.name,
+                'postingEndDate', options.postingEndDate,
+                'duration', options.duration,
+                'bonusDays', options.bonusDays,
+                'listUpIntervalHours', options.listUpIntervalHours,
+                'maxListUpPerDay', options.max_list_up_per_day
+              )
+            ) FILTER (WHERE options.id IS NOT NULL), '[]'::json
+          ) AS options`,
         ])
-        // .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
+        .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
         .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
         .groupBy('recruitment.id')
         .addGroupBy('paymentRecruitment.id')
         .addOrderBy('recruitment.priorityDate', 'DESC');
 
-      // if (job !== undefined && job.length > 0) {
-      //   baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
-      // }
+      if (job !== undefined && job.length > 0) {
+        baseQuery.andWhere('recruitment.jobs && ARRAY[:...job]::recruitment_jobs_enum[]', { job });
+      }
 
       const [rawPaginatedItems, totalCount] = await Promise.all([
         baseQuery
@@ -433,6 +480,23 @@ export class RecruitService {
         .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
         .getMany()
         .then((payments) => payments.map((p) => p.id));
+
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
 
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
