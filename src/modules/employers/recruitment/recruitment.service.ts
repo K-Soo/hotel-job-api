@@ -400,6 +400,7 @@ export class RecruitmentService {
       throw new BadRequestException(error.message);
     }
   }
+
   /**
    * 특정 채용공고의 지원자 수 카운트
    */

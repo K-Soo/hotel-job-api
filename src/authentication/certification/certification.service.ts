@@ -271,7 +271,7 @@ export class CertificationService {
   async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer) {
     try {
       // 해당 유저가 이미 본인인증을 완료했는지 확인
-      const existCertification = await this.checkDuplicateCertification(user);
+      const existCertification = await this.checkSignUpCertificationExists(user);
 
       if (existCertification) {
         return { status: ResponseStatus.DUPLICATE };
@@ -279,7 +279,7 @@ export class CertificationService {
 
       // 사업자 - 이미 존재하는 본인인증 정보 중복확인
       if (user instanceof Employer) {
-        const isDuplicateDi = await this.isEmployerDiAlreadyVerified(decryptCert.di);
+        const isDuplicateDi = await this.SignUpWithDiAlreadyVerified(decryptCert.di);
 
         if (isDuplicateDi) {
           return { status: ResponseStatus.UNAVAILABLE };
@@ -327,9 +327,9 @@ export class CertificationService {
   }
 
   /**
-   * 해당 유저의 본인인증 정보 확인
+   * 유저의 본인인증 정보 존재여부 확인
    */
-  async checkDuplicateCertification(user: Applicant | Employer) {
+  async checkSignUpCertificationExists(user: Applicant | Employer) {
     if (user instanceof Employer) {
       const existingCertification = await this.certificationRepository.findOne({
         where: { employer: { id: user.id }, certificationType: CertificationType.SIGN_UP },
@@ -351,9 +351,9 @@ export class CertificationService {
   }
 
   /**
-   * 이미 존재하는 사업자 DI값(휴대폰번호) 중복확인
+   *이미 존재하는 DI값(휴대폰번호) 중복확인
    */
-  private async isEmployerDiAlreadyVerified(di: string): Promise<boolean> {
+  private async SignUpWithDiAlreadyVerified(di: string): Promise<boolean> {
     const existingCertification = await this.certificationRepository.findOne({
       where: { di, certificationType: CertificationType.SIGN_UP },
     });
@@ -362,15 +362,17 @@ export class CertificationService {
   }
 
   /**
-   * 사업자 DI 값으로 본인인증 정보 찾기
-   * @description 유저는 중복 인증이 가능하기 때문에 사업자만 체크
+   * DI 값, 유저 id로 본인인증 정보 찾기
    */
-  async findEmployerByDiAndUserId(di: string, employer: Employer) {
-    const certification = await this.certificationRepository.findOne({
-      where: { di, employer: { id: employer.id } },
-      relations: ['employer'],
-    });
+  async findVerifySignUpUser(di: string, user: Applicant | Employer) {
+    const userTypeKey = user instanceof Employer ? 'employer' : 'applicant';
 
-    return certification;
+    const where = {
+      di,
+      certificationType: CertificationType.SIGN_UP,
+      [userTypeKey]: { id: user.id },
+    };
+
+    return this.certificationRepository.findOne({ where });
   }
 }

@@ -38,7 +38,7 @@ export class ResumesService {
         throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
       }
 
-      const userCertInfo = await this.certificationService.checkDuplicateCertification(applicant);
+      const userCertInfo = await this.certificationService.checkSignUpCertificationExists(applicant);
 
       if (!userCertInfo) {
         throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
