@@ -20,14 +20,10 @@ export class AccountHistory {
   @Column({ type: 'enum', enum: AccountStatus })
   status: AccountStatus;
 
-  // 변경 주체 (관리자, 시스템, 사용자 등)
-  @Column({ type: 'varchar', nullable: true })
-  changedBy: string;
-
   // 상태 변경 시간
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   changedAt: Date;
 
   @Column({ type: 'text', nullable: true })
-  note: string;
+  reason: string;
 }

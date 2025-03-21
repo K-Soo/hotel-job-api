@@ -17,8 +17,6 @@ import { EmployersService } from '../../modules/employers/employers.service';
 
 @Controller('certification')
 export class CertificationController {
-  private readonly logger = new Logger(CouponService.name);
-
   constructor(
     private readonly certificationService: CertificationService,
     private readonly authService: AuthService,
@@ -81,9 +79,9 @@ export class CertificationController {
   @ApiOperation({ summary: '인증정보가 해당 유저의 본인 인증정보가 맞는지 확인' })
   @ApiBearerAuth()
   @UseGuards(PassportJwtGuard, RolesGuard)
-  @Roles('EMPLOYER')
-  @Post('reset/verify')
-  async recoverPasswordVerify(@Req() req: Request, @Body() verifyDto: any) {
+  @Roles('EMPLOYER', 'JOB_SEEKER')
+  @Post('verify/identity')
+  async VerifyIdentity(@Req() req: Request, @Body() verifyDto: any) {
     const user = req.user as RequestUser;
 
     const employer = await this.employersService.findOneUuid(user.sub);
@@ -96,7 +94,7 @@ export class CertificationController {
 
     const decryptData = await this.certificationService.decryptCert(verifyData);
 
-    const certification = await this.certificationService.findEmployerByDiAndUserId(decryptData.di, employer);
+    const certification = await this.certificationService.findVerifySignUpUser(decryptData.di, employer);
 
     if (certification) {
       return { status: ResponseStatus.AVAILABLE };

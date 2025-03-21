@@ -263,27 +263,32 @@ export class CertificationService {
     }
   }
 
+  /**
+   *  본인인증 정보 저장, 이미 본인인증을 완료했는지 확인
+   *  @description 사업자 - DI 중복확인(같은 본인인증정보 인증 불가)
+   *  @description 일반 유저 - 본인인증 완료 여부 확인
+   */
   async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer) {
     try {
       // 해당 유저가 이미 본인인증을 완료했는지 확인
-      const existCertification = await this.checkDuplicateCertification(user);
+      const existCertification = await this.checkSignUpCertificationExists(user);
 
       if (existCertification) {
         return { status: ResponseStatus.DUPLICATE };
       }
 
+      // 사업자 - 이미 존재하는 본인인증 정보 중복확인
       if (user instanceof Employer) {
-        // 사업자 전용 - 존재하는 DI인지 체크(휴대폰 번호 중복확인)
-        // const isDuplicateDi = await this.isDiAlreadyVerified(decryptCert.di);
+        const isDuplicateDi = await this.SignUpWithDiAlreadyVerified(decryptCert.di);
 
-        // if (isDuplicateDi) {
-        //   return { status: ResponseStatus.UNAVAILABLE };
-        // }
+        if (isDuplicateDi) {
+          return { status: ResponseStatus.UNAVAILABLE };
+        }
 
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,
-            certificationType: CertificationType.EMPLOYER,
+            certificationType: CertificationType.SIGN_UP,
             employer: user,
           }),
         );
@@ -295,11 +300,12 @@ export class CertificationService {
         return { status: ResponseStatus.SUCCESS };
       }
 
+      // 일반 유저
       if (user instanceof Applicant) {
         const createdCertification = await safeQuery(async () =>
           this.certificationRepository.create({
             ...decryptCert,
-            certificationType: CertificationType.APPLICANT,
+            certificationType: CertificationType.SIGN_UP,
             applicant: user,
           }),
         );
@@ -321,12 +327,12 @@ export class CertificationService {
   }
 
   /**
-   * 해당 유저가 이미 본인인증을 완료했는지 확인
+   * 유저의 본인인증 정보 존재여부 확인
    */
-  private async checkDuplicateCertification(user: Applicant | Employer) {
+  async checkSignUpCertificationExists(user: Applicant | Employer) {
     if (user instanceof Employer) {
       const existingCertification = await this.certificationRepository.findOne({
-        where: { employer: { id: user.id }, certificationType: CertificationType.EMPLOYER },
+        where: { employer: { id: user.id }, certificationType: CertificationType.SIGN_UP },
       });
 
       return existingCertification;
@@ -334,7 +340,10 @@ export class CertificationService {
 
     if (user instanceof Applicant) {
       const existingCertification = await this.certificationRepository.findOne({
-        where: { applicant: { id: user.id }, certificationType: CertificationType.APPLICANT },
+        where: {
+          applicant: { id: user.id },
+          certificationType: CertificationType.SIGN_UP,
+        },
       });
 
       return existingCertification;
@@ -342,53 +351,28 @@ export class CertificationService {
   }
 
   /**
-   * DI 값으로 중복 체크
+   *이미 존재하는 DI값(휴대폰번호) 중복확인
    */
-  private async isDiAlreadyVerified(di: string): Promise<boolean> {
-    const existingCertification = await this.certificationRepository.findOne({ where: { di } });
+  private async SignUpWithDiAlreadyVerified(di: string): Promise<boolean> {
+    const existingCertification = await this.certificationRepository.findOne({
+      where: { di, certificationType: CertificationType.SIGN_UP },
+    });
 
     return !!existingCertification;
   }
 
-  createApplicantsCertification() {
-    //유저 찾기
-    // 1. Certification 엔티티 생성
-    // const certification = this.certificationRepository.create({
-    //   certificationType: CertificationType.APPLICANT,
-    // });
-    // 2. GeneralCertification 엔티티 생성
-  }
+  /**
+   * DI 값, 유저 id로 본인인증 정보 찾기
+   */
+  async findVerifySignUpUser(di: string, user: Applicant | Employer) {
+    const userTypeKey = user instanceof Employer ? 'employer' : 'applicant';
 
-  async findCertificationByUser(userUUid: string, role: RoleType) {
-    try {
-      if (role === 'EMPLOYER') {
-        const employerCertification = await this.certificationRepository.findOne({
-          where: { employer: { id: userUUid }, certificationType: CertificationType.EMPLOYER },
-        });
+    const where = {
+      di,
+      certificationType: CertificationType.SIGN_UP,
+      [userTypeKey]: { id: user.id },
+    };
 
-        return employerCertification;
-      }
-
-      if (role === 'JOB_SEEKER') {
-        const applicantCertification = await this.certificationRepository.findOne({
-          where: { applicant: { id: userUUid }, certificationType: CertificationType.APPLICANT },
-        });
-
-        return applicantCertification;
-      }
-
-      throw new UnauthorizedException('Invalid role type');
-    } catch (error) {
-      throw new UnauthorizedException(error.message);
-    }
-  }
-
-  async findEmployerByDiAndUserId(di: string, employer: Employer) {
-    const certification = await this.certificationRepository.findOne({
-      where: { di, employer: { id: employer.id } },
-      relations: ['employer'],
-    });
-
-    return certification;
+    return this.certificationRepository.findOne({ where });
   }
 }

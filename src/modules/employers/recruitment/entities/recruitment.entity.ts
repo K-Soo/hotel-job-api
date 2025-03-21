@@ -1,3 +1,16 @@
+import { Jobs, Position, SalaryType } from '../../../../common/constants/app.enum';
+import { Employer } from '../../entities/employer.entity';
+import { Nationality } from './nationality.entity';
+import { Benefits } from '../../../../common/constants/benefits';
+import { Preferences } from '../../../../common/constants/preferences';
+import { PaymentRecruitment } from '../../../payment/payment-recruitment/entities/payment-recruitment.entity';
+import { Application } from '../../../applications/entities/application.entity';
+import {
+  EducationCondition,
+  ExperienceCondition,
+  RecruitmentStatus,
+  WorkingDay,
+} from '../../../../common/constants/recruitment';
 import {
   Column,
   CreateDateColumn,
@@ -13,22 +26,8 @@ import {
   AfterInsert,
   Index,
 } from 'typeorm';
-import {
-  EducationCondition,
-  ExperienceCondition,
-  RecruitmentStatus,
-  WorkingDay,
-} from '../../../../common/constants/recruitment';
-import { Jobs, Position, SalaryType } from '../../../../common/constants/app.enum';
-import { Employer } from '../../entities/employer.entity';
-import { Nationality } from './nationality.entity';
-import { Benefits } from '../../../../common/constants/benefits';
-import { Preferences } from '../../../../common/constants/preferences';
-import { PaymentRecruitment } from '../../../payment/payment-recruitment/entities/payment-recruitment.entity';
-import { Application } from '../../../applications/entities/application.entity';
 @Entity()
 export class Recruitment {
-  // 채용 테이블
   @OneToMany(() => Application, (application) => application.recruitment)
   applications: Application[];
 

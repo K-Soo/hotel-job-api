@@ -23,6 +23,8 @@ export enum AccountStatus {
 
   DEACTIVATED = 'DEACTIVATED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
 
+  WITHDRAW = 'WITHDRAW', // 회원탈퇴
+
   PENDING = 'PENDING', // 인증 절차(이메일, 전화번호 인증 등)가 완료되지 않은 상태.
 
   RECOVERY = 'RECOVERY', // 비밀번호 재설정 또는 계정 복구 절차 중인 상태.
@@ -51,6 +53,7 @@ export enum CertificationType {
   RESET_PASSWORD = 'RESET_PASSWORD',
   EMPLOYER = 'EMPLOYER',
   APPLICANT = 'APPLICANT',
+  SIGN_UP = 'SIGN_UP',
   RECOVER_PASSWORD = 'RECOVER_PASSWORD',
 }
 

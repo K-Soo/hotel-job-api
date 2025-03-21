@@ -43,19 +43,6 @@ export class ApplicantsService {
     return safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
   }
 
-  async deactivatedForApplicant(uuid: string) {
-    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
-
-    await this.accountHistoryService.changeAccountStatus(
-      applicant,
-      AccountStatus.DEACTIVATED,
-      applicant.userId,
-      'ADMIN',
-    );
-
-    return { status: ResponseStatus.SUCCESS };
-  }
-
   async existsApplicantNickname(nickname: string) {
     const applicant = await this.repo
       .createQueryBuilder('applicant')
@@ -67,5 +54,14 @@ export class ApplicantsService {
 
   updateNickname(id: string, nickname: string) {
     return this.repo.update({ id }, { nickname });
+  }
+
+  // 계정 삭제 요청
+  async deactivatedForApplicant(uuid: string) {
+    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
+
+    await this.accountHistoryService.createAccountHistory(applicant, AccountStatus.DEACTIVATED, applicant.userId);
+
+    return { status: ResponseStatus.SUCCESS };
   }
 }

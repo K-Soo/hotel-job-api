@@ -6,7 +6,6 @@ import { ProviderType, RoleType } from '../../common/types';
 import { EmployersService } from '../../modules/employers/employers.service';
 import { ApplicantsService } from '../../modules/applicants/applicants.service';
 import { customHttpException } from '../../common/constants/custom-http-exception';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +14,6 @@ export class AuthService {
     private readonly jwtConfigService: JwtConfigService,
     private readonly employersService: EmployersService,
     private readonly applicantsService: ApplicantsService,
-    private readonly dataSource: DataSource,
   ) {}
 
   async getUserByProvider(provider: ProviderType, uuid: string) {

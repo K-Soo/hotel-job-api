@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { RecruitQueryDto } from './dto/recruit-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -43,6 +43,23 @@ export class RecruitService {
         .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
         .getMany()
         .then((payments) => payments.map((p) => p.id));
+
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
 
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
@@ -171,6 +188,23 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
+
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
@@ -298,6 +332,23 @@ export class RecruitService {
         .getMany()
         .then((payments) => payments.map((p) => p.id));
 
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
+
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
         .innerJoin(
@@ -406,6 +457,9 @@ export class RecruitService {
       };
     } catch (error) {
       this.logger.error(`getUrgentRecruit: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
 
       throw new InternalServerErrorException();
     }
@@ -426,6 +480,23 @@ export class RecruitService {
         .andWhere('payment.paymentType = :paymentType', { paymentType: PaymentType.RECRUITMENT })
         .getMany()
         .then((payments) => payments.map((p) => p.id));
+
+      if (!paymentIds.length) {
+        return {
+          items: [],
+          pagination: {
+            itemCount: 0,
+            itemsPerPage: limit,
+
+            totalItems: 0,
+            totalPages: 0,
+
+            nextPage: null,
+            prevPage: null,
+            currentPage: 1,
+          },
+        };
+      }
 
       const baseQuery = this.recruitmentRepo
         .createQueryBuilder('recruitment')
