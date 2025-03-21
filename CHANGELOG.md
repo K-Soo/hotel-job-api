@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/K-Soo/hotel-job-api/compare/v1.4.0...v1.4.1) (2025-03-21)
+
+
+### Features
+
+* 채용공고 복사 시 국적 정보 수정 및 복사 제목 포맷 개선 ([6c5954f](https://github.com/K-Soo/hotel-job-api/commit/6c5954fcd82bf6c2d45145b0934340ead00412f7))
+
+
+### Refactors
+
+* 결제 ID 유효성 검사 추가 및 예외 처리 개선 ([3cc8211](https://github.com/K-Soo/hotel-job-api/commit/3cc82119cfcced5b44f6c6e73916beff96c00589))
+* 결제 ID가 없는 경우 빈 결과 및 페이지네이션 반환 로직 추가 ([a506a7c](https://github.com/K-Soo/hotel-job-api/commit/a506a7cd0aa7eed756e862c5e5f1cf18b667ed62))
+* 계정 삭제 요청 메서드 수정 및 인증 상태 필드 추가 ([c92661f](https://github.com/K-Soo/hotel-job-api/commit/c92661fa8b60bd4e2d93dfd088733e940291d4bc))
+* 본인인증 관련 메서드 및 DTO의 인증 타입을 SIGN_UP으로 변경 ([98e6073](https://github.com/K-Soo/hotel-job-api/commit/98e6073f1eab895137b9fc51cb73a0c31753fce4))
+* 불필요한 주석 제거 및 인증 정보 조회 메서드 변경 ([05f81a2](https://github.com/K-Soo/hotel-job-api/commit/05f81a28faef5a3df540c232044666a13fc0881b))
+* 불필요한 주석 처리 및 옵션 쿼리 수정 ([3e16afc](https://github.com/K-Soo/hotel-job-api/commit/3e16afc0bcd28fcd6b4af114d7a0ba39c1923d47))
+* 불필요한 주석 처리 및 쿼리 조건 주석화 ([0580538](https://github.com/K-Soo/hotel-job-api/commit/0580538f76d5cc2687e9c3f52e9440ab152e2828))
+* 불필요한 EmployersService 및 TypeOrmModule 제거 ([c77cdc5](https://github.com/K-Soo/hotel-job-api/commit/c77cdc55cf67cb4f97fe79900ef480ff4ecca990))
+* 불필요한 import 제거 및 코드 정리 ([c9feacf](https://github.com/K-Soo/hotel-job-api/commit/c9feacf50e370c68121a0c239595f81832aab297))
+* 사업자 계정 삭제 메서드 추가 및 모듈 의존성 정리 ([bbc4c83](https://github.com/K-Soo/hotel-job-api/commit/bbc4c836124cd667b65e6101f8d0952f467c8151))
+* 인증 관련 메서드 및 변수 이름 변경으로 가독성 향상 ([85ecaa5](https://github.com/K-Soo/hotel-job-api/commit/85ecaa5e86151d193a89a0737079ddffe5c7503b))
+* 회사 및 고용주 엔티티의 불필요한 임포트 제거 및 관계 수정 ([f7b914d](https://github.com/K-Soo/hotel-job-api/commit/f7b914dca4de6d4d5ca09d84059df253295f1644))
+* 회원탈퇴 상태 추가 및 인증 타입에 SIGN_UP 추가 ([35167b1](https://github.com/K-Soo/hotel-job-api/commit/35167b181f59284a631264a6a0eff278b9b3d5e2))
+* account-history.module.ts에서 불필요한 EmployersModule import 제거 ([4bffdac](https://github.com/K-Soo/hotel-job-api/commit/4bffdac50850b6514a5055c8553c8f7ece40213f))
+* AuthService에서 불필요한 DataSource 의존성 제거 ([74fbba5](https://github.com/K-Soo/hotel-job-api/commit/74fbba5a49ef6d6e158d33340e70b86bfd4a7c3b))
+* changeAccountStatus 메서드를 createAccountHistory로 이름 변경 및 changedBy 매개변수 제거 ([9130998](https://github.com/K-Soo/hotel-job-api/commit/91309987a84bf78d65b06ed5d201da8926d45aec))
+* changedBy 필드 제거 및 note 필드를 reason으로 이름 변경 ([5f72da8](https://github.com/K-Soo/hotel-job-api/commit/5f72da88ab5ea4e6bfc992c87c734345d8aa5368))
+* note 매개변수를 reason으로 이름 변경 ([0d94aae](https://github.com/K-Soo/hotel-job-api/commit/0d94aae9fb4ae3fa669ee7c4a1ea169d4fcdf8be))
+
 ## [1.4.0](https://github.com/K-Soo/hotel-job-api/compare/v1.3.1...v1.4.0) (2025-03-18)
 
 
