@@ -8,9 +8,9 @@ export class EmployerCoupon {
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
-  @ManyToOne(() => Coupon, (coupon) => coupon.employerCoupon, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Coupon, (coupon) => coupon.employerCoupon, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'coupon_id' })
-  coupon: Coupon;
+  coupon: Coupon | null;
 
   @PrimaryGeneratedColumn('uuid')
   id: string;

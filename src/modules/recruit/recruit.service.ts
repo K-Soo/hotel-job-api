@@ -91,6 +91,9 @@ export class RecruitService {
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
 
+          'recruitment.isListUp',
+          'recruitment.listUpCount',
+
           'paymentRecruitment.type',
           'paymentRecruitment.name',
           'paymentRecruitment.duration',
@@ -144,6 +147,8 @@ export class RecruitService {
         priorityDate: item.recruitment_priority_date,
         postingStartDate: item.recruitment_posting_start_date,
         postingEndDate: item.recruitment_posting_end_date,
+        isListUp: item.recruitment_is_list_up,
+        listUpCount: item.recruitment_list_up_count,
         paymentRecruitment: {
           type: item.paymentRecruitment_type,
           name: item.paymentRecruitment_name,
@@ -234,6 +239,8 @@ export class RecruitService {
           'recruitment.priorityDate',
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
+          'recruitment.isListUp',
+          'recruitment.listUpCount',
 
           'paymentRecruitment.type',
           'paymentRecruitment.name',
@@ -288,6 +295,8 @@ export class RecruitService {
         priorityDate: item.recruitment_priority_date,
         postingStartDate: item.recruitment_posting_start_date,
         postingEndDate: item.recruitment_posting_end_date,
+        isListUp: item.recruitment_is_list_up,
+        listUpCount: item.recruitment_list_up_count,
         paymentRecruitment: {
           type: item.paymentRecruitment_type,
           name: item.paymentRecruitment_name,
@@ -374,6 +383,8 @@ export class RecruitService {
           'recruitment.address',
           'recruitment.addressDetail',
           'recruitment.recruitmentStatus',
+          'recruitment.isListUp',
+          'recruitment.listUpCount',
 
           'recruitment.priorityDate',
           'recruitment.postingStartDate',
@@ -432,6 +443,9 @@ export class RecruitService {
         priorityDate: item.recruitment_priority_date,
         postingStartDate: item.recruitment_posting_start_date,
         postingEndDate: item.recruitment_posting_end_date,
+        isListUp: item.recruitment_is_list_up,
+        listUpCount: item.recruitment_list_up_count,
+
         paymentRecruitment: {
           type: item.paymentRecruitment_type,
           name: item.paymentRecruitment_name,
@@ -522,6 +536,8 @@ export class RecruitService {
           'recruitment.address',
           'recruitment.addressDetail',
           'recruitment.recruitmentStatus',
+          'recruitment.isListUp',
+          'recruitment.listUpCount',
 
           'recruitment.priorityDate',
           'recruitment.postingStartDate',
@@ -580,29 +596,35 @@ export class RecruitService {
         baseQuery.clone().getCount(),
       ]);
 
-      const paginatedItems = rawPaginatedItems.map((item) => ({
-        id: item.recruitment_id,
-        recruitmentTitle: item.recruitment_recruitment_title,
-        experienceCondition: item.recruitment_experience_condition,
-        hotelName: item.recruitment_hotel_name,
-        employmentType: item.recruitment_employment_type,
-        salaryAmount: item.recruitment_salary_amount,
-        salaryType: item.recruitment_salary_type,
-        jobs: item.recruitment_jobs,
-        address: item.recruitment_address,
-        addressDetail: item.recruitment_address_detail,
-        recruitmentStatus: item.recruitment_recruitment_status,
-        priorityDate: item.recruitment_priority_date,
-        postingStartDate: item.recruitment_posting_start_date,
-        postingEndDate: item.recruitment_posting_end_date,
-        paymentRecruitment: {
-          type: item.paymentRecruitment_type,
-          name: item.paymentRecruitment_name,
-          duration: Number(item.paymentRecruitment_duration),
-          bonusDays: item.paymentRecruitment_bonus_days,
-          options: item.options,
-        },
-      }));
+      const paginatedItems = rawPaginatedItems.map((item) => {
+        console.log('item: ', item);
+        return {
+          id: item.recruitment_id,
+          recruitmentTitle: item.recruitment_recruitment_title,
+          experienceCondition: item.recruitment_experience_condition,
+          hotelName: item.recruitment_hotel_name,
+          employmentType: item.recruitment_employment_type,
+          salaryAmount: item.recruitment_salary_amount,
+          salaryType: item.recruitment_salary_type,
+          jobs: item.recruitment_jobs,
+          address: item.recruitment_address,
+          addressDetail: item.recruitment_address_detail,
+          recruitmentStatus: item.recruitment_recruitment_status,
+          priorityDate: item.recruitment_priority_date,
+          postingStartDate: item.recruitment_posting_start_date,
+          postingEndDate: item.recruitment_posting_end_date,
+          isListUp: item.recruitment_is_list_up,
+          listUpCount: item.recruitment_list_up_count,
+
+          paymentRecruitment: {
+            type: item.paymentRecruitment_type,
+            name: item.paymentRecruitment_name,
+            duration: Number(item.paymentRecruitment_duration),
+            bonusDays: item.paymentRecruitment_bonus_days,
+            options: item.options,
+          },
+        };
+      });
 
       return {
         items: paginatedItems,

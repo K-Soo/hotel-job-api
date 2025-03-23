@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Applicant } from './entities/applicant.entity';
@@ -7,11 +7,17 @@ import { AccountStatus, Provider, Role } from '../../common/constants/app.enum';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { AccountHistoryService } from '../../authentication/account-history/account-history.service';
 import { handleAccountStatus } from '../../common/helpers/account.helper';
+import { DataSource } from 'typeorm';
+import { customHttpException } from '../../common/constants/custom-http-exception';
+import { PushService } from '../notifications/push/push.service';
 @Injectable()
 export class ApplicantsService {
   constructor(
+    private readonly dataSource: DataSource,
+
     @InjectRepository(Applicant) private repo: Repository<Applicant>,
     private readonly accountHistoryService: AccountHistoryService,
+    private readonly pushService: PushService,
   ) {}
 
   async create(userId: string, email: string, provider: Provider) {
@@ -21,9 +27,7 @@ export class ApplicantsService {
 
   // 유저 정보, 인증정보, 동의항목 찾기
   async findOne(id: string) {
-    const applicant = await safeQuery(() =>
-      this.repo.findOne({ where: { id: id }, relations: ['consent', 'certification'] }),
-    );
+    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: id }, relations: ['consent'] }));
     return applicant;
   }
 
@@ -57,11 +61,34 @@ export class ApplicantsService {
   }
 
   // 계정 삭제 요청
-  async deactivatedForApplicant(uuid: string) {
-    const applicant = await safeQuery(() => this.repo.findOne({ where: { id: uuid } }));
+  async withdrawUserForApplicant(uuid: string) {
+    return await this.dataSource.transaction(async (manager) => {
+      const applicantRepo = manager.getRepository(Applicant);
 
-    await this.accountHistoryService.createAccountHistory(applicant, AccountStatus.DEACTIVATED, applicant.userId);
+      const applicant = await applicantRepo.findOne({
+        where: { id: uuid },
+        relations: ['certification'],
+      });
 
-    return { status: ResponseStatus.SUCCESS };
+      if (!applicant) {
+        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      }
+
+      // push token 삭제
+      await this.pushService.removeUserWithTransaction(applicant.id, manager);
+
+      // 계정 삭제
+      await applicantRepo.delete({ id: applicant.id });
+
+      // 히스토리 생성
+      await this.accountHistoryService.createAccountHistoryWithTransaction(
+        applicant,
+        AccountStatus.WITHDRAW,
+        manager,
+        '회원 탈퇴',
+      );
+
+      return { status: ResponseStatus.SUCCESS };
+    });
   }
 }

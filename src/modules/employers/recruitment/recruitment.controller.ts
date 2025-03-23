@@ -43,9 +43,12 @@ export class RecruitmentController {
   async create(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
     const userId = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userId);
+    console.log('employer: ', employer);
+
     if (!employer) {
       throw new NotFoundException(customHttpException.NOT_FOUND_USER);
     }
+
     return this.recruitmentService.create(createRecruitmentDto, employer);
   }
 

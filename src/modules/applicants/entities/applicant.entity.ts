@@ -13,21 +13,17 @@ import { Consent } from '../../consents/entities/consent.entity';
 import { Exclude } from 'class-transformer';
 import { Resume } from '../../resumes/entities/resume.entity';
 import { Certification } from '../../../authentication/certification/entities/certification.entity';
-import { AccountHistory } from '../../../authentication/account-history/entities/account-history.entity';
 
 @Entity('applicant')
 export class Applicant {
-  @OneToOne(() => Consent, (consent) => consent.applicant)
+  @OneToOne(() => Consent, (consent) => consent.applicant, { cascade: true })
   consent: Consent;
 
-  @OneToMany(() => Resume, (resumes) => resumes.applicant)
+  @OneToMany(() => Resume, (resumes) => resumes.applicant, { cascade: true })
   resumes: Resume[];
 
   @OneToOne(() => Certification, (certification) => certification.applicant, { cascade: true })
   certification: Certification;
-
-  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.applicant)
-  accountHistory: AccountHistory[];
 
   @Column({ type: 'enum', enum: CertificationStatus, default: CertificationStatus.UNVERIFIED })
   certificationStatus: CertificationStatus;

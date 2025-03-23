@@ -3,7 +3,7 @@ import { Employer } from '../../entities/employer.entity';
 
 @Entity()
 export class Company {
-  @OneToOne(() => Employer, (employer) => employer.company, { cascade: true, onDelete: 'CASCADE' })
+  @OneToOne(() => Employer, (employer) => employer.company, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 

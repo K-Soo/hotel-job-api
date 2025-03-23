@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  Index,
   JoinColumn,
   OneToOne,
 } from 'typeorm';
@@ -30,12 +29,12 @@ export class Resume {
   @OneToMany(() => Application, (application) => application.resume)
   applications: Application[];
 
-  @ManyToOne(() => Applicant, (applicant) => applicant.resumes, { cascade: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Applicant, (applicant) => applicant.resumes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'applicant_id', referencedColumnName: 'id' })
   applicant: Applicant;
 
   // 근무 조건
-  @OneToOne(() => Condition, (condition) => condition.resume)
+  @OneToOne(() => Condition, (condition) => condition.resume, { cascade: true })
   condition: Condition;
 
   //경력 (필수)

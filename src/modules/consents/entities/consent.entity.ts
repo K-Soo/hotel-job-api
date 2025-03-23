@@ -12,11 +12,11 @@ import { Employer } from '../../employers/entities/employer.entity';
 import { Exclude } from 'class-transformer';
 @Entity()
 export class Consent {
-  @OneToOne(() => Employer, (Employer) => Employer.consent, { cascade: true, onDelete: 'CASCADE', nullable: true })
+  @OneToOne(() => Employer, (Employer) => Employer.consent, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
 
-  @OneToOne(() => Applicant, (applicant) => applicant.consent, { cascade: true, onDelete: 'CASCADE', nullable: true })
+  @OneToOne(() => Applicant, (applicant) => applicant.consent, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'applicant_id', referencedColumnName: 'id' })
   applicant: Applicant;
 
