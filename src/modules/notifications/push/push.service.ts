@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SaveFcmTokenDto } from './dto/save-fcm-token.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, LessThan, Repository } from 'typeorm';
+import { EntityManager, In, LessThan, Repository } from 'typeorm';
 import { Push } from './entities/push.entity';
 import { RequestUser } from '../../../authentication/auth/interfaces/jwt-payload.interface';
 import { UserAgent } from './interfaces/user-agent.interface';
@@ -151,5 +151,12 @@ export class PushService {
     return await this.pushRepo.find({
       where: { userId: In(userIdArray), isActivePermission: true },
     });
+  }
+
+  /**
+   * 사용자의 푸시 토큰 삭제
+   */
+  async removeUserWithTransaction(userId: string, manager: EntityManager) {
+    return await manager.getRepository(Push).delete({ userId });
   }
 }
