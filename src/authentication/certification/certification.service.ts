@@ -31,8 +31,6 @@ export class CertificationService {
     private readonly configService: ConfigService,
     private readonly secretsManagerService: SecretsManagerService,
     private readonly httpService: HttpService,
-    private readonly employersService: EmployersService,
-    private readonly applicantsService: ApplicantsService,
     @InjectRepository(Certification) private readonly certificationRepository: Repository<Certification>,
     @InjectRepository(Employer) private employerRepo: Repository<Employer>,
     @InjectRepository(Applicant) private applicantRepo: Repository<Applicant>,
