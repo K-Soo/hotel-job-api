@@ -27,7 +27,7 @@ export class RecruitmentService {
    */
   async create(createRecruitmentDto: CreateRecruitmentDto, employer: Employer) {
     const recruitmentCount = await this.recruitmentRepo.count({
-      where: { employer: { id: employer.userId } },
+      where: { employer: { id: employer.id } },
     });
 
     if (recruitmentCount >= 100) {
