@@ -34,7 +34,7 @@ export class Employer {
   @OneToMany(() => Recruitment, (recruitment) => recruitment.employer, { cascade: true })
   recruitment: Recruitment[];
 
-  @ManyToOne(() => Membership, (membership) => membership.employers, { cascade: true })
+  @ManyToOne(() => Membership, (membership) => membership.employers, { onDelete: 'SET NULL' })
   membership: Membership;
 
   @OneToOne(() => Consent, (consent) => consent.employer, { cascade: true })
