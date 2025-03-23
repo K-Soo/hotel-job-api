@@ -1,7 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
-import { AccountStatus } from '../../../common/constants/app.enum';
-import { Applicant } from '../../../modules/applicants/entities/applicant.entity';
-import { Employer } from '../../../modules/employers/entities/employer.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { AccountStatus, Role } from '../../../common/constants/app.enum';
 
 @Entity('account_history')
 export class AccountHistory {
@@ -11,19 +9,24 @@ export class AccountHistory {
   @Column()
   userId: string;
 
-  @ManyToOne(() => Applicant, (applicant) => applicant.accountHistory, { nullable: true, onDelete: 'SET NULL' })
-  applicant: Applicant | null;
+  @Column({ nullable: true })
+  phone: string;
 
-  @ManyToOne(() => Employer, (employer) => employer.accountHistory, { nullable: true, onDelete: 'SET NULL' })
-  employer: Employer | null;
+  @Column({ nullable: true })
+  di: string;
 
   @Column({ type: 'enum', enum: AccountStatus })
   status: AccountStatus;
 
-  // 상태 변경 시간
-  @CreateDateColumn({ type: 'timestamptz', precision: 0 })
-  changedAt: Date;
+  @Column({ type: 'enum', enum: Role })
+  userRole: Role;
 
   @Column({ type: 'text', nullable: true })
   reason: string;
+
+  @Column({ type: 'timestamptz', precision: 0 })
+  registeredAt: Date;
+
+  @CreateDateColumn({ type: 'timestamptz', precision: 0 })
+  createdAt: Date;
 }
