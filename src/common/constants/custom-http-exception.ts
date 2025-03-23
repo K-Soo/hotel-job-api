@@ -53,6 +53,10 @@ export const customHttpException = {
     customCode: 2004,
     message: 'oauth get user-info failed',
   },
+  OAUTH_SIGN_IN_TOKEN_RATE_LIMIT: {
+    customCode: 2005,
+    message: 'token request rate limit exceeded',
+  },
   CREATION_LIMIT_EXCEEDED: {
     customCode: 3000,
     message: 'Creation limit exceeded for the resource',
@@ -201,38 +205,42 @@ export const customHttpException = {
   // 계정 상태
   ACCOUNT_STATUS_INACTIVE: {
     customCode: 8000,
-    message: 'Your account is inactive.',
+    message: 'This account is currently inactive.',
   },
   ACCOUNT_STATUS_BLOCKED: {
     customCode: 8001,
-    message: 'Your account is blocked.',
+    message: 'Access to this account has been permanently restricted.',
   },
   ACCOUNT_STATUS_SUSPENDED: {
     customCode: 8002,
-    message: 'Your account is suspended.',
+    message: 'This account has been temporarily suspended.',
   },
   ACCOUNT_STATUS_LOCKED: {
     customCode: 8003,
-    message: 'Your account is locked.',
+    message: 'This account has been locked for security reasons.',
   },
   ACCOUNT_STATUS_DEACTIVATED: {
     customCode: 8004,
-    message: 'Your account is deactivated.',
+    message: 'This account has been deactivated.',
   },
   ACCOUNT_STATUS_PENDING: {
     customCode: 8005,
-    message: 'Your account is pending verification.',
+    message: 'This account is pending verification.',
   },
   ACCOUNT_STATUS_RECOVERY: {
     customCode: 8006,
-    message: 'Your account is under recovery.',
+    message: 'This account is under recovery process.',
   },
   ACCOUNT_STATUS_ANONYMIZED: {
     customCode: 8007,
-    message: 'Your account is anonymized.',
+    message: 'This account’s personal information has been anonymized.',
   },
   ACCOUNT_STATUS_WAITING_APPROVAL: {
     customCode: 8008,
-    message: 'Your account is awaiting approval.',
+    message: 'This account is waiting for administrator approval.',
+  },
+  ACCOUNT_STATUS_WITHDRAW: {
+    customCode: 8009,
+    message: 'This account has been withdrawn by the user.',
   },
 } as const;
