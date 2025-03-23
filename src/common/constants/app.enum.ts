@@ -12,25 +12,15 @@ export enum Role {
 
 export enum AccountStatus {
   ACTIVE = 'ACTIVE', //활성화되어 있으며 정상적으로 사용 가능한 상태.
-
   INACTIVE = 'INACTIVE', //계정이 비활성화된 상태. 사용자가 자발적으로 계정을 비활성화하거나, 관리자가 임시로 비활성화한 경우.
-
   BLOCKED = 'BLOCKED', //영구적 제한 상태(심각한 규칙 위반).
-
   SUSPENDED = 'SUSPENDED', // 계정이 임시적으로 제한된 상태. 예: 사기 탐지.
-
   LOCKED = 'LOCKED', // 보안상의 이유로 계정이 잠긴 상태. 비밀번호 시도 실패 등.
-
-  DEACTIVATED = 'DEACTIVATED', //사용자가 계정을 삭제(탈퇴)한 상태. 데이터를 완전히 삭제하거나 일정 기간 유지 후 삭제될 수 있음.
-
+  DEACTIVATED = 'DEACTIVATED', //사용자가 계정을 삭제요청 상태. 일정 기간 유지 후 삭제
   WITHDRAW = 'WITHDRAW', // 회원탈퇴
-
   PENDING = 'PENDING', // 인증 절차(이메일, 전화번호 인증 등)가 완료되지 않은 상태.
-
   RECOVERY = 'RECOVERY', // 비밀번호 재설정 또는 계정 복구 절차 중인 상태.
-
   ANONYMIZED = 'ANONYMIZED', // 개인정보가 익명 처리된 상태.
-
   WAITING_APPROVAL = 'WAITING_APPROVAL', // 관리자 승인 대기 상태. 예: 기업 계정 요청.
 }
 
