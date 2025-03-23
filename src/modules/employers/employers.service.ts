@@ -12,20 +12,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
 import { hashPassword, comparePassword } from '../../common/helpers/password.helper';
 import { safeQuery } from '../../common/helpers/database.helper';
-import { EntityManager, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { DataSource, EntityManager, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Membership } from '../membership/entities/membership.entity';
 import { AccountResetDto } from './dto/account-reset.dto';
 import { customHttpException } from '../../common/constants/custom-http-exception';
 import { ResponseStatus } from '../../common/constants/responseStatus';
 import { AccountHistoryService } from '../../authentication/account-history/account-history.service';
 import { AccountStatus } from '../../common/constants/app.enum';
+import { PushService } from '../notifications/push/push.service';
 
 @Injectable()
 export class EmployersService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Employer) private readonly employerRepo: Repository<Employer>,
     @InjectRepository(Membership) private readonly membershipRepo: Repository<Membership>,
     private readonly accountHistoryService: AccountHistoryService,
+    private readonly pushService: PushService,
   ) {}
 
   //회원가입 시 Employer 생성 및 Membership 설정
@@ -157,15 +160,31 @@ export class EmployersService {
     return this.employerRepo.update({ id }, { nickname });
   }
 
-  async accountWithdrawal(userId: string) {
-    const employer = await this.findOneUuid(userId);
+  // 계정 삭제 요청
+  async withdrawUserForEmployer(uuid: string) {
+    return await this.dataSource.transaction(async (manager) => {
+      const employerRepo = manager.getRepository(Employer);
 
-    if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
-    }
+      const employer = await employerRepo.findOne({ where: { id: uuid }, relations: ['certification'] });
+      console.log('employer: ', employer);
 
-    await this.accountHistoryService.createAccountHistory(employer, AccountStatus.DEACTIVATED, userId);
+      if (!employer) {
+        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      }
 
-    return { status: ResponseStatus.SUCCESS };
+      // push token 삭제
+      await this.pushService.removeUserWithTransaction(employer.id, manager);
+
+      await employerRepo.delete({ id: uuid });
+
+      await this.accountHistoryService.createAccountHistoryWithTransaction(
+        employer,
+        AccountStatus.DEACTIVATED,
+        manager,
+        '회원 탈퇴',
+      );
+
+      return { status: ResponseStatus.SUCCESS };
+    });
   }
 }

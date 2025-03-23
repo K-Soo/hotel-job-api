@@ -28,23 +28,20 @@ import {
 
 @Entity()
 export class Employer {
-  @OneToMany(() => AccountHistory, (accountHistory) => accountHistory.employer)
-  accountHistory: AccountHistory[];
-
   @OneToOne(() => Certification, (certification) => certification.employer)
   certification: Certification;
 
-  @ManyToOne(() => Membership, (membership) => membership.employers)
+  @OneToMany(() => Recruitment, (recruitment) => recruitment.employer, { cascade: true })
+  recruitment: Recruitment[];
+
+  @ManyToOne(() => Membership, (membership) => membership.employers, { cascade: true })
   membership: Membership;
 
-  @OneToOne(() => Consent, (consent) => consent.employer)
+  @OneToOne(() => Consent, (consent) => consent.employer, { cascade: true })
   consent: Consent;
 
-  @OneToOne(() => Company, (company) => company.employer)
+  @OneToOne(() => Company, (company) => company.employer, { cascade: true })
   company: Company;
-
-  @OneToMany(() => Recruitment, (recruitment) => recruitment.employer)
-  recruitment: Recruitment[];
 
   @OneToMany(() => EmployerCoupon, (employerCoupon) => employerCoupon.employer)
   coupon: EmployerCoupon[];
