@@ -6,15 +6,13 @@ import { ApplicationAnnouncementRecipient } from '../announcements/entities/appl
 
 @Entity()
 export class Application {
-  // 이력서와의 관계 (참조만 유지)
   @ManyToOne(() => Resume, (resume) => resume.applications, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'resume_id' })
   resume: Resume | null;
 
-  // 채용공고와의 관계 (참조만 유지)
-  @ManyToOne(() => Recruitment, (recruitment) => recruitment.applications, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => Recruitment, (recruitment) => recruitment.applications, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'recruitment_id' })
-  recruitment: Recruitment | null;
+  recruitment: Recruitment;
 
   // 공고 발표
   @OneToMany(() => ApplicationAnnouncementRecipient, (recipient) => recipient.application)
