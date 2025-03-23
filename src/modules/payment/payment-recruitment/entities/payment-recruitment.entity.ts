@@ -11,12 +11,9 @@ import {
 
 @Entity('payment_recruitment')
 export class PaymentRecruitment {
-  @ManyToOne(() => Recruitment, (recruitment) => recruitment.paymentRecruitment, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(() => Recruitment, (recruitment) => recruitment.paymentRecruitment, { onDelete: 'CASCADE' })
   @JoinColumn()
-  recruitment: Recruitment | null;
+  recruitment: Recruitment;
 
   @ManyToOne(() => Payment, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'payment_id', referencedColumnName: 'id' })
