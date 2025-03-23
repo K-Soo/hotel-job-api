@@ -22,6 +22,10 @@ export function handleAccountStatus(status: AccountStatus): void {
       throw new ForbiddenException(customHttpException.ACCOUNT_STATUS_RECOVERY);
     case AccountStatus.WAITING_APPROVAL:
       throw new ForbiddenException(customHttpException.ACCOUNT_STATUS_WAITING_APPROVAL);
+    case AccountStatus.WITHDRAW:
+      throw new ForbiddenException(customHttpException.ACCOUNT_STATUS_WITHDRAW);
+    case AccountStatus.INACTIVE:
+      throw new ForbiddenException(customHttpException.ACCOUNT_STATUS_INACTIVE);
     default:
       throw new ForbiddenException('Unknown account status');
   }

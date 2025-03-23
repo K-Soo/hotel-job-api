@@ -3,7 +3,7 @@ import { Payment } from './payment.entity';
 
 @Entity()
 export class PaymentTransaction {
-  @ManyToOne(() => Payment, (payment) => payment.transactions, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Payment, (payment) => payment.transactions, { onDelete: 'SET NULL', nullable: true })
   payment: Payment | null;
 
   @PrimaryGeneratedColumn('uuid')

@@ -28,12 +28,12 @@ import {
 } from 'typeorm';
 @Entity()
 export class Recruitment {
-  @OneToMany(() => Application, (application) => application.recruitment)
-  applications: Application[];
-
-  @ManyToOne(() => Employer, (employer) => employer.recruitment, { cascade: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Employer, (employer) => employer.recruitment, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
   employer: Employer;
+
+  @OneToMany(() => Application, (application) => application.recruitment, { cascade: true })
+  applications: Application[];
 
   @OneToMany(() => PaymentRecruitment, (paymentRecruitment) => paymentRecruitment.recruitment)
   paymentRecruitment: PaymentRecruitment[];

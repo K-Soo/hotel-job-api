@@ -35,8 +35,8 @@ export class EmployersController {
   }
 
   @ApiOperation({ summary: '사업자 계정삭제' })
-  @Delete('account/withdraw')
+  @Delete('withdraw')
   accountWithdraw(@Req() req: Request) {
-    return this.employersService.accountWithdrawal(req.user['sub']);
+    return this.employersService.withdrawUserForEmployer(req.user['sub']);
   }
 }

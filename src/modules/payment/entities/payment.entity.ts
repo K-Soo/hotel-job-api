@@ -1,21 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToMany,
-  BeforeInsert,
-  ManyToOne,
-  JoinColumn,
-  Index,
-} from 'typeorm';
 import { PaymentRecruitment } from '../payment-recruitment/entities/payment-recruitment.entity';
 import { PaymentStatus, PaymentType } from '../../../common/constants/payment';
 import { addMinutes } from 'date-fns';
 import { EmployerCoupon } from '../../coupon/entities/employer-coupon.entity';
 import { PaymentTransaction } from './payment-transaction.entity';
 import { Exclude } from 'class-transformer';
+//prettier-ignore
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany, BeforeInsert, ManyToOne, JoinColumn, Index } from 'typeorm';
 
 @Entity()
 export class Payment {
@@ -25,7 +15,7 @@ export class Payment {
   @OneToMany(() => PaymentRecruitment, (paymentRecruitment) => paymentRecruitment.payment)
   recruitmentPayments: PaymentRecruitment[];
 
-  @ManyToOne(() => EmployerCoupon, { nullable: true }) // 적용된 쿠폰 (nullable: 쿠폰이 없어도 가능)
+  @ManyToOne(() => EmployerCoupon, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'employer_coupon_id' })
   employerCoupon: EmployerCoupon | null;
 

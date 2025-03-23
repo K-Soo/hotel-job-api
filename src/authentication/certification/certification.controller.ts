@@ -100,6 +100,8 @@ export class CertificationController {
       return { status: ResponseStatus.AVAILABLE };
     }
 
-    return { status: ResponseStatus.FAILURE };
+    if (!certification) {
+      return { status: ResponseStatus.NOT_FOUND };
+    }
   }
 }

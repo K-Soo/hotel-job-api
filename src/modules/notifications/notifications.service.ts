@@ -73,8 +73,6 @@ export class NotificationService {
       .where('notification.userIds @> :userId::jsonb', { userId: JSON.stringify([userId]) })
       .orderBy('notification.createdAt', 'DESC');
 
-    // queryBuilder.select(['recruitment.id']);
-
     const paginatedResult = await paginate<Notification>(queryBuilder, optionPagination);
 
     return formatPagination({

@@ -28,22 +28,22 @@ export class ResumesService {
   ) {}
 
   async createResume(applicant: Applicant) {
+    const existingResumes = await this.resumeRepo.find({
+      where: { applicant },
+      relations: ['experience'],
+    });
+
+    if (existingResumes.length >= 5) {
+      throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
+    }
+
+    const userCertInfo = await this.certificationService.checkSignUpCertificationExists(applicant);
+
+    if (!userCertInfo) {
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
+    }
+
     try {
-      const existingResumes = await this.resumeRepo.find({
-        where: { applicant },
-        relations: ['experience'],
-      });
-
-      if (existingResumes.length >= 5) {
-        throw new BadRequestException(customHttpException.CREATION_LIMIT_EXCEEDED);
-      }
-
-      const userCertInfo = await this.certificationService.checkSignUpCertificationExists(applicant);
-
-      if (!userCertInfo) {
-        throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
-      }
-
       // initial Create Resume
       if (existingResumes.length === 0) {
         const resume = this.resumeRepo.create({ applicant });
@@ -123,6 +123,12 @@ export class ResumesService {
   async publishResume(publishResumeDto: PublishResumeDto, applicant: Applicant) {
     const { id, experience: newExperiences, ...updateData } = publishResumeDto;
 
+    const userCertInfo = await this.certificationService.checkSignUpCertificationExists(applicant);
+
+    if (!userCertInfo) {
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
+    }
+
     const resume = await this.resumeRepo.findOne({
       where: { id, applicant },
       relations: ['experience'],
@@ -132,23 +138,32 @@ export class ResumesService {
       throw new NotFoundException('Not found resume');
     }
 
-    if (newExperiences) {
-      const experienceRepo = this.dataSource.getRepository(Experience);
-      // 1. 기존 경력 데이터 제거
-      await experienceRepo.delete({ resume: { id: resume.id } });
+    try {
+      if (newExperiences) {
+        const experienceRepo = this.dataSource.getRepository(Experience);
 
-      // 2. 새로운 경력 데이터 추가
-      const newExperienceEntities = newExperiences.map((exp) => experienceRepo.create(exp));
-      resume.experience = newExperienceEntities; // 새로운 경험 데이터를 할당 (덮어쓰기)
+        // 1. 기존 경력 데이터 제거
+        await experienceRepo.delete({ resume: { id: resume.id } });
+
+        // 2. 새로운 경력 데이터 추가
+        const newExperienceEntities = newExperiences.map((exp) => experienceRepo.create(exp));
+        resume.experience = newExperienceEntities; // 새로운 경험 데이터를 할당 (덮어쓰기)
+      }
+
+      const mergedResume = this.resumeRepo.merge(resume, updateData, {
+        status: ResumeStatus.PUBLISH,
+        updatedAt: new Date(),
+      });
+
+      await this.resumeRepo.save(mergedResume);
+
+      return { status: ResponseStatus.SUCCESS, id: resume.id };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new UnauthorizedException(customHttpException.CERTIFICATION_UNAUTHORIZED);
     }
-
-    const mergedResume = this.resumeRepo.merge(resume, updateData, {
-      status: ResumeStatus.PUBLISH,
-      updatedAt: new Date(),
-    });
-
-    await this.resumeRepo.save(mergedResume);
-    return { status: ResponseStatus.SUCCESS, id: resume.id };
   }
 
   async getAllResumesWithApplication(uuid: string) {

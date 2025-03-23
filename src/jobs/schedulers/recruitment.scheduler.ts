@@ -24,7 +24,6 @@ export class RecruitmentScheduler {
       .leftJoinAndSelect('paymentRecruitment.options', 'options')
       .where('recruitment.recruitmentStatus = :status', { status: RecruitmentStatus.PROGRESS })
       .andWhere('recruitment.isListUp = :isListUp', { isListUp: true })
-      .andWhere('recruitment.listUpCount <= :maxListUpCount', { maxListUpCount: 4 })
       .andWhere('payment.paymentStatus = :paymentStatus', { paymentStatus: PaymentStatus.PAYMENT_COMPLETED })
       .orderBy('recruitment.priorityDate', 'DESC')
       .getMany();
@@ -61,6 +60,31 @@ export class RecruitmentScheduler {
         recruitmentItem.recruitmentTitle,
         `| 만료일 ${recruitmentItem.priorityDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
       );
+
+      // 1. 하루 최대 횟수 제한
+      // const maxListUpPerDay = listUpProductOption.maxListUpPerDay ?? 4;
+      // const listUpIntervalHours = listUpProductOption.listUpIntervalHours ?? 6;
+
+      // // 오늘 자정 기준
+      // const today = new Date();
+      // today.setHours(0, 0, 0, 0);
+
+      // const lastPriorityDate = recruitmentItem.priorityDate;
+
+      // // 2. 하루 안에 했는지 여부
+      // const isTodayListUp = lastPriorityDate >= today;
+
+      // // 3. 마지막 리스트업 후 몇 시간 지났는지
+      // const hoursSinceLastListUp = (now.getTime() - lastPriorityDate.getTime()) / (1000 * 60 * 60);
+
+      // //  4. 하루 횟수 초과 OR 리스트업 간격 미충족
+      // if (
+      //   (isTodayListUp && recruitmentItem.listUpCount >= maxListUpPerDay) ||
+      //   hoursSinceLastListUp < listUpIntervalHours
+      // ) {
+      //   continue;
+      // }
+      // recruitmentItem.listUpCount = isTodayListUp ? recruitmentItem.listUpCount + 1 : 1;
 
       // 순회 시 1초씩 늘려가며 맨 마지막 공고부터 최상단으로 끌어올림
       const newPriorityDate = new Date(now.getTime() + index * 1000);

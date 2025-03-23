@@ -9,10 +9,10 @@ export class PointTransaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Employer, (employer) => employer.pointTransactions, { onDelete: 'CASCADE' })
-  employer: Employer;
+  @ManyToOne(() => Employer, (employer) => employer.pointTransactions, { onDelete: 'SET NULL', nullable: true })
+  employer: Employer | null;
 
-  @ManyToOne(() => Payment, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Payment, { onDelete: 'SET NULL', nullable: true })
   payment: Payment | null;
 
   @Column({ type: 'enum', enum: PointTransactionType })

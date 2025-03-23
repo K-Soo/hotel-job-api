@@ -23,7 +23,7 @@ export class ApplicantsController {
   @UseGuards(PassportJwtGuard, RolesGuard)
   @Delete('deactivate')
   @Roles('JOB_SEEKER')
-  deactivatedUser(@Req() req: Request) {
-    return this.applicantsService.deactivatedForApplicant(req.user['sub']);
+  withdrawUser(@Req() req: Request) {
+    return this.applicantsService.withdrawUserForApplicant(req.user['sub']);
   }
 }

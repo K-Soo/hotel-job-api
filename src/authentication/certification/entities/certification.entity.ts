@@ -13,19 +13,13 @@ import { Applicant } from '../../../modules/applicants/entities/applicant.entity
 import { Exclude } from 'class-transformer';
 @Entity('certification')
 export class Certification {
-  @OneToOne(() => Applicant, (applicant) => applicant.certification, {
-    onDelete: 'CASCADE',
-    nullable: true,
-  })
+  @OneToOne(() => Applicant, (applicant) => applicant.certification, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'applicant_id', referencedColumnName: 'id' })
-  applicant: Applicant;
+  applicant: Applicant | null;
 
-  @OneToOne(() => Employer, (employer) => employer.certification, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
+  @OneToOne(() => Employer, (employer) => employer.certification, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'employer_id', referencedColumnName: 'id' })
-  employer: Employer;
+  employer: Employer | null;
 
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
@@ -81,9 +75,11 @@ export class Certification {
   @Column()
   web_siteid: string;
 
+  @Exclude()
   @CreateDateColumn({ type: 'timestamptz', precision: 0 })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({ type: 'timestamptz', precision: 0 })
   updatedAt: Date;
 }

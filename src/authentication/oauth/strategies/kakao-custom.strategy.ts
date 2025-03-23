@@ -87,6 +87,9 @@ export class KakaoCustomStrategy extends PassportStrategy(Strategy, 'kakao-custo
       if (error.response?.data.error_code === 'KOE320') {
         throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_NOT_FOUND_USER);
       }
+      if (error.response?.data.error_code === 'KOE237') {
+        throw new NotFoundException(customHttpException.OAUTH_SIGN_IN_TOKEN_RATE_LIMIT);
+      }
 
       throw new BadRequestException(customHttpException.OAUTH_GET_TOKEN_ERROR);
     }

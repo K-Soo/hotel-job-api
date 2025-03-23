@@ -5,7 +5,7 @@ import { Resume } from '../../resumes/entities/resume.entity';
 
 @Entity('condition')
 export class Condition {
-  @OneToOne(() => Resume, (resume) => resume.condition, { cascade: true, onDelete: 'CASCADE' })
+  @OneToOne(() => Resume, (resume) => resume.condition, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'resume_id', referencedColumnName: 'id' })
   resume: Resume;
 
