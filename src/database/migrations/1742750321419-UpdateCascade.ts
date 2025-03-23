@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class DevUpdateCascade1742747569004 implements MigrationInterface {
-    name = 'DevUpdateCascade1742747569004'
+export class UpdateCascade1742750321419 implements MigrationInterface {
+    name = 'UpdateCascade1742750321419'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "employer_coupon" DROP CONSTRAINT "FK_49f538e2bb0fb7f1778d1e1fc25"`);
