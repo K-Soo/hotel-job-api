@@ -181,7 +181,7 @@ export class CouponService {
     await this.notificationService.sendNotification({
       category: CategoryType.EVENT,
       title: '',
-      link: `/employer/coupon`,
+      link: `/employer`,
       userIds: [employer.id],
       message: `${description}이 발급되었습니다.`,
       notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
