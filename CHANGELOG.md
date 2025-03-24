@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/K-Soo/hotel-job-api/compare/v1.4.1...v1.4.2) (2025-03-24)
+
+
+### Features
+
+* account_history 테이블의 제약 조건 및 컬럼 업데이트 ([d8c6c7b](https://github.com/K-Soo/hotel-job-api/commit/d8c6c7b607b99ca6071c4e7a7ee25058a8663b36))
+* RecruitService에 isListUp 및 listUpCount 필드 추가 ([d2bf1ac](https://github.com/K-Soo/hotel-job-api/commit/d2bf1ac3fbcdea277cab3784bda29d8e23932ebb))
+
+
+### Updates
+
+* 마이그레이션 - 인증관련 이넘값 변경 [skip ci] ([d8fd0bc](https://github.com/K-Soo/hotel-job-api/commit/d8fd0bc577735aa604d50d95bd9a7fba9203293f))
+* 쿠폰 알림 링크를 '/employer'로 수정 ([89396cc](https://github.com/K-Soo/hotel-job-api/commit/89396ccd886c81fd033299558c56d48e83a2eb54))
+* account with payment migration ([7c79a12](https://github.com/K-Soo/hotel-job-api/commit/7c79a12d32b617aef16bb1217c1dbaf509f22836))
+* cascade 옵션을 onDelete: 'SET NULL'로 변경 ([b603678](https://github.com/K-Soo/hotel-job-api/commit/b6036785d6d705ba4a42ba9618bb1dc4567ae4fb))
+
+
+### Refactors
+
+* 결제 관련 엔티티 수정, nullable 속성 추가 및 불필요한 코드 제거 ([40e2174](https://github.com/K-Soo/hotel-job-api/commit/40e2174deb204d3ac62228e5146f607e844ef1f6))
+* 계정 상태 설명 수정 및 삭제 요청 상태 추가 ([88d4cb5](https://github.com/K-Soo/hotel-job-api/commit/88d4cb524216eba3ced185da86f0a06acb3ebbb3))
+* 계정 상태 처리 로직 추가 및 인증 유효성 검사 개선 ([b9f4e44](https://github.com/K-Soo/hotel-job-api/commit/b9f4e440ee57a64b65ab9a3dbfb0cf21a1db8b5a))
+* 계정 상태에 WITHDRAW 및 INACTIVE 추가 예외 처리 ([6e2dbdf](https://github.com/K-Soo/hotel-job-api/commit/6e2dbdfef19e8feccd90bdc11055f35564976b8d))
+* 고용주 ID 참조 수정 및 로깅 추가 ([d95ffe0](https://github.com/K-Soo/hotel-job-api/commit/d95ffe03259a7284f8dd3beec74c85a57b909bda))
+* 리스트업 횟수 제한 로직 주석 처리 ([62a0ebc](https://github.com/K-Soo/hotel-job-api/commit/62a0ebce5377d5fac4d3758f7912b1b90000508a))
+* 불필요한 주석 제거 및 계정 이력 관련 엔티티와 서비스 개선 ([60ce4ff](https://github.com/K-Soo/hotel-job-api/commit/60ce4ffdef53efb5f6746242360f8ff89d3cba1d))
+* 사업자 계정 삭제 로직 개선 및 푸시 서비스 통합 ([40c04ba](https://github.com/K-Soo/hotel-job-api/commit/40c04bae991a08b4e23ce4f67fc7f4f5ef173698))
+* 사용자 탈퇴 로직 개선 및 푸시 서비스 통합 ([878b124](https://github.com/K-Soo/hotel-job-api/commit/878b12439a247c6e721874b35e5377017c35b8e9))
+* 응답 상태에 NOT_FOUND 추가 ([95555fe](https://github.com/K-Soo/hotel-job-api/commit/95555fedcf87c057ec70bae95da7206aa48f7361))
+* 이력서 엔티티 및 서비스 개선, 불필요한 코드 제거 및 예외 처리 추가 ([acc11a3](https://github.com/K-Soo/hotel-job-api/commit/acc11a3477a39e22272df4a8857d08ffaebd7c3b))
+* 인증 관련 로직 개선 및 null 처리 추가 ([c391fbb](https://github.com/K-Soo/hotel-job-api/commit/c391fbb07a2c9fcd098c4a7b1cc3d124a229afe8))
+* 조건 엔티티에서 Resume 관계의 cascade 옵션 제거 ([daea05f](https://github.com/K-Soo/hotel-job-api/commit/daea05ff6158ee1aa147cb7c2f671309ecc75119))
+* 지원자 엔티티에서 계정 이력 제거 및 관계에 cascade 옵션 추가 ([efa36c6](https://github.com/K-Soo/hotel-job-api/commit/efa36c6ec7991549da50e1cb40ba44c6c462e908))
+* 카카오 OAuth 전략에 토큰 비율 제한 예외 처리 추가 ([e8f156e](https://github.com/K-Soo/hotel-job-api/commit/e8f156e161113363ae83ddb4d11830def8754d19))
+* 쿠폰 설명에서 '웰컴 쿠폰' 문구 제거 ([2658167](https://github.com/K-Soo/hotel-job-api/commit/265816716f1c2eeb3d0e1739dc5bacf42ce86b02))
+* 푸시 서비스에 사용자 푸시 토큰 삭제 메서드 추가 및 포인트 거래 엔티티 수정 ([d96cf5f](https://github.com/K-Soo/hotel-job-api/commit/d96cf5fce6216e189bf32d5453afb6f5ef4d223d))
+* Company 엔티티에서 Employer 관계의 cascade 옵션 제거 ([15bb6a3](https://github.com/K-Soo/hotel-job-api/commit/15bb6a33d65e9d09ac026a61165f812b9de16176))
+* consent 엔티티에서 Employer 및 Applicant 관계의 cascade 옵션 제거 ([78f7ad9](https://github.com/K-Soo/hotel-job-api/commit/78f7ad9f5ef0f55ef61ee6d4c44af5dbae9a384a))
+* createCertification으로 변경 및 링크 수정 ([a4f129a](https://github.com/K-Soo/hotel-job-api/commit/a4f129a7133c1a2b29d34c13146d1b9613c46d25))
+* createCertification으로 이름 변경 ([353578d](https://github.com/K-Soo/hotel-job-api/commit/353578d671402e571fc4fbf0c9ceadb8e655e8de))
+* OAuth 관련 예외 처리 추가 및 계정 상태 메시지 개선 ([a09af26](https://github.com/K-Soo/hotel-job-api/commit/a09af26745571d75180a81bbe7e8d94bd1bd04ae))
+* paymentRecruitment 쿼리에서 type 필드 제거 ([9f50dfa](https://github.com/K-Soo/hotel-job-api/commit/9f50dfac9fb125b52ec2dae13d06485f002f282f))
+* Recruitment 엔티티에서 Employer 관계의 cascade 옵션 제거 및 Application 관계의 cascade 옵션 추가 ([98b721f](https://github.com/K-Soo/hotel-job-api/commit/98b721fbb6a153206af1faa0d3fc7dad65f513de))
+
 ### [1.4.1](https://github.com/K-Soo/hotel-job-api/compare/v1.4.0...v1.4.1) (2025-03-21)
 
 
