@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { PaymentStatus, PaymentType } from '../../common/constants/payment';
 @Injectable()
 export class PaymentService {
+  private readonly logger = new Logger(PaymentService.name);
+
   constructor(@InjectRepository(Payment) private paymentRepo: Repository<Payment>) {}
 
   async paymentList(userId: string) {
@@ -34,6 +36,12 @@ export class PaymentService {
 
     const formattedPayments = payments.map((payment) => {
       const { transactions, recruitmentPayments, ...rest } = payment;
+
+      if (!recruitmentPayments?.[0]?.recruitment) {
+        this.logger.error(`Missing recruitment for payment ${payment.id}`);
+
+        return null;
+      }
 
       return {
         ...rest,
