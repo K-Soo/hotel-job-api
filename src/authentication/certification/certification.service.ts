@@ -266,7 +266,7 @@ export class CertificationService {
    *  @description 사업자 - DI 중복확인(같은 본인인증정보 인증 불가)
    *  @description 일반 유저 - 본인인증 완료 여부 확인
    */
-  async saveCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer) {
+  async createCertification(decryptCert: DecryptCertResponse, user: Applicant | Employer) {
     try {
       // 해당 유저가 이미 본인인증을 완료했는지 확인
       const existCertification = await this.checkSignUpCertificationExists(user);

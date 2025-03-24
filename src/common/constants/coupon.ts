@@ -23,5 +23,5 @@ export enum COUPON_CODE_LIST {
 }
 
 export const COUPON_DESCRIPTION = {
-  WELCOME_BASIC_10_DAYS: '웰컴 쿠폰: 기본 공고 10일 무료! 추가 공고는 최대 11,000원 할인',
+  WELCOME_BASIC_10_DAYS: '기본 공고 10일 무료! 추가 공고는 최대 11,000원 할인',
 };

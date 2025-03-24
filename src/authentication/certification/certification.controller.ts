@@ -50,7 +50,11 @@ export class CertificationController {
 
     const decryptCert = await this.certificationService.decryptCert(verifyDnHash);
 
-    const saveCertification = await this.certificationService.saveCertification(decryptCert, existingUser);
+    const createCertification = await this.certificationService.createCertification(decryptCert, existingUser);
+
+    if (createCertification.status !== ResponseStatus.SUCCESS) {
+      return createCertification;
+    }
 
     if (existingUser instanceof Employer) {
       try {
@@ -63,7 +67,7 @@ export class CertificationController {
         await this.notificationService.sendNotification({
           category: CategoryType.WELCOME,
           title: `회원가입을 축하합니다. 🎉`,
-          link: `/employer/coupon`,
+          link: `/employer`,
           userIds: [existingUser.id],
           message: `무료 쿠폰이 발급됬습니다. 쿠폰함을 확인해주세요.`,
           notificationType: [NotificationType.IN_APP, NotificationType.PUSH],
@@ -73,7 +77,7 @@ export class CertificationController {
       }
     }
 
-    return saveCertification;
+    return createCertification;
   }
 
   @ApiOperation({ summary: '인증정보가 해당 유저의 본인 인증정보가 맞는지 확인' })
