@@ -519,9 +519,8 @@ export class RecruitService {
           'paymentRecruitment',
           `
           paymentRecruitment.payment_id IN (:...paymentIds)
-          AND paymentRecruitment.type = :type
         `,
-          { paymentIds, type },
+          { paymentIds },
         )
         .leftJoinAndSelect('paymentRecruitment.options', 'options')
         .select([
