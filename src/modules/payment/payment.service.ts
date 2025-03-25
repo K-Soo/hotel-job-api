@@ -37,6 +37,11 @@ export class PaymentService {
     const formattedPayments = payments.map((payment) => {
       const { transactions, recruitmentPayments, ...rest } = payment;
 
+      if (!recruitmentPayments) {
+        this.logger.error(`Missing recruitmentPayments for payment ${payment.id}`);
+        return;
+      }
+
       if (!recruitmentPayments?.[0]?.recruitment) {
         this.logger.error(`Missing recruitment for payment ${payment.id}`);
         return;
