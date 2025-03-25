@@ -35,16 +35,10 @@ export class PaymentService {
       .getMany();
 
     const formattedPayments = payments.map((payment) => {
-      console.log('payment: ', payment);
       const { transactions, recruitmentPayments, ...rest } = payment;
 
       if (!recruitmentPayments || recruitmentPayments.length === 0) {
         this.logger.error(`Missing recruitmentPayments for payment ${payment.id}`);
-        return;
-      }
-
-      if (!recruitmentPayments?.[0]?.recruitment) {
-        this.logger.error(`Missing recruitment for payment ${payment.id}`);
         return;
       }
 
@@ -58,6 +52,8 @@ export class PaymentService {
       };
     });
 
-    return formattedPayments;
+    const result = formattedPayments.filter(Boolean);
+
+    return result;
   }
 }
