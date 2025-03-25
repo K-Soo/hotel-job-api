@@ -1,6 +1,6 @@
 {
   "name": "hotel-job-api",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "",
   "author": "",
   "private": true,
@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:generate": "npm run build && env-cmd -e $npm_config_env npm run typeorm -- migration:generate -d dist/database/data-source.js src/database/migrations/$npm_config_name",
+    "migration:generate": "env-cmd -e $npm_config_env npm run typeorm -- migration:generate -d dist/database/data-source.js src/database/migrations/$npm_config_name && npm run build",
     "migration:run": "env-cmd -e $npm_config_env npm run typeorm migration:run -- -d dist/database/data-source.js",
     "migration:revert": "npm run typeorm migration:revert -- -d src/database/typeorm-data-source.ts",
     "seed:run": "env-cmd -e $npm_config_env ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d dist/database/data-source.js"

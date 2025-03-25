@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { SwaggerAuthMiddleware } from './config/swagger/swagger-auth.middleware';
 
+// test
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const httpAdapterHost = app.get(HttpAdapterHost);
