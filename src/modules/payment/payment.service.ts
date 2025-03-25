@@ -39,8 +39,7 @@ export class PaymentService {
 
       if (!recruitmentPayments?.[0]?.recruitment) {
         this.logger.error(`Missing recruitment for payment ${payment.id}`);
-
-        return null;
+        return;
       }
 
       return {
