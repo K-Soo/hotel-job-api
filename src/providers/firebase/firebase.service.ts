@@ -9,7 +9,7 @@ export class FirebaseService {
   /**
    *  푸시 알림 전송
    */
-  async sendPushNotification(payload: MulticastMessage) {
+  async firebaseSendEachForMulticast(payload: MulticastMessage) {
     try {
       const response = await this.firebaseAdmin.messaging().sendEachForMulticast(payload);
       console.log(`📤 푸시 알림 전송 완료: ${response.successCount}개 성공`);

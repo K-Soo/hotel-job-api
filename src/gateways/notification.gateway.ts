@@ -37,9 +37,8 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
   ) {}
 
   afterInit() {
-    this.logger.debug(`websocket server is running`);
     this.server.on('connection', () => {
-      console.log('socket connected');
+      this.logger.log(`websocket server connected`);
     });
   }
 
@@ -48,30 +47,35 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
     const refreshToken = cookies['refresh_token'];
 
     if (!refreshToken) {
-      console.error(`Socket: ${client.id} is not authenticated`);
+      this.logger.error(`Socket: ${client.id} is not authenticated`);
+
       client.disconnect();
       return;
     }
 
     try {
       const verifyToken = this.authService.refreshTokenVerify(refreshToken);
+
       const userId = verifyToken.sub;
+
       this.userSockets.set(userId, client.id);
 
       this.logger.log(`Connected: User ${userId} (socket: ${client.id})`);
-      console.log('현재 소켓 유저 목록', this.userSockets.entries());
+
+      this.logger.debug('현재 소켓 유저 목록', ...this.userSockets.entries());
 
       // 읽지 않은 알림 여부 보내기
       this.checkUnreadNotifications(userId);
     } catch (error) {
       console.error('Socket: invalid token', error.message);
+
       client.disconnect();
       return;
     }
   }
 
-  handleDisconnect(client: any) {
-    const userId = [...this.userSockets.entries()].find(([_, socketId]) => socketId === client.id)?.[0];
+  handleDisconnect(client: Socket) {
+    const userId = this.getUserIdBySocketId(client.id);
 
     if (userId) {
       this.userSockets.delete(userId);
@@ -87,12 +91,12 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
 
     if (socketId) {
       this.server.to(socketId).emit('newNotification', message);
-      console.log(`Sent In-app notification to user ${userId}`);
+      this.logger.log(`인앱 알림(소켓) 전송 아이디: ${userId}`);
 
       // 읽지 않은 알림 여부 전송
       this.checkUnreadNotifications(userId);
     } else {
-      console.log(`User ${userId} is not connected`);
+      this.logger.error(`User ${userId} is not connected`);
     }
   }
 
@@ -100,7 +104,7 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
    * 읽지 않은 알림 여부 상태 전송
    */
   private async checkUnreadNotifications(userId: string, client?: Socket) {
-    // 모든 알림 읽음 처리 -> 클라이언트에게 읽음으로 알림 전송
+    // 알림을 읽음 처리한 직후엔 강제로 ALL_READ 상태를 전송
     if (client) {
       client.emit('unreadStatus', { status: ResponseStatus.ALL_READ });
     }
@@ -119,7 +123,7 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
 
     if (socketId) {
       this.server.to(socketId).emit('unreadStatus', { status });
-      console.log(`Sent notification to user ${userId}`);
+      console.log(`읽지 않은 알림 여부 상태 전송 아이디: ${userId}`);
     }
   }
 
@@ -128,11 +132,10 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
    */
   @SubscribeMessage('markNotificationsAsRead')
   private async markNotificationsAsRead(@ConnectedSocket() client: Socket) {
-    console.log('client: ', client.id);
+    // const userId = this.getUserIdBySocketId(client.id);
     const userId = [...this.userSockets.entries()].find(([_, value]) => value === client.id)?.[0];
-
     if (!userId) {
-      console.error('Invalid user');
+      this.logger.error('Invalid user');
       return;
     }
 
@@ -144,7 +147,10 @@ export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, 
       .andWhere('NOT (read_by_user_ids @> :userId::jsonb)', { userId: JSON.stringify([userId]) }) // 아직 읽지 않은 경우만
       .execute();
 
-    // 읽지 않은 알림 여부 전송
     this.checkUnreadNotifications(userId, client);
+  }
+
+  private getUserIdBySocketId(socketId: string): string | undefined {
+    return [...this.userSockets.entries()].find(([_, id]) => id === socketId)?.[0];
   }
 }

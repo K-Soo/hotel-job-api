@@ -538,6 +538,12 @@ export class RecruitService {
           'recruitment.isListUp',
           'recruitment.listUpCount',
 
+          // new 03/27
+          'recruitment.educationCondition',
+          'recruitment.roomCount',
+          'recruitment.workingDay',
+          'recruitment.workingTime',
+
           'recruitment.priorityDate',
           'recruitment.postingStartDate',
           'recruitment.postingEndDate',
@@ -596,7 +602,6 @@ export class RecruitService {
       ]);
 
       const paginatedItems = rawPaginatedItems.map((item) => {
-        console.log('item: ', item);
         return {
           id: item.recruitment_id,
           recruitmentTitle: item.recruitment_recruitment_title,
@@ -614,6 +619,11 @@ export class RecruitService {
           postingEndDate: item.recruitment_posting_end_date,
           isListUp: item.recruitment_is_list_up,
           listUpCount: item.recruitment_list_up_count,
+
+          educationCondition: item.recruitment_education_condition,
+          roomCount: item.recruitment_room_count,
+          workingDay: item.recruitment_working_day,
+          workingTime: item.recruitment_working_time,
 
           paymentRecruitment: {
             type: item.paymentRecruitment_type,
@@ -647,6 +657,9 @@ export class RecruitService {
     }
   }
 
+  /**
+   * 공고 상세정보
+   */
   async getRecruitDetail(id: string) {
     const recruit = await this.recruitmentRepo.findOne({ where: { id }, relations: ['nationality'] });
 

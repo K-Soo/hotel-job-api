@@ -180,7 +180,7 @@ export class CouponService {
 
     await this.notificationService.sendNotification({
       category: CategoryType.EVENT,
-      title: '',
+      title: '쿠폰',
       link: `/employer`,
       userIds: [employer.id],
       message: `${description}이 발급되었습니다.`,
