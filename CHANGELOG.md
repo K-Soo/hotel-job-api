@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/K-Soo/hotel-job-api/compare/v1.4.2...v1.5.0) (2025-03-26)
+
+
+### Features
+
+* PaymentService에 로깅 기능 추가 및 결제 정보 검증 강화 ([4a7d7c5](https://github.com/K-Soo/hotel-job-api/commit/4a7d7c572079b86b9de6ea75ef9eb6556a89cbbc))
+
+
+### Bug Fixes
+
+* 쿠폰 발급 알림 제목을 '쿠폰'으로 수정 ([84c315f](https://github.com/K-Soo/hotel-job-api/commit/84c315f1530e71ea581f4fbc204579f9310db00e))
+* PaymentService에서 결제 정보가 없을 경우 null 대신 undefined 반환 ([30f3909](https://github.com/K-Soo/hotel-job-api/commit/30f3909f320023b5b9ef8d5dee8bd53e255a7029))
+* PaymentService에서 recruitmentPayments가 없거나 비어있을 경우 에러 로깅 추가 ([307b059](https://github.com/K-Soo/hotel-job-api/commit/307b0590472da1d8326e63a833d24bb51c77ff03))
+* PaymentService에서 recruitmentPayments가 없을 경우 에러 로깅 추가 ([8f75661](https://github.com/K-Soo/hotel-job-api/commit/8f75661ee4f8d15963f357d152cacf9211f3a89c))
+
+
+### Refactors
+
+* 인앱 알림 전송 주석 수정 및 모집 서비스에 새로운 필드 추가 ([b3b86e0](https://github.com/K-Soo/hotel-job-api/commit/b3b86e008bccf33d154462de1082b69cbd8af0d7))
+* makefile에서 불필요한 주석 및 마이그레이션 관련 명령어 제거 ([f017235](https://github.com/K-Soo/hotel-job-api/commit/f017235faea22655857e71731bd697a1121ae6bb))
+* NotificationGateway에서 console.log를 logger로 변경 및 사용자 소켓 ID 처리 개선 ([883c200](https://github.com/K-Soo/hotel-job-api/commit/883c2001060667682e8d6c32ef41a0f4fe89b72a))
+* PaymentService에서 불필요한 로그 제거 및 결과 필터링 추가 ([33c4a00](https://github.com/K-Soo/hotel-job-api/commit/33c4a004fb5cefed662509884d6cb9d4ddbca895))
+* sendPushNotification 메서드 이름을 firebaseSendEachForMulticast로 변경 ([4074373](https://github.com/K-Soo/hotel-job-api/commit/4074373518c2e6e88ab8499ce67b40313297f172))
+* sendPushNotification 메서드를 firebaseSendEachForMulticast로 변경 ([cf6b698](https://github.com/K-Soo/hotel-job-api/commit/cf6b6984b66492224dcf0199bfa3156691155bea))
+
 ### [1.4.2](https://github.com/K-Soo/hotel-job-api/compare/v1.4.1...v1.4.2) (2025-03-24)
 
 
