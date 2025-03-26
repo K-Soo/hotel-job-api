@@ -34,7 +34,7 @@ export class NotificationService {
 
     await this.notificationRepo.save(notification);
 
-    // 웹소켓을 통해 특정 유저에게 인앱 알림 전송
+    // 인앱 알림(웹소켓) 전송
     sendNotificationDto.userIds.forEach((userId) => {
       this.notificationGateway.sendNotificationToUser(userId, {
         category: sendNotificationDto.category,
