@@ -41,7 +41,7 @@ export class PushService {
       },
     };
 
-    const response = await this.firebaseService.sendPushNotification(payload);
+    const response = await this.firebaseService.firebaseSendEachForMulticast(payload);
 
     const invalidTokens: string[] = [];
 
