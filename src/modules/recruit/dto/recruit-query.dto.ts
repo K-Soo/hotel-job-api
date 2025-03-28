@@ -76,7 +76,7 @@ export class RecruitQueryDto {
   @IsOptional()
   @IsArray({ message: 'Jobs must be an array.' })
   @ArrayUnique({ message: 'Jobs must not contain duplicate values.' })
-  @ArrayMaxSize(3, { message: 'You can select up to 3 Jobs only.' })
+  // @ArrayMaxSize(3, { message: 'You can select up to 3 Jobs only.' })
   @IsEnum(Jobs, { each: true, message: 'Invalid Jobs value provided.' })
   job?: Jobs | Jobs[];
 
