@@ -1,5 +1,5 @@
 import { IsBoolean } from 'class-validator';
-import { IsTrue } from '../../../common/validations/is-true.decorator';
+import { IsTrue } from '../../../common/decorators/is-true.decorator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateConsentDto {
