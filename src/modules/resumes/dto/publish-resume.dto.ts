@@ -5,7 +5,7 @@ import { CreateExperienceDto } from '../../experiences/dto/create-experience.dto
 import { LanguageDto } from '../dto/language.dto';
 import { CreateMilitaryDto } from '../../military/dto/create-military.dto';
 import { EducationLevel, ResumeType, CareerLevel, LocalCode, SexCode } from '../../../common/constants/app.enum';
-import { IsTrue } from '../../../common/validations/is-true.decorator';
+import { IsTrue } from '../../../common/decorators/is-true.decorator';
 import { LicenseDto } from './license.dto';
 
 export class PublishResumeDto {

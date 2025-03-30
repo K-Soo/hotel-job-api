@@ -569,7 +569,9 @@ export class RecruitService {
         ])
         .addSelect(`array_to_json(recruitment.jobs)`, 'recruitment_jobs')
         .where('recruitment.recruitmentStatus IN (:...statuses)', {
-          statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
+          // 정책변경 - 진행중인것들만 2024.03.27
+          // statuses: [RecruitmentStatus.PROGRESS, RecruitmentStatus.CLOSED],
+          statuses: [RecruitmentStatus.PROGRESS],
         })
         .groupBy('recruitment.id')
         .addGroupBy('paymentRecruitment.id')

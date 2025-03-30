@@ -25,7 +25,6 @@ export class S3Service {
       });
 
       const metadata = await this.s3Client.send(command);
-      console.log('metadata: ', metadata);
 
       return {
         contentDisposition: metadata.ContentDisposition,

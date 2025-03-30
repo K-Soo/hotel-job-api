@@ -59,7 +59,7 @@ export class CryptoService {
       const decrypted = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
 
       return decrypted.toString('utf8');
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Decryption failed. Invalid cipher text.');
     }
   }

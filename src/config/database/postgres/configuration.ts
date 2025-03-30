@@ -10,6 +10,7 @@ export const configuration: TypeOrmModuleAsyncOptions = {
   useFactory: async (configService: ConfigService) => {
     const isLocal = configService.get('APP_ENV') === 'local';
     const logger = new Logger('DatabaseConnection');
+
     const dataSource = new DataSource({
       type: 'postgres',
       host: configService.get('DB_HOST'),
@@ -19,13 +20,8 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       database: configService.get('DB_NAME'),
       entities: ['dist/**/*.entity.js'],
       namingStrategy: new SnakeNamingStrategy(),
-      synchronize: isLocal,
+      synchronize: false,
       connectTimeoutMS: 1000,
-      // autoLoadEntities: true,
-      // useUTC: true,
-      // extra: {
-      //   options: `-c timezone=Asia/Seoul`,
-      // },
       ...(!isLocal && { ssl: { rejectUnauthorized: false } }),
     });
 
