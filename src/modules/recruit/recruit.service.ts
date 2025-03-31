@@ -247,6 +247,12 @@ export class RecruitService {
           'paymentRecruitment.duration',
           'paymentRecruitment.bonusDays',
 
+          // new 03/27
+          'recruitment.educationCondition',
+          'recruitment.roomCount',
+          'recruitment.workingDay',
+          'recruitment.workingTime',
+
           `COALESCE(
             json_agg(
               json_build_object(
@@ -297,6 +303,12 @@ export class RecruitService {
         postingEndDate: item.recruitment_posting_end_date,
         isListUp: item.recruitment_is_list_up,
         listUpCount: item.recruitment_list_up_count,
+
+        educationCondition: item.recruitment_education_condition,
+        roomCount: item.recruitment_room_count,
+        workingDay: item.recruitment_working_day,
+        workingTime: item.recruitment_working_time,
+
         paymentRecruitment: {
           type: item.paymentRecruitment_type,
           name: item.paymentRecruitment_name,
