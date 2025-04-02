@@ -21,7 +21,7 @@ export const configuration: TypeOrmModuleAsyncOptions = {
       entities: ['dist/**/*.entity.js'],
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: false,
-      connectTimeoutMS: 1000,
+      connectTimeoutMS: 10000,
       ...(!isLocal && { ssl: { rejectUnauthorized: false } }),
     });
 
