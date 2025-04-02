@@ -43,4 +43,10 @@ export class CompanyService {
   async findBusinessNumber(businessNumber: string) {
     return safeQuery(() => this.companyRepo.findOne({ where: { businessRegistrationNumber: businessNumber } }));
   }
+
+  async findManagerEmail(email: string) {
+    return safeQuery(() =>
+      this.companyRepo.findOne({ where: { managerEmail: email }, relations: ['employer', 'employer.certification'] }),
+    );
+  }
 }
