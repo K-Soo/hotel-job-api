@@ -6,7 +6,6 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
-  Res,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities/employer.entity';
@@ -20,7 +19,7 @@ import { ResponseStatus } from '../../common/constants/responseStatus';
 import { AccountHistoryService } from '../../authentication/account-history/account-history.service';
 import { AccountStatus } from '../../common/constants/app.enum';
 import { PushService } from '../notifications/push/push.service';
-
+import { Company } from './company/entities/company.entity';
 @Injectable()
 export class EmployersService {
   constructor(
@@ -166,7 +165,6 @@ export class EmployersService {
       const employerRepo = manager.getRepository(Employer);
 
       const employer = await employerRepo.findOne({ where: { id: uuid }, relations: ['certification'] });
-      console.log('employer: ', employer);
 
       if (!employer) {
         throw new NotFoundException(customHttpException.NOT_FOUND_USER);
@@ -185,6 +183,36 @@ export class EmployersService {
       );
 
       return { status: ResponseStatus.SUCCESS };
+    });
+  }
+
+  // 본인인증한 이름 & 이메일로 유저 찾기
+  async findByUserNameAndEmail(userName: string, email: string) {
+    return await this.dataSource.transaction(async (manager) => {
+      const employerRepo = manager.getRepository(Employer);
+
+      const employer = await employerRepo
+        .createQueryBuilder('employer')
+        .leftJoinAndSelect('employer.certification', 'certification')
+        .leftJoinAndSelect('employer.company', 'company')
+        .where('company.managerEmail = :email', { email }) // ✅ 이메일 비교 대상 변경
+        .andWhere('certification.user_name = :userName', { userName }) // ✅ 이름 비교
+        .getOne();
+      console.log('employer: ', employer);
+
+      if (!employer) {
+        throw new Error('No matching employer found.');
+      }
+
+      if (!employer.certification) {
+        throw new Error('User has not completed identity verification.');
+      }
+
+      if (!employer.company) {
+        throw new Error('Employer is not associated with a company.');
+      }
+
+      return employer;
     });
   }
 }
