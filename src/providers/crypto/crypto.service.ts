@@ -20,7 +20,13 @@ export class CryptoService {
     this.cryptoKey = keyBuffer;
   }
 
-  // AES 암호화 (고정 IV)
+  /**
+   * AES-256-CBC 암호화 (고정된 IV 생성)
+   * 평문에서 해시 기반의 IV를 생성해 항상 동일한 입력에 대해 동일한 암호문 생성
+   * 보안 민감한 용도로는 적합하지 않으며, 인증/링크용에는 사용 지양
+   * @param plainText 암호화할 평문 문자열 또는 숫자
+   * @returns URL-safe Base64 문자열 형식의 암호문 (고정된 IV + 암호문)
+   */
   encryptionAES(plainText: string | number): string {
     if (!plainText) {
       throw new BadRequestException('Data is required for encryption.');
@@ -36,6 +42,7 @@ export class CryptoService {
     return this.toUrlSafeBase64(base64);
   }
 
+  // AES 복호화 (고정 IV)
   decryptionAES(cipherText: string): string {
     if (!cipherText) {
       throw new BadRequestException('Cipher text is required for decryption.');
@@ -64,7 +71,13 @@ export class CryptoService {
     }
   }
 
-  // AES 암호화 (IV 포함)
+  /**
+   * AES-256-CBC 암호화 (랜덤 IV 포함)
+   * 매 암호화 시마다 새로운 IV를 생성하여 안전한 암호문 생성
+   * IV와 암호문을 함께 Base64로 묶고 URL-safe 포맷으로 반환
+   * @param plainText 암호화할 문자열 또는 숫자
+   * @returns URL-safe Base64 문자열 (IV:암호문)
+   */
   encryptionAESWithIV(plainText: string | number): string {
     if (!plainText) {
       throw new BadRequestException('Data is required for encryption.');
@@ -104,7 +117,7 @@ export class CryptoService {
       const decrypted = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
 
       return decrypted.toString('utf8');
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Decryption failed. Invalid cipher text.');
     }
   }
@@ -115,7 +128,8 @@ export class CryptoService {
     return Buffer.from(hash.slice(0, this.ivLength * 2), 'hex'); // IV는 16바이트 고정
   }
 
-  // Base64 → URL-safe Base64 변환
+  // 일반 Base64 문자열을 URL-safe 포맷으로 변환
+  // 이메일 링크 등에 사용할 수 있도록 '+' → '-', '/' → '_', '=' 제거
   private toUrlSafeBase64(base64: string): string {
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
