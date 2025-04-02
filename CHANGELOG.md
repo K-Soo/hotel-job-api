@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/K-Soo/hotel-job-api/compare/v1.5.0...v1.5.1) (2025-04-02)
+
+
+### Features
+
+* 계정 인증을 위한 사용자 이름 및 이메일 찾기 기능 추가 ([bf8d2b5](https://github.com/K-Soo/hotel-job-api/commit/bf8d2b5080172e5f660d08b55bdbb5f0e7da216f))
+* 계정 인증을 위한 DTO 추가 (사용자 이름 및 이메일 필드 포함) ([78de7a6](https://github.com/K-Soo/hotel-job-api/commit/78de7a6d2bd8d9ce454edefd49eff690fc5b62ed))
+* 관리자 이메일 조회 기능 추가 ([750d901](https://github.com/K-Soo/hotel-job-api/commit/750d901b92b88fe70f3e66b677429148fda6ed40))
+* 라이센스 및 사용 안내 문서 추가 ([2110502](https://github.com/K-Soo/hotel-job-api/commit/2110502c0698401c1c2acb68beee1752061727b8))
+* 새로운 IsTrue 데코레이터 추가 ([4ccf016](https://github.com/K-Soo/hotel-job-api/commit/4ccf016b67772ea63ab3909f2d0c4b889c48d389))
+* 이력서 필드 업데이트 및 이메일 검증 관련 마이그레이션 파일 삭제 ([ddd0a37](https://github.com/K-Soo/hotel-job-api/commit/ddd0a3767256bcbb37578535ce19705d52322f1c))
+* 이메일 발송 기능을 위한 MailModule 추가 및 설정 구성 ([7f440fd](https://github.com/K-Soo/hotel-job-api/commit/7f440fd1c3a722f2368540109d6fc31cdce0b61d))
+* 이메일 인증 기능 개선 및 새로운 API 엔드포인트 추가 ([b5c48d8](https://github.com/K-Soo/hotel-job-api/commit/b5c48d81dc0bbf944116edfe621a7148bf871c1a))
+* 이메일 인증 기능 추가 및 관련 DTO, 서비스, 엔티티 구현 ([92f6f0e](https://github.com/K-Soo/hotel-job-api/commit/92f6f0e538beaac8dcabd8928d1d611a8bd2c435))
+* 이메일 인증 모듈 추가 및 관련 데이터베이스 마이그레이션 구현 ([cffdd2b](https://github.com/K-Soo/hotel-job-api/commit/cffdd2bd466da8181f759eff97f0d4ef2d484d86))
+* 이메일 인증 발송 기능을 위한 EmailVerificationMailer 서비스 추가 ([7320481](https://github.com/K-Soo/hotel-job-api/commit/73204815faaa797993f449719c7677b34665c019))
+* 이메일 인증 요청 DTO에 사용자 이름 및 리다이렉트 URL 필드 추가 ([5f806a4](https://github.com/K-Soo/hotel-job-api/commit/5f806a4b9a9fa6b7d11b371dbb9ceb6e945717e0))
+* 이메일 인증 템플릿 및 관련 상수 추가 ([4e7ffa7](https://github.com/K-Soo/hotel-job-api/commit/4e7ffa751a99647acda52c7011f29736b0793360))
+* 이메일 인증을 위한 템플릿 추가 ([80ad82b](https://github.com/K-Soo/hotel-job-api/commit/80ad82bef7a61db12b1424f075c9dfa055de21c2))
+* AES 암호화 메서드에 대한 주석 추가 및 오류 처리 개선 ([fa4bd0f](https://github.com/K-Soo/hotel-job-api/commit/fa4bd0f85552467074d5f9a3c46ef2d98421ab99))
+* AuthModule을 알림 모듈에 추가 ([2588578](https://github.com/K-Soo/hotel-job-api/commit/258857830718782233c075d9635a0b54c56ea0bc))
+* MailService 추가하여 이메일 발송 기능 구현 ([9167059](https://github.com/K-Soo/hotel-job-api/commit/91670598dfa86f05eb0543eb2dcbbfc4d6f3e9a9))
+* nest-cli 및 package.json 수정하여 핸들바 자산 지원 추가 ([3b87c59](https://github.com/K-Soo/hotel-job-api/commit/3b87c59d357a09b02005024bb21c995a80cf56e0))
+
+
+### Bug Fixes
+
+* 데이터베이스 마이그레이션 경로 수정 ([db7bc1f](https://github.com/K-Soo/hotel-job-api/commit/db7bc1ff588c8145615a6600d88e5042a8887f9a))
+* 데이터베이스 마이그레이션 경로 오타 수정 ([7e665f7](https://github.com/K-Soo/hotel-job-api/commit/7e665f7a21a5012571dc7cea2c7931376ab30866))
+* 데이터베이스 마이그레이션 충돌 해결 전략 수정 ([1333904](https://github.com/K-Soo/hotel-job-api/commit/1333904a83c4809b57611aca5a8d6405b31a85ee))
+
+
+### Refactors
+
+* 데이터베이스 구성에서 synchronize 옵션을 false로 변경 ([04790cc](https://github.com/K-Soo/hotel-job-api/commit/04790cca333deac43145d1cb8054c5ed08259357))
+* 데이터베이스 마이그레이션 충돌 해결 전략 변경 ([0e1db3b](https://github.com/K-Soo/hotel-job-api/commit/0e1db3b2d74ba8b09c51cdbb0e52e7c51da3405a))
+* 모집 서비스에 교육 조건 및 근무 정보 필드 추가 ([c571f93](https://github.com/K-Soo/hotel-job-api/commit/c571f9309941544fd48d938a96be82f58592af20))
+* 불필요한 마이그레이션 파일 삭제 ([0e7986d](https://github.com/K-Soo/hotel-job-api/commit/0e7986d28dee4be3de757ad8b36988aec60fe3ab))
+* 암호 해독 오류 처리 방식을 개선 ([89c0f07](https://github.com/K-Soo/hotel-job-api/commit/89c0f07da07ef2584a04e738822a7eee1945ccea))
+* 진행중인 모집만 필터링하도록 쿼리 수정 ([31f8d80](https://github.com/K-Soo/hotel-job-api/commit/31f8d809c0f34eb065efe89fbd5a524c524cf6b8))
+* IsTrue 데코레이터의 경로를 수정 ([22e8133](https://github.com/K-Soo/hotel-job-api/commit/22e8133d6ec83c712bfa4a222b3ae3a545b03d12))
+* IsTrue 데코레이터의 경로를 수정 ([d87d48e](https://github.com/K-Soo/hotel-job-api/commit/d87d48e8dfcc8d09ff574a7bec246f66beb1e5aa))
+* RecruitQueryDto에서 job 필드의 ArrayMaxSize 유효성 검사 주석 처리 ([d0f4a5e](https://github.com/K-Soo/hotel-job-api/commit/d0f4a5ea1e48ba71953eb1e6548acd4cbe652b6a))
+* S3Service에서 메타데이터 로그 출력 제거 ([1003870](https://github.com/K-Soo/hotel-job-api/commit/1003870fb863da20c6ec10ef6445069038ffeb4d))
+
 ## [1.5.0](https://github.com/K-Soo/hotel-job-api/compare/v1.4.2...v1.5.0) (2025-03-26)
 
 
