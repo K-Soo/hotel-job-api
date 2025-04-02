@@ -2,10 +2,6 @@
 FROM node:20.18.0-alpine AS base
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@9.14.4 --activate
-
-# curl 설치 추가
-# RUN apk add --no-cache curl
-
 COPY pnpm-lock.yaml package.json ./
 
 # Stage - Production Build
