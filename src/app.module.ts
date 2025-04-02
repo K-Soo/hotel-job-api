@@ -41,7 +41,7 @@ import { SchedulerModule } from './jobs/schedulers/scheduler.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { PointModule } from './modules/point/point.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
-
+import { EmailVerificationModule } from './modules/email-verification /email-verification.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -74,6 +74,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     CouponModule,
     PointModule,
     NotificationsModule,
+    EmailVerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, SwaggerAuthMiddleware, { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor }],
