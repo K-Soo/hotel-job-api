@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/K-Soo/hotel-job-api/compare/v1.5.1...v1.5.2) (2025-04-02)
+
+
+### Features
+
+* 데이터베이스 연결 타임아웃 증가 및 이메일 검증 테이블 생성 마이그레이션 추가 ([e87f931](https://github.com/K-Soo/hotel-job-api/commit/e87f93175d90e74c09f5f1f154206a49be73dfad))
+* 이메일 템플릿 디렉토리 존재 여부 확인 및 오류 처리 추가 ([472b3bc](https://github.com/K-Soo/hotel-job-api/commit/472b3bcaaf20a9fe3860c9cd5520d73739be7d03))
+
 ### [1.5.1](https://github.com/K-Soo/hotel-job-api/compare/v1.5.0...v1.5.1) (2025-04-02)
 
 
