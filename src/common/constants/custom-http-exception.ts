@@ -243,4 +243,16 @@ export const customHttpException = {
     customCode: 8009,
     message: 'This account has been withdrawn by the user.',
   },
+  EMAIL_VERIFICATION_FAILED: {
+    customCode: 9000,
+    message: 'Email verification failed.',
+  },
+  EMAIL_VERIFICATION_EXPIRED: {
+    customCode: 9001,
+    message: 'Email verification expired.',
+  },
+  EMAIL_INVALID_OR_ALREADY_VERIFIED: {
+    customCode: 9002,
+    message: 'The verification request is either invalid or has already been completed.',
+  },
 } as const;
