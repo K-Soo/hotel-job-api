@@ -13,6 +13,7 @@ FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . /app
 RUN pnpm run build
+RUN find /app/dist -name "*.hbs"
 
 # Stage - Local
 FROM base AS local

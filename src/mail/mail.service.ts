@@ -13,11 +13,16 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendMail({ to, subject, template, context }: SendMailOptions): Promise<void> {
-    await this.mailerService.sendMail({
-      to,
-      subject,
-      template,
-      context,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to,
+        subject,
+        template,
+        context,
+      });
+    } catch (error) {
+      console.log('sendMail error: ', error);
+      throw new Error('Failed to send email');
+    }
   }
 }

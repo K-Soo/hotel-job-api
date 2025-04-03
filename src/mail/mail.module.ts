@@ -5,31 +5,44 @@ import { MailService } from './mail.service';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { EmailVerificationMailer } from './verification/verification-mailer.service';
-
+import { existsSync } from 'fs';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 @Module({
   imports: [
     ConfigModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        transport: {
-          service: 'gmail',
-          auth: {
-            user: config.get<string>('EMAIL_USER'),
-            pass: config.get<string>('EMAIL_PASSWORD'),
+      useFactory: (config: ConfigService) => {
+        const templateDir = join(__dirname, 'verification');
+
+        const templateConfig = existsSync(templateDir)
+          ? {
+              dir: templateDir,
+              adapter: new HandlebarsAdapter(),
+              // adapter: new EjsAdapter(),
+              options: { strict: true },
+              preview: true,
+            }
+          : undefined;
+
+        if (!templateConfig) {
+          console.warn('[MailModule] 템플릿 디렉토리가 존재하지 않습니다:', templateDir);
+        }
+
+        return {
+          transport: {
+            service: 'gmail',
+            auth: {
+              user: config.get<string>('EMAIL_USER'),
+              pass: config.get<string>('EMAIL_PASSWORD'),
+            },
           },
-        },
-        defaults: {
-          from: `"호텔잡" <${config.get<string>('EMAIL_USER')}>`,
-        },
-        template: {
-          dir: join(__dirname, 'verification', 'templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
+          defaults: {
+            from: `"호텔잡" <${config.get<string>('EMAIL_USER')}>`,
           },
-        },
-      }),
+          ...(templateConfig && { template: templateConfig }),
+        };
+      },
       inject: [ConfigService],
     }),
   ],
