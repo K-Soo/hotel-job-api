@@ -42,9 +42,6 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Build dist 확인용
         run: |
           pnpm run build
