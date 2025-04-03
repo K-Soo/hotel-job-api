@@ -42,6 +42,9 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
+      - name: 도커 컨텍스트에 .hbs 포함 여부 확인
+        run: find . -name "*.hbs" || (echo "❌ .hbs 없음! Docker COPY에 포함되지 않을 수 있습니다." && exit 1)
+
       - name: Create ENV JSON File
         id: env-json
         uses: jsdaniell/create-json@1.1.2
