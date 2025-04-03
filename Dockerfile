@@ -9,7 +9,8 @@ FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . /app
 RUN pnpm run build
-RUN find /app/dist -name "*.hbs"
+RUN find /app/dist -name "*.hbs" || (echo "❌ .hbs 파일 없음!" && exit 1)
+
 
 # Stage - Local
 FROM base AS local
@@ -31,5 +32,6 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
+
 EXPOSE 8020
 CMD ["pnpm", "run", "start:prod"]
