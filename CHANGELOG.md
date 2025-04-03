@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.3](https://github.com/K-Soo/hotel-job-api/compare/v1.5.2...v1.5.3) (2025-04-03)
+
+
+### Features
+
+* .hbs 파일 존재 여부 확인 및 오류 메시지 추가 ([d8b56dc](https://github.com/K-Soo/hotel-job-api/commit/d8b56dc4c36ae2e893b5dc95332b20c59760291f))
+
+
+### Chore
+
+* .dockerignore에서 dist 항목 제거 및 Dockerfile에서 curl 설치 주석 제거 ([2a8ee5d](https://github.com/K-Soo/hotel-job-api/commit/2a8ee5d07b14fd4a0051d17d24f8e2d0ca4af479))
+
 ### [1.5.2](https://github.com/K-Soo/hotel-job-api/compare/v1.5.1...v1.5.2) (2025-04-02)
 
 
