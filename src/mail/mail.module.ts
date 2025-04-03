@@ -15,20 +15,6 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
       useFactory: (config: ConfigService) => {
         const templateDir = join(__dirname, 'verification');
 
-        const templateConfig = existsSync(templateDir)
-          ? {
-              dir: templateDir,
-              adapter: new HandlebarsAdapter(),
-              // adapter: new EjsAdapter(),
-              options: { strict: true },
-              preview: true,
-            }
-          : undefined;
-
-        if (!templateConfig) {
-          console.warn('[MailModule] 템플릿 디렉토리가 존재하지 않습니다:', templateDir);
-        }
-
         return {
           transport: {
             service: 'gmail',
@@ -40,7 +26,12 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
           defaults: {
             from: `"호텔잡" <${config.get<string>('EMAIL_USER')}>`,
           },
-          ...(templateConfig && { template: templateConfig }),
+          template: {
+            dir: templateDir,
+            adapter: new HandlebarsAdapter(),
+            options: { strict: true },
+            preview: true,
+          },
         };
       },
       inject: [ConfigService],

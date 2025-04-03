@@ -4,7 +4,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["**/*.hbs", "**/*.ejs"],
+    "assets": [
+      {
+        "include": "mail/verification/**/*"
+      },
+      {
+        "include": "**/*.hbs"
+      }
+    ],
+
     "watchAssets": true
   }
 }
