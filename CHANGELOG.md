@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.6](https://github.com/K-Soo/hotel-job-api/compare/v1.5.5...v1.5.6) (2025-04-03)
+
+
+### Features
+
+* 도커 컨텍스트에 .hbs 포함 여부 확인 단계 추가 ([245abb4](https://github.com/K-Soo/hotel-job-api/commit/245abb469ade1ae19e9fb43a1636951000427427))
+
+
+### Chore
+
+* remove dependency installation step from deploy workflow ([41ae5de](https://github.com/K-Soo/hotel-job-api/commit/41ae5de33172090a8a5c7b078515856c9790062e))
+
 ### [1.5.5](https://github.com/K-Soo/hotel-job-api/compare/v1.5.4...v1.5.5) (2025-04-03)
 
 
