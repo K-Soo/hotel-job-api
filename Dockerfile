@@ -10,7 +10,7 @@ RUN pnpm install --frozen-lockfile
 COPY . /app
 RUN pnpm run build
 RUN find /app/dist -name "*.hbs" || (echo "❌ .hbs 파일 없음!" && exit 1)
-
+RUN echo "[📂 .hbs 실제 경로]" && find /app/dist -name "*.hbs" || (echo "❌ .hbs 없음!" && exit 1)
 
 # Stage - Local
 FROM base AS local
