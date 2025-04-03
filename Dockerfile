@@ -32,6 +32,10 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
+RUN echo "[확인] .hbs 포함 여부:" && find ./dist -name "*.hbs" || (echo "prod .hbs 없음!" && exit 1)
+RUN apk add --no-cache tree && \
+    echo "📦 dist 구조:" && \
+    tree /app/dist
 
 EXPOSE 8020
 CMD ["pnpm", "run", "start:prod"]
