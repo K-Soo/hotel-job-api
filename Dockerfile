@@ -9,8 +9,13 @@ FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . /app
 RUN pnpm run build
-RUN find /app/dist -name "*.hbs" || (echo "❌ .hbs 파일 없음!" && exit 1)
+
 RUN echo "[📂 .hbs 실제 경로]" && find /app/dist -name "*.hbs" || (echo "❌ .hbs 없음!" && exit 1)
+
+# BUILD STAGE 전체 구조 보기
+RUN apk add --no-cache tree && \
+    echo "📦 dist 구조 출력" && \
+    tree /app/dist
 
 # Stage - Local
 FROM base AS local
@@ -32,7 +37,6 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
-RUN echo "[확인] .hbs 포함 여부:" && find ./dist -name "*.hbs" || (echo "prod .hbs 없음!" && exit 1)
 RUN apk add --no-cache tree && \
     echo "📦 dist 구조:" && \
     tree /app/dist
