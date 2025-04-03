@@ -6,20 +6,22 @@ import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { EmailVerificationMailer } from './verification/verification-mailer.service';
 import { existsSync } from 'fs';
-
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 @Module({
   imports: [
     ConfigModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => {
-        const templateDir = join(__dirname, 'verification', 'templates');
+        const templateDir = join(__dirname, 'verification');
 
         const templateConfig = existsSync(templateDir)
           ? {
               dir: templateDir,
               adapter: new HandlebarsAdapter(),
+              // adapter: new EjsAdapter(),
               options: { strict: true },
+              preview: true,
             }
           : undefined;
 
