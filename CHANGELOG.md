@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.4](https://github.com/K-Soo/hotel-job-api/compare/v1.5.3...v1.5.4) (2025-04-03)
+
+
+### Features
+
+* .hbs 파일 포함 여부 확인 및 dist 구조 출력 추가 ([c35738e](https://github.com/K-Soo/hotel-job-api/commit/c35738e8d392bf559bae3a86d0dd653d1ba59db6))
+
 ### [1.5.3](https://github.com/K-Soo/hotel-job-api/compare/v1.5.2...v1.5.3) (2025-04-03)
 
 
