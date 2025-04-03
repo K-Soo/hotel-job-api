@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.5](https://github.com/K-Soo/hotel-job-api/compare/v1.5.4...v1.5.5) (2025-04-03)
+
+
+### Features
+
+* 도커 컨텍스트에 .hbs 포함 여부 확인 작업 추가 ([b8ae8da](https://github.com/K-Soo/hotel-job-api/commit/b8ae8daf0bfa2939855a4b2ef6f49b5d7549ac80))
+* EJS 템플릿 추가 및 이메일 인증 기능 개선 ([595b08a](https://github.com/K-Soo/hotel-job-api/commit/595b08a0b92c8b39fcce1098ed0c15026069ad5e))
+
 ### [1.5.4](https://github.com/K-Soo/hotel-job-api/compare/v1.5.3...v1.5.4) (2025-04-03)
 
 
