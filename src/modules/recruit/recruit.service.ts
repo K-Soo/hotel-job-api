@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Recruitment } from '../employers/recruitment/entities/recruitment.entity';
 import { PaymentStatus, PaymentType } from '../../common/constants/payment';
-import { RecruitmentProductName } from '../../common/constants/product';
+import { RecruitmentProductName, RecruitmentProductType } from '../../common/constants/product';
 import { RecruitmentStatus } from '../../common/constants/recruitment';
 import { Payment } from '../payment/entities/payment.entity';
 
@@ -34,7 +34,7 @@ export class RecruitService {
   }
 
   async premium(filters: RecruitQueryDto) {
-    const { page, limit, type, job } = filters;
+    const { page, limit, job } = filters;
     try {
       const paymentIds = await this.paymentRepo
         .createQueryBuilder('payment')
@@ -71,7 +71,7 @@ export class RecruitService {
           AND paymentRecruitment.type = :type
           AND paymentRecruitment.name = :name 
         `,
-          { paymentIds, type, name: RecruitmentProductName.PREMIUM },
+          { paymentIds, type: RecruitmentProductType.RECRUIT, name: RecruitmentProductName.PREMIUM },
         )
         .leftJoinAndSelect('paymentRecruitment.options', 'options')
         .select([
@@ -182,7 +182,7 @@ export class RecruitService {
    * 스페셜 채용
    */
   async special(filters: RecruitQueryDto) {
-    const { page, limit, type, job } = filters;
+    const { page, limit, job } = filters;
 
     try {
       const paymentIds = await this.paymentRepo
@@ -220,7 +220,7 @@ export class RecruitService {
           AND paymentRecruitment.type = :type
           AND paymentRecruitment.name = :name 
         `,
-          { paymentIds, type, name: RecruitmentProductName.SPECIAL },
+          { paymentIds, type: RecruitmentProductType.RECRUIT, name: RecruitmentProductName.SPECIAL },
         )
         .leftJoinAndSelect('paymentRecruitment.options', 'options')
         .select([
@@ -342,7 +342,7 @@ export class RecruitService {
    * 급구 채용
    */
   async urgent(filters: RecruitQueryDto) {
-    const { page, limit, type, job } = filters;
+    const { page, limit, job } = filters;
 
     try {
       const paymentIds = await this.paymentRepo
@@ -380,7 +380,7 @@ export class RecruitService {
           AND paymentRecruitment.type = :type
           AND paymentRecruitment.name = :name 
         `,
-          { paymentIds, type, name: RecruitmentProductName.URGENT },
+          { paymentIds, type: RecruitmentProductType.RECRUIT, name: RecruitmentProductName.URGENT },
         )
         .leftJoinAndSelect('paymentRecruitment.options', 'options')
         .select([
@@ -496,7 +496,7 @@ export class RecruitService {
    * @description CLOSE 상태의 채용공고 포함해서 노출 및 스페셜, 급구 결제한 상품도 기본에 포함해서 노출
    */
   async basic(filters: RecruitQueryDto) {
-    const { page, limit, type, job } = filters;
+    const { page, limit, job } = filters;
 
     try {
       const paymentIds = await this.paymentRepo
