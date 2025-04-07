@@ -41,15 +41,6 @@ export class RecruitQueryDto {
   @IsEnum(ExperienceCondition, validationMessage('experience'))
   experience?: ExperienceCondition;
 
-  @ApiProperty({
-    description: '상품 타입',
-    type: String,
-    enum: RecruitmentProductType,
-    example: RecruitmentProductType.RECRUIT,
-  })
-  @IsEnum(RecruitmentProductType, validationMessage('type'))
-  type: RecruitmentProductType;
-
   @ApiPropertyOptional({
     required: false,
     description: '고용형태',
