@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional, ApiQuery } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, Min, IsEnum, IsArray, IsOptional, ArrayUnique } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { validationMessage } from '../../../common/utils/regex';
@@ -6,7 +6,6 @@ import { ExperienceCondition } from '../../../common/constants/recruitment';
 import { Benefits } from '../../../common/constants/benefits';
 import { EmploymentType, Jobs } from '../../../common/constants/app.enum';
 import { ArrayMaxSize } from 'class-validator';
-import { RecruitmentProductType } from '../../../common/constants/product';
 
 export class RecruitQueryDto {
   @ApiProperty({
@@ -40,15 +39,6 @@ export class RecruitQueryDto {
   @IsOptional()
   @IsEnum(ExperienceCondition, validationMessage('experience'))
   experience?: ExperienceCondition;
-
-  @ApiProperty({
-    description: '상품 타입',
-    type: String,
-    enum: RecruitmentProductType,
-    example: RecruitmentProductType.RECRUIT,
-  })
-  @IsEnum(RecruitmentProductType, validationMessage('type'))
-  type: RecruitmentProductType;
 
   @ApiPropertyOptional({
     required: false,

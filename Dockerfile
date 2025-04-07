@@ -4,7 +4,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@9.14.4 --activate
 COPY pnpm-lock.yaml package.json ./
 
-# Stage - Production Build
+# Stage - Production Pre Build
 FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . /app
@@ -16,6 +16,15 @@ RUN echo "[📂 .hbs 실제 경로]" && find /app/dist -name "*.hbs" || (echo "�
 RUN apk add --no-cache tree && \
     echo "📦 dist 구조 출력" && \
     tree /app/dist
+
+# Stage - Production 
+FROM base AS prod
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
+EXPOSE 8020
+CMD ["pnpm", "run", "start:prod"]
 
 # Stage - Local
 FROM base AS local
@@ -31,15 +40,3 @@ COPY . /app
 EXPOSE 8010
 CMD ["pnpm", "run", "start:dev"]
 
-# Stage - Production 
-FROM base AS prod
-WORKDIR /app
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/.env-cmdrc.json .env-cmdrc.json
-RUN apk add --no-cache tree && \
-    echo "📦 dist 구조:" && \
-    tree /app/dist
-
-EXPOSE 8020
-CMD ["pnpm", "run", "start:prod"]
