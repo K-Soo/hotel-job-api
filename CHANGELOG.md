@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/K-Soo/hotel-job-api/compare/v1.6.0...v1.7.0) (2025-04-07)
+
+
+### Features
+
+* 채용 상품 목록 조회에서 쿼리 파라미터 제거 및 고정 타입 사용 ([348d098](https://github.com/K-Soo/hotel-job-api/commit/348d098900d6466391f5cd4086004fcd8b3f560e))
+* 채용 상품 목록 API에서 쿼리 파라미터 및 응답 관련 데코레이터 제거 ([f65d4a7](https://github.com/K-Soo/hotel-job-api/commit/f65d4a73ec366b3f01dac3fb608269ed92b651b0))
+* 채용 서비스에 교육 조건, 방 개수, 근무일 및 근무 시간 필드 추가 ([5278895](https://github.com/K-Soo/hotel-job-api/commit/5278895fc539f3cf73b559d408f0cb5a38aa3020))
+* RecruitmentProductQueryDto 파일 삭제 및 관련 타입 제거 ([ce2143f](https://github.com/K-Soo/hotel-job-api/commit/ce2143f69ccbd17022361708b7ef66e801e119aa))
+* RecruitQueryDto에서 상품 타입 필드 제거 및 관련 서비스 수정 ([89d65e7](https://github.com/K-Soo/hotel-job-api/commit/89d65e7e52e408982e9e1d4772d55fedd03b0868))
+
+
+### Updates
+
+* merge ([05afe87](https://github.com/K-Soo/hotel-job-api/commit/05afe87a2b5125f087ab8f41d691e789b3d4bcd7))
+
 ## [1.6.0](https://github.com/K-Soo/hotel-job-api/compare/v1.5.6...v1.6.0) (2025-04-07)
 
 
