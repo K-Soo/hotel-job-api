@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/K-Soo/hotel-job-api/compare/v1.5.6...v1.6.0) (2025-04-07)
+
+
+### Features
+
+* 불필요한 파일 및 코드 제거 및 제품 서비스 로직 간소화 ([6c4cf66](https://github.com/K-Soo/hotel-job-api/commit/6c4cf6611fc264175d822b632189eb31e299ce91))
+* 이메일 인증 관련 템플릿 및 DTO 파일 삭제 ([429ef73](https://github.com/K-Soo/hotel-job-api/commit/429ef733363f7974bb089527ad2304ae8a032435))
+* 이메일 인증 템플릿 경로를 assets에 추가 ([63c4635](https://github.com/K-Soo/hotel-job-api/commit/63c4635a3c512cb36832bb17def73a582a611a73))
+* 이메일 인증 템플릿 디렉토리 경로 수정 및 핸들바 어댑터 설정 추가 ([84dc306](https://github.com/K-Soo/hotel-job-api/commit/84dc3065b247619ba5c3c80c5123b8ff196fccbb))
+* 이메일 인증 템플릿 추가 ([0df458a](https://github.com/K-Soo/hotel-job-api/commit/0df458a9fef8175bcdf1b08fe6b9766f2d88b05a))
+* 이메일 인증 템플릿을 Handlebars로 변경하고 관련 파일 정리 ([6c62f40](https://github.com/K-Soo/hotel-job-api/commit/6c62f40b473c28bfb7203b45bf572d6b53bf4f93))
+* 채용 상품 목록 조회에서 쿼리 매개변수 제거 및 기본 타입 설정 ([03c5b02](https://github.com/K-Soo/hotel-job-api/commit/03c5b028a83c36246a7d8b34280cd148151f9cfc))
+* 채용 상품 목록 API에서 불필요한 인증 및 메타데이터 제거 ([075cbc4](https://github.com/K-Soo/hotel-job-api/commit/075cbc4c8d774a21292cdb5327682bf55a6555d4))
+* 채용 상품 시더 코드 주석 처리 ([97b6b40](https://github.com/K-Soo/hotel-job-api/commit/97b6b40b9852455a44d5aff0da79474c0db34277))
+* 채용 상품 시더에 프리미엄 상품 및 옵션 추가 ([34f63cd](https://github.com/K-Soo/hotel-job-api/commit/34f63cdaf790b48fa4320069f6c6dea45c20fa9d))
+* 채용 상품 쿼리 DTO에서 상품 타입 관련 코드 제거 ([e4cbe4f](https://github.com/K-Soo/hotel-job-api/commit/e4cbe4ff6583fe1090db5630b1307b006fb3382a))
+* 채용 상품 API에서 쿼리 매개변수에서 타입 제거 및 결제 타입 수정 ([f23d6b2](https://github.com/K-Soo/hotel-job-api/commit/f23d6b262eb24d8483fefd45a7f637087bacb20c))
+* Dockerfile 개선 및 프로덕션 빌드 단계 추가 ([706e34e](https://github.com/K-Soo/hotel-job-api/commit/706e34e79443861c46079f52694f8d32b886701d))
+* nest-cli.json에서 자산 포함 규칙 수정 ([62e34c8](https://github.com/K-Soo/hotel-job-api/commit/62e34c84d6efbb4638645caef031ccb2ca6622a0))
+
 ### [1.5.6](https://github.com/K-Soo/hotel-job-api/compare/v1.5.5...v1.5.6) (2025-04-03)
 
 
