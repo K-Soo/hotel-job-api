@@ -1,11 +1,9 @@
 import { ProductsService } from './products.service';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { ApiOperation, ApiBearerAuth, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/metadata/roles.decorator';
 import { PassportJwtGuard } from '../../authentication/auth/guards/passport-jwt.guard';
-import { SerializeInterceptor } from '../../common/interceptors/serialize.interceptor';
-import { RecruitmentProductQueryDto } from './dto/recruitment-product-query.dto';
-import { Controller, Get, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(PassportJwtGuard, RolesGuard)
@@ -15,20 +13,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @ApiOperation({ summary: '채용 상품 목록' })
-  @ApiQuery({
-    name: 'type',
-    type: String,
-    example: 'RECRUIT',
-    description: 'RECRUIT, MAIN',
-    required: true,
-  })
-  @ApiResponse({
-    status: 200,
-    description: '상태별 수량',
-  })
-  // @UseInterceptors(new SerializeInterceptor())
   @Get('recruitment')
-  async recruitmentStatus(@Query() query: RecruitmentProductQueryDto) {
-    return this.productsService.findRecruitmentProducts(query);
+  async recruitmentStatus() {
+    return this.productsService.findRecruitmentProducts();
   }
 }
