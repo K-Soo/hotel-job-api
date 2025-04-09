@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/K-Soo/hotel-job-api/compare/v1.7.1...v1.7.2) (2025-04-09)
+
+
+### Features
+
+* 불필요한 import 문 제거 및 코드 정리 ([e25406f](https://github.com/K-Soo/hotel-job-api/commit/e25406ff419e8ee98e8841a80e1e5ab45a1a78d5))
+* 사용자 미발견 예외 메시지 수정 및 관련 상수 추가 ([fbb4340](https://github.com/K-Soo/hotel-job-api/commit/fbb4340daf1f1dae9f42efc85daeac1af6925141))
+* 이메일 인증 테이블 생성 마이그레이션 추가 ([95eff44](https://github.com/K-Soo/hotel-job-api/commit/95eff44ef572c04b3a323b8ae59160725a773de2))
+* createCoupon 메서드에서 employerUserId 필드 제거 ([3613bcf](https://github.com/K-Soo/hotel-job-api/commit/3613bcf3b995e0b04d7078b16952850cdbe87f6b))
+
 ### [1.7.1](https://github.com/K-Soo/hotel-job-api/compare/v1.7.0...v1.7.1) (2025-04-07)
 
 ## [1.7.0](https://github.com/K-Soo/hotel-job-api/compare/v1.6.0...v1.7.0) (2025-04-07)
