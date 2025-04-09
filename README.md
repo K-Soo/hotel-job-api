@@ -1,6 +1,6 @@
 # Hotel Job - Backend
 
-> 채용 플랫폼 | NestJS 기반 백엔드 서버
+> Hotel Job API SERVER
 > **프로젝트 시작**: 2024년 12월 ~ 현재
 
 <br>
