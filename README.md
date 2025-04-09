@@ -49,8 +49,7 @@
 
 ## Infrastructure
 
-이 프로젝트는 다음과 같은 AWS 기반 인프라에서 운영되고 있습니다
-
+AWS 기반 인프라
 - 퍼블릭 서브넷 2개, 프라이빗 서브넷 2개로 구성된 VPC 내에서 서비스 운영
 - 현재 ECS Fargate Task 및 NAT Gateway는 **요금 절감을 위해 하나의 가용 영역(AZ)만 사용** 중
 - NAT Gateway 1개를 통해 프라이빗 서브넷의 외부 통신 처리
