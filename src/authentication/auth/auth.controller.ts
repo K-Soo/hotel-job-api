@@ -140,7 +140,7 @@ export class AuthController {
       return existingUser;
     } catch (error) {
       console.log('error: ', error.name);
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
   }
 

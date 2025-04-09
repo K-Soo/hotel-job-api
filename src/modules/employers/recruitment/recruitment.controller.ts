@@ -43,10 +43,9 @@ export class RecruitmentController {
   async create(@Req() req: Request, @Body() createRecruitmentDto: CreateRecruitmentDto) {
     const userId = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userId);
-    console.log('employer: ', employer);
 
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     return this.recruitmentService.create(createRecruitmentDto, employer);
@@ -66,7 +65,7 @@ export class RecruitmentController {
     const userUuid = req.user['sub'];
     const employer = await this.employersService.findOneUuid(userUuid);
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     const draftRecruitment = await this.recruitmentService.draft(draftRecruitmentDto, employer);

@@ -26,7 +26,7 @@ export class CompanyController {
   async create(@Req() req: Request, @Body() createCompanyDto: CreateCompanyDto) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
     return this.companyService.create(createCompanyDto, employer);
   }

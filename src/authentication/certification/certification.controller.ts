@@ -43,7 +43,7 @@ export class CertificationController {
     const existingUser = await this.authService.getUserByProvider(user.provider, user.sub);
 
     if (!existingUser) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     const verifyDnHash = await this.certificationService.verifyDnHash(verify);
@@ -91,7 +91,7 @@ export class CertificationController {
     const employer = await this.employersService.findOneUuid(user.sub);
 
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     const verifyData = await this.certificationService.verifyDnHash(verifyDto);

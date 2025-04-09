@@ -71,7 +71,7 @@ export class ApplicantsService {
       });
 
       if (!applicant) {
-        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+        throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
       }
 
       // push token 삭제
