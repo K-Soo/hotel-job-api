@@ -81,12 +81,6 @@
 <br>
 
 ## Versioning
-
-이 프로젝트는 `standard-version`으로 버전을 관리합니다.
-
-배포 시점마다 CHANGELOG를 함께 업데이트하며,  
-상세한 변경 이력은 아래 파일에서 확인할 수 있습니다.
-
 → [CHANGELOG.md](./CHANGELOG.md)
 
 <br>
