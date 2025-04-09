@@ -3,10 +3,6 @@ import { DiscountType } from '../../../common/constants/coupon';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCouponDto {
-  @ApiProperty({ description: '수동 발급할 사용자 계정', example: 'kanabun102' })
-  @IsString()
-  employerUserId: string;
-
   @ApiProperty({ description: 'secretKey' })
   @IsString()
   secretKey: string;

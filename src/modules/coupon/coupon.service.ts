@@ -98,18 +98,12 @@ export class CouponService {
    * 쿠폰 생성
    */
   async createCoupon(createCouponDto: CreateCouponDto) {
-    const { employerUserId, secretKey } = createCouponDto;
+    const { secretKey } = createCouponDto;
 
     const adminSecretKey = this.configService.get('ADMIN_SECRET_KEY');
 
     if (adminSecretKey !== secretKey) {
       throw new UnauthorizedException('인증 실패');
-    }
-
-    const employer = await this.employerRepo.findOne({ where: { userId: employerUserId } });
-
-    if (!employer) {
-      throw new NotFoundException('해당 사용자를 찾을 수 없습니다.');
     }
 
     const coupon = await this.couponRepo.findOne({ where: { code: createCouponDto.code } });
