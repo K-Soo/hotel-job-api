@@ -33,7 +33,6 @@
 | --------------------- | --------------------------------------------------------- |
 | **Framework**         | NestJS                                                    |
 | **Database**          | PostgreSQL, TypeORM                                       |
-| **ORM 확장**          | typeorm-extension                    |
 | **Auth**              | JWT (Access/Refresh 토큰, HTTP Only Cookie 방식)          |
 | **OAuth**             | Custom Passport + Kakao / Google 전략                     |
 | **WebSocket**         | @nestjs/websockets + Socket.IO                            |
