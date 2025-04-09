@@ -91,7 +91,7 @@ export class EmployersService {
       const employer = await this.findOneUuid(id);
 
       if (!employer) {
-        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+        throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
       }
 
       // 기존 비밀번호 확인
@@ -167,7 +167,7 @@ export class EmployersService {
       const employer = await employerRepo.findOne({ where: { id: uuid }, relations: ['certification'] });
 
       if (!employer) {
-        throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+        throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
       }
 
       // push token 삭제

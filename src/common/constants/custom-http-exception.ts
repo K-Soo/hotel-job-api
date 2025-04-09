@@ -11,6 +11,10 @@ export const customHttpException = {
     customCode: 1002,
     message: 'Access token is invalid',
   },
+  AUTH_NOT_FOUND_USER: {
+    customCode: 1003,
+    message: 'not found user',
+  },
   REFRESH_TOKEN_EXPIRED: {
     customCode: 1020,
     message: 'Refresh token expired',

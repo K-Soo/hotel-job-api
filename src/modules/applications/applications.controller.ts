@@ -95,7 +95,7 @@ export class ApplicationsController {
   async getRecruitmentApplicationStatusCount(@Req() req: Request, @Param('id') recruitmentId: string) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
     return this.applicationsService.calculateEmployerReviewStageStatusCount(recruitmentId, employer);
   }
@@ -123,7 +123,7 @@ export class ApplicationsController {
   ) {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
     return this.applicationsService.getApplicationsForRecruitment(recruitmentId, employer, step);
   }
@@ -149,7 +149,7 @@ export class ApplicationsController {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
 
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     return this.applicationsService.updateEmployerReviewStageStatus(updateReviewStageDto, employer);
@@ -166,7 +166,7 @@ export class ApplicationsController {
     const employer = await this.employersService.findOneUuid(req.user['sub']);
 
     if (!employer) {
-      throw new NotFoundException(customHttpException.NOT_FOUND_USER);
+      throw new NotFoundException(customHttpException.AUTH_NOT_FOUND_USER);
     }
 
     return this.applicationsService.markResumeAsViewed(body.applicationId, employer);
